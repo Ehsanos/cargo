@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Enums\LevelUserEnum;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,7 +17,9 @@ class DatabaseSeeder extends Seeder
 
          \App\Models\User::factory()->create([
              'name' => 'Test User',
-             'email' => 'test@example.com',
+             'email' => 'admin@admin.com',
+             'password'=>bcrypt('password'),
+             'level'=>LevelUserEnum::ADMIN->value
          ]);
     }
 }
