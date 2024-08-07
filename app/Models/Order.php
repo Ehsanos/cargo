@@ -60,4 +60,9 @@ class Order extends Model
     {
         return $this->hasMany(Package::class);
     }
+
+    public function agencies(): HasMany
+    {
+        return $this->hasMany(Agency::class);
+    }
 }

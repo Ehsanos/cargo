@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\OrderResource\Pages;
 use App\Filament\Admin\Resources\OrderResource\RelationManagers;
 use App\Models\Order;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
@@ -108,7 +109,14 @@ class OrderResource extends Resource
                                     Forms\Components\TextInput::make('width')->numeric()->label('العرض'),
                                     Forms\Components\TextInput::make('height')->numeric()->label('الارتفاع'),
                             ]),
-                ])
+                ]),
+                        Tabs\Tab::make('سلسلة التوكيل')->schema([
+                            Forms\Components\Repeater::make('agencies')->relationship('agencies')->schema([
+                                Forms\Components\Select::make('user_id')->options(User::pluck('name','id'))->label('الموظف')->searchable()->required(),
+                                Forms\Components\TextInput::make('task')->label('المهمة المطلوب تنفيذها'),
+
+                            ])
+                        ])
             ])->columnSpanFull()
             ]);
 
