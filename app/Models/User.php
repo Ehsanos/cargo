@@ -20,7 +20,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasMedia
 {
-    use HasApiTokens, HasFactory, Notifiable,HasRoles, InteractsWithMedia;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, InteractsWithMedia;
     use HasPanelShield;
 
     /**
@@ -59,12 +59,10 @@ class User extends Authenticatable implements HasMedia
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
-        'level'=>LevelUserEnum::class,
-        'status'=>ActivateStatusEnum::class,
-        'job'=>JobUserEnum::class
+        'level' => LevelUserEnum::class,
+        'status' => ActivateStatusEnum::class,
+        'job' => JobUserEnum::class
     ];
-
-
 
 
     public function city(): BelongsTo
@@ -94,7 +92,13 @@ class User extends Authenticatable implements HasMedia
 
     public function getTotalBalanceAttribute(): float
     {
-        $total = DB::table('balances')->where('user_id', $this->id)->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0;
+        $total = DB::table('balances')->where('user_id', $this->id)->where('is_complete', true)->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0;
+        return sprintf('%.2f', $total);
+    }
+
+    public function getPendingBalanceAttribute(): float
+    {
+        $total = DB::table('balances')->where('user_id', $this->id)->where('is_complete', false)->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0;
         return sprintf('%.2f', $total);
     }
 }

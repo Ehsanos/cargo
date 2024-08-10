@@ -2,6 +2,8 @@
 
 namespace App\Observers;
 
+use App\Enums\BayTypeEnum;
+use App\Models\Balance;
 use App\Models\Order;
 use Filament\Notifications\Notification;
 use App\Enums\LevelUserEnum;
@@ -15,15 +17,38 @@ class OrderObserver
     public function created(Order $order): void
     {
 
-        if(auth()->user()->id==$order->receive_id) {
-            $admin=User::whereLevel('admin')->get();
+/*
+        if (auth()->user()->id == $order->receive_id) {
+            $admin = User::whereLevel('admin')->get();
             Notification::make()->title('لديك طلب جديد', auth()->user()->name)->
-            sendToDatabase(array_merge([auth()->user()],$admin));
+            sendToDatabase(array_merge([auth()->user()], $admin));
+        }*/
 
-
+        if ($order->bay_type->value == BayTypeEnum::BEFORE->value) {
+            info('before');
+            $sender = $order->sender;
+            Balance::create([
+                'credit' => 0,
+                'debit' => $order->price,
+                'order_id' => $order->id,
+                'user_id' => $sender->id,
+                'total' => $sender->total_balance - $order->price,
+                'info' => 'أجور شحن طلب رقم ' . $order->code,
+            ]);
         }
-
-
+        //
+        elseif ($order->bay_type->value == BayTypeEnum::AFTER->value){
+            info('after');
+            $receive = $order->receive;
+            Balance::create([
+                'credit' => 0,
+                'debit' => $order->price,
+                'order_id' => $order->id,
+                'user_id' => $receive->id,
+                'total' => $receive->total_balance - $order->price,
+                'info' => 'أجور شحن طلب رقم ' . $order->code,
+            ]);
+        }
 
 
     }
@@ -33,7 +58,7 @@ class OrderObserver
      */
     public function updated(Order $order): void
     {
-        //
+
     }
 
     /**

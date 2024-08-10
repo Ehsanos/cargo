@@ -21,5 +21,8 @@ class DatabaseSeeder extends Seeder
              'password'=>bcrypt('password'),
              'level'=>LevelUserEnum::ADMIN->value
          ]);
+         $this->call(CitySeeder::class);
+         $this->call(BranchSeeder::class);
+         $this->call(UnitSeeder::class);
     }
 }

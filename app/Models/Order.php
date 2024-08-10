@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Observers\OrderObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,15 +17,18 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 class Order extends Model
 {
     use HasFactory;
+
     protected $casts = [
         'options' => 'array',
-         'status'=>OrderStatusEnum::class,
-        'type'=>OrderTypeEnum::class,
-        'bay_type'=>BayTypeEnum::class
+        'status' => OrderStatusEnum::class,
+        'type' => OrderTypeEnum::class,
+        'bay_type' => BayTypeEnum::class
 
 
     ];
     protected $guarded = [];
+
+
 
     public function citySource(): BelongsTo
     {
