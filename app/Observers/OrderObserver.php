@@ -36,6 +36,7 @@ class OrderObserver
                 'user_id' => $sender->id,
                 'total' => $sender->total_balance - $order->price,
                 'info' => 'أجور شحن طلب رقم ' . $order->code,
+                'is_complete'=>true,
             ]);
         } //
         elseif ($order->bay_type->value == BayTypeEnum::AFTER->value) {
@@ -47,6 +48,7 @@ class OrderObserver
                 'user_id' => $receive->id,
                 'total' => $receive->total_balance - $order->price,
                 'info' => 'أجور شحن طلب رقم ' . $order->code,
+                'is_complete'=>true,
             ]);
         }
 
