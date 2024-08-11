@@ -87,7 +87,12 @@ class User extends Authenticatable implements HasMedia
 
     public function balances(): HasMany
     {
-        return $this->hasMany(Balance::class);
+        return $this->hasMany(Balance::class)->where('balances.is_complete', 1);
+    }
+
+    public function pendingBalances(): HasMany
+    {
+        return $this->hasMany(Balance::class)->where('balances.is_complete', 0);
     }
 
     public function getTotalBalanceAttribute(): float

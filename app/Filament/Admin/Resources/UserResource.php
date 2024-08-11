@@ -133,7 +133,7 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('username')->label('الاسم'),
+                Tables\Columns\TextColumn::make('name')->label('الاسم'),
                 Tables\Columns\TextColumn::make('status')->badge()->label('حالة المستخدم'),
                 Tables\Columns\TextColumn::make('level')->badge()
                     ->label('فئة المستخدم'),
@@ -162,7 +162,8 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\BalancesRelationManager::class,
+            RelationManagers\PendingBalancesRelationManager::class
         ];
     }
 
