@@ -69,4 +69,8 @@ class Order extends Model
     {
         return $this->hasMany(Agency::class);
     }
+    public function balances(): HasMany
+    {
+        return $this->hasMany(Balance::class, 'order_id');
+    }
 }

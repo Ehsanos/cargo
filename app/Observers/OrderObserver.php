@@ -27,7 +27,7 @@ class OrderObserver
                 }*/
 
         if ($order->bay_type->value == BayTypeEnum::BEFORE->value) {
-
+info('ok');
             $sender = $order->sender;
             Balance::create([
                 'credit' => 0,
@@ -40,6 +40,7 @@ class OrderObserver
             ]);
         } //
         elseif ($order->bay_type->value == BayTypeEnum::AFTER->value) {
+            info('No');
             $receive = $order->receive;
             Balance::create([
                 'credit' => 0,
@@ -69,7 +70,7 @@ class OrderObserver
      */
     public function deleted(Order $order): void
     {
-        //
+        $order->balances()->delete();
     }
 
     /**
