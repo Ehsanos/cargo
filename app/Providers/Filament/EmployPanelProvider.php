@@ -29,6 +29,7 @@ class EmployPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Indigo,
             ])
+            ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Employ/Resources'), for: 'App\\Filament\\Employ\\Resources')
             ->discoverPages(in: app_path('Filament/Employ/Pages'), for: 'App\\Filament\\Employ\\Pages')
             ->pages([

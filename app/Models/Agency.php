@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ActivateAgencyEnum;
 use App\Observers\AgencyObServer;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +13,10 @@ class Agency extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    protected $casts=[
+        'activate' => ActivateAgencyEnum::class
+    ];
 
     protected static function boot()
     {

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Employ\Resources;
 
+use App\Enums\ActivateAgencyEnum;
+use App\Enums\ActivateStatusEnum;
 use App\Enums\BayTypeEnum;
 use App\Enums\OrderStatusEnum;
 use App\Enums\OrderTypeEnum;
@@ -15,6 +17,7 @@ use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -56,52 +59,52 @@ class OrderResource extends Resource
 
                                     ]
                                 )->label('حالة الطلب')->reactive()->afterStateUpdated(
-                                    function ($state,callable $set){
-                                        if(OrderStatusEnum::RETURNED->value ===$state)
-                                            $set('active',true);
+                                    function ($state, callable $set) {
+                                        if (OrderStatusEnum::RETURNED->value === $state)
+                                            $set('active', true);
                                         else
-                                            $set('active',false);
+                                            $set('active', false);
 
                                     }
 
                                 )->live(),
                                 Forms\Components\Select::make('branch_source_id')->relationship('branchSource', 'name')->label('اسم الفرع المرسل')
-                                    ->afterStateUpdated(function ($state,$set){
-                                        $branch=Branch::find($state);
-                                        if($branch){
-                                            $set('city_source_id',$branch->city_id);
+                                    ->afterStateUpdated(function ($state, $set) {
+                                        $branch = Branch::find($state);
+                                        if ($branch) {
+                                            $set('city_source_id', $branch->city_id);
                                         }
                                     })->live(),
                                 Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')
-                                    ->afterStateUpdated(function ($state,$set){
-                                        $branch=Branch::find($state);
-                                        if($branch){
-                                            $set('city_target_id',$branch->city_id);
+                                    ->afterStateUpdated(function ($state, $set) {
+                                        $branch = Branch::find($state);
+                                        if ($branch) {
+                                            $set('city_target_id', $branch->city_id);
                                         }
                                     })->live(),
                                 Forms\Components\DateTimePicker::make('shipping_date')->label('تاريخ الطلب'),
 
                                 Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')
-                                    ->afterStateUpdated(function ($state,$set){
-                                        $user=User::find($state);
-                                        if($user){
-                                            $set('sender_phone',$user->phone);
-                                            $set('sender_address',$user->address);
+                                    ->afterStateUpdated(function ($state, $set) {
+                                        $user = User::find($state);
+                                        if ($user) {
+                                            $set('sender_phone', $user->phone);
+                                            $set('sender_address', $user->address);
                                         }
                                     })->live(),
                                 Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل'),
                                 Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل'),
 
                                 Forms\Components\Select::make('receive_id')->relationship('receive', 'name')->label('اسم المستلم')
-                                    ->afterStateUpdated(function ($state,$set){
-                                        $user=User::find($state);
-                                        if($user){
-                                            $set('receive_phone',$user->phone);
-                                            $set('receive_address',$user->address);
+                                    ->afterStateUpdated(function ($state, $set) {
+                                        $user = User::find($state);
+                                        if ($user) {
+                                            $set('receive_phone', $user->phone);
+                                            $set('receive_address', $user->address);
                                         }
                                     })->live(),
                                 Forms\Components\Select::make('category_id')
-                                    ->relationship('category','name')
+                                    ->relationship('category', 'name')
                                     ->label
                                     ('الفئة'),
                                 Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
@@ -118,7 +121,7 @@ class OrderResource extends Resource
                                 Forms\Components\TextInput::make('price')->numeric()->label('التحصيل'),
 //                                Forms\Components\TextInput::make('total_weight')->numeric()->label('الوزن الكلي'),
                                 Forms\Components\TextInput::make('canceled_info')
-                                    ->hidden(fn(Forms\Get $get):bool=>!$get('active'))->live()
+                                    ->hidden(fn(Forms\Get $get): bool => !$get('active'))->live()
                                     ->label('سبب الارجاع في حال ارجاع الطلب'),
 
 
@@ -129,8 +132,8 @@ class OrderResource extends Resource
                                 Forms\Components\Repeater::make('packages')->relationship('packages')->schema([
                                     SpatieMediaLibraryFileUpload::make('package')->label('صورة الشحنة')->collection('packages'),
 
-                                    Forms\Components\TextInput::make('code')->default(fn()=>"FC". now()->format('dHis')),
-                                    Forms\Components\Select::make('unit_id')->relationship('unit','name')->label('الوحدة'),
+                                    Forms\Components\TextInput::make('code')->default(fn() => "FC" . now()->format('dHis')),
+                                    Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة'),
 
                                     Forms\Components\TextInput::make('info')->label('معلومات الشحنة'),
 //                                    Forms\Components\Select::make('weight')->relationship('category','name')->label('من فئة '),
@@ -143,18 +146,16 @@ class OrderResource extends Resource
                             ]),
                         Tabs\Tab::make('سلسلة التوكيل')->schema([
                             Forms\Components\Repeater::make('agencies')->relationship('agencies')->schema([
-                                Forms\Components\Select::make('user_id')->options(User::pluck('name','id'))->label('الموظف')->searchable()->required(),
+                                Forms\Components\Select::make('user_id')->options(User::pluck('name', 'id'))->label('الموظف')->searchable()->required(),
                                 Forms\Components\Radio::make('status')->options([
-                                    TaskAgencyEnum::TASK->value=>TaskAgencyEnum::TASK->getLabel(),
-                                    TaskAgencyEnum::TAKE->value=>TaskAgencyEnum::TAKE->getLabel(),
-                                    TaskAgencyEnum::DELIVER->value=>TaskAgencyEnum::DELIVER->getLabel(),
+                                    TaskAgencyEnum::TASK->value => TaskAgencyEnum::TASK->getLabel(),
+                                    TaskAgencyEnum::TAKE->value => TaskAgencyEnum::TAKE->getLabel(),
+                                    TaskAgencyEnum::DELIVER->value => TaskAgencyEnum::DELIVER->getLabel(),
                                 ])->label('المهمة'),
                                 Forms\Components\TextInput::make('task')->label('المهمة المطلوب تنفيذها'),
 
                             ])
                         ])
-
-
 
 
                     ])->columnSpanFull()
@@ -168,7 +169,7 @@ class OrderResource extends Resource
                 PopoverColumn::make('qr_url')
                     ->trigger('click')
                     ->placement('right')
-                    ->content(\LaraZeus\Qr\Facades\Qr::render('2222'))
+                    ->content(fn($record)=>\LaraZeus\Qr\Facades\Qr::render($record->code))
                     ->icon('heroicon-o-qr-code'),
 
                 Tables\Columns\TextColumn::make('code'),
@@ -180,17 +181,34 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('citySource.name')->label('من مدينة'),
                 Tables\Columns\TextColumn::make('receive.name')->label('اسم المستلم '),
                 Tables\Columns\TextColumn::make('cityTarget.name')->label('الى مدينة '),
+                Tables\Columns\TextColumn::make('agencies.task')->formatStateUsing(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->task)->label('المهمة الموكلة'),
+                Tables\Columns\TextColumn::make('agencies.activate')
+                    ->formatStateUsing(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->activate->getLabel())
+                    ->icon(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->activate->getIcon())
+                    ->color(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->activate->getColor())
+                    ->label('حالة المهمة'),
 
             ])
-
-
-
-
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('is_complete')->form([
+                    Forms\Components\Select::make('status')->options([
+                        ActivateAgencyEnum::PENDING->value => ActivateAgencyEnum::PENDING->getLabel(),
+                        ActivateAgencyEnum::COMPLETE->value => ActivateAgencyEnum::COMPLETE->getLabel(),
+                        ActivateAgencyEnum::CANCELED->value => ActivateAgencyEnum::CANCELED->getLabel(),
+                    ])->label('حالة المهمة'),
+                    Forms\Components\Textarea::make('msg')->label('ملاحظات'),
+                ])->action(function($record,$data){
+                    $agency=$record->agencies()->where('user_id',auth()->id())->where('agencies.activate',ActivateAgencyEnum::PENDING->value)->first();
+                    $agency->update([
+                        'activate'=>$data['status'],
+                        'msg'=>$data['msg']
+                    ]);
+                    Notification::make('success')->title('نجاح العملية')->body('تم حفظ البيانات')->success()->send();
+                })->label('إنهاء المهمة')->button()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -203,8 +221,8 @@ class OrderResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('orders.take_id', auth()->user()->id)
-            ->OrWhere('orders.delivery_id',auth()->user()->id);
+            ->whereHas('agencies', fn($query) => $query->where('agencies.user_id', auth()->id()))
+            ->orWhere(['orders.take_id' => auth()->user()->id, 'orders.delivery_id' => auth()->user()->id]);
     }
 
     public static function getRelations(): array
