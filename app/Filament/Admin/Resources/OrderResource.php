@@ -103,6 +103,10 @@ class OrderResource extends Resource
                                             $set('receive_address',$user->address);
                                         }
                                     })->live(),
+                                Forms\Components\Select::make('category_id')
+                                    ->relationship('category','name')
+                                    ->label
+                                    ('الفئة'),
                                 Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
                                 Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم'),
 
@@ -114,8 +118,8 @@ class OrderResource extends Resource
                                     BayTypeEnum::BEFORE->value => BayTypeEnum::BEFORE->getLabel()
 
                                 ])->label('نوع الدفع'),
-                                Forms\Components\TextInput::make('price')->numeric()->label('السعر'),
-                                Forms\Components\TextInput::make('total_weight')->numeric()->label('الوزن الكلي'),
+                                Forms\Components\TextInput::make('price')->numeric()->label('التحصيل'),
+//                                Forms\Components\TextInput::make('total_weight')->numeric()->label('الوزن الكلي'),
                                 Forms\Components\TextInput::make('canceled_info')
                                     ->hidden(fn(Forms\Get $get):bool=>!$get('active'))->live()
                                     ->label('سبب الارجاع في حال ارجاع الطلب'),
@@ -130,12 +134,14 @@ class OrderResource extends Resource
 
                                 Forms\Components\TextInput::make('code')->default(fn()=>"FC". now()->format('dHis')),
                                     Forms\Components\Select::make('unit_id')->relationship('unit','name')->label('الوحدة'),
+
                                     Forms\Components\TextInput::make('info')->label('معلومات الشحنة'),
-                                    Forms\Components\TextInput::make('weight')->label('وزن الشحنة'),
+//                                    Forms\Components\Select::make('weight')->relationship('category','name')->label('من فئة '),
                                     Forms\Components\TextInput::make('quantity')->numeric()->label('الكمية'),
-                                    Forms\Components\TextInput::make('length')->numeric()->label('الطول'),
-                                    Forms\Components\TextInput::make('width')->numeric()->label('العرض'),
-                                    Forms\Components\TextInput::make('height')->numeric()->label('الارتفاع'),
+
+//                                    Forms\Components\TextInput::make('length')->numeric()->label('الطول'),
+//                                    Forms\Components\TextInput::make('width')->numeric()->label('العرض'),
+//                                    Forms\Components\TextInput::make('height')->numeric()->label('الارتفاع'),
                             ]),
                 ]),
                         Tabs\Tab::make('سلسلة التوكيل')->schema([
@@ -150,6 +156,10 @@ class OrderResource extends Resource
 
                             ])
                         ])
+
+
+
+
             ])->columnSpanFull()
             ]);
 

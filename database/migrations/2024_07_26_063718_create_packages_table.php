@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();
             $table->foreignId('unit_id')->nullable()->constrained()->nullOnDelete();
+
             $table->string('code')->nullable();
             $table->string('qr_url')->nullable();
             $table->string('info')->nullable();

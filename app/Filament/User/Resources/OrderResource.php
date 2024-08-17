@@ -32,6 +32,25 @@ class OrderResource extends Resource
             ->schema([
                 Tabs::make('Tabs')
                     ->tabs([
+
+                        Tabs\Tab::make('ارسال طلب للادارة')
+                            ->schema([
+                                Forms\Components\Select::make('bay_type')->options([
+                                    BayTypeEnum::AFTER->value => BayTypeEnum::AFTER->getLabel(),
+                                    BayTypeEnum::BEFORE->value => BayTypeEnum::BEFORE->getLabel()
+
+                                ])->label('نوع الدفع'),
+
+                                Forms\Components\Select::make('receive_id')
+                                    ->relationship('receive', 'name')
+                                    ->label('اسم المستلم'),
+
+
+
+                       ]),
+
+
+
                         Tabs\Tab::make('معلومات الطلب')
                             ->schema([
 
@@ -43,12 +62,6 @@ class OrderResource extends Resource
                                     [
 
                                         OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel(),
-                                        OrderStatusEnum::AGREE->value => OrderStatusEnum::AGREE->getLabel(),
-                                        OrderStatusEnum::PICK->value => OrderStatusEnum::PICK->getLabel(),
-                                        OrderStatusEnum::TRANSFER->value => OrderStatusEnum::TRANSFER->getLabel(),
-                                        OrderStatusEnum::SUCCESS->value => OrderStatusEnum::SUCCESS->getLabel(),
-                                        OrderStatusEnum::RETURNED->value => OrderStatusEnum::RETURNED->getLabel(),
-                                        OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
 
                                     ]
                                 )->label('حالة الطلب')->reactive()->afterStateUpdated(
@@ -60,7 +73,10 @@ class OrderResource extends Resource
 
                                     }
 
-                                )->live()->hidden(),
+                                )->live()->hidden()->default(
+                                   [OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel()]
+
+                                ),
                                 Forms\Components\Select::make('branch_source_id')->relationship('branchSource', 'name')->label('اسم الفرع المرسل')->hidden(),
                                 Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم'),
                                 Forms\Components\DateTimePicker::make('shipping_date')->default(now()->format(''))
@@ -91,6 +107,7 @@ class OrderResource extends Resource
 
                             ]),
 
+
                         Tabs\Tab::make('محتويات الطلب')
                             ->schema([
                                 Forms\Components\Repeater::make('packages')->relationship('packages')->schema([
@@ -109,6 +126,8 @@ class OrderResource extends Resource
                     ])->columnSpanFull()
             ]);
     }
+
+
 
     public static function table(Table $table): Table
     {
@@ -148,6 +167,8 @@ class OrderResource extends Resource
 
 
     }
+
+
 
     public static function getRelations(): array
     {

@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('qr_url')->nullable();
             $table->string('qr_code')->nullable();
             $table->string('options')->nullable();
+            $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
 
             $table->string('type')->nullable()->comment('OrderTypeEnum');
             $table->string('status')->nullable()->default('pending')->comment('OrderStatusEnum');

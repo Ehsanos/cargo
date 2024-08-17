@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\User\Auth\CustomLogin;
+use App\Filament\User\Auth\CustomReg;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -25,8 +27,9 @@ class UserPanelProvider extends PanelProvider
         return $panel
             ->id('user')
             ->path('user')
-            ->login()
-            ->registration()
+            ->login(CustomLogin::class)
+            ->passwordReset()
+            ->registration(CustomReg::class)
             ->profile()
             ->colors([
                 'primary' => Color::Emerald,

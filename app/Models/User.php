@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,29 +20,46 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements HasMedia
+class User extends Authenticatable implements HasMedia , FilamentUser
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles, InteractsWithMedia;
     use HasPanelShield;
 
+
+
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        if ($panel->getId() === 'admin') {
+
+           if($this->level==LevelUserEnum::ADMIN)
+           return true;
+
+           else return false;
+
+
+        }
+        return true;
+    }
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'username',
-        'password',
-        'phone',
-        'url',
-        'latitude',
-        'longitude',
-        'status',
-        'level',
-        'job'
-    ];
-
+//    protected $fillable = [
+//        'name',
+//        'username',
+//        'password',
+//        'phone',
+//        'url',
+//        'latitude',
+//        'longitude',
+//        'status',
+//        'level',
+//        'job'
+//
+//    ];
+protected $guarded=[];
     /**
      * The attributes that should be hidden for serialization.
      *

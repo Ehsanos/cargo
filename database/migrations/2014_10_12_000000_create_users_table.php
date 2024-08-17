@@ -15,6 +15,9 @@ return new class extends Migration {
             $table->string('name');
             $table->string('username')->unique();
             $table->string('email')->unique()->nullable();
+            $table->string('num_id')->unique()->nullable();
+            $table->string('iban')->unique()->nullable();
+            $table->string('market_name')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('phone')->nullable();
@@ -22,6 +25,7 @@ return new class extends Migration {
             $table->string('address')->nullable();
             $table->double('latitude')->nullable();
             $table->double('longitude')->nullable();
+            $table->json('location')->nullable();
             $table->string('status')->nullable()->default('pending')->comment('ActivateStatusEnum');
             $table->string('level')->nullable()->default('user')->comment('LevelUserEnum');
             $table->string('full_name')->nullable();

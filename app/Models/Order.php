@@ -73,4 +73,12 @@ class Order extends Model
     {
         return $this->hasMany(Balance::class, 'order_id');
     }
+
+
+
+    public function category():BelongsTo{
+        return  $this->belongsTo(Category::class);
+
+    }
+
 }
