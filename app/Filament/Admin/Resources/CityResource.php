@@ -20,6 +20,8 @@ class CityResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-map';
     protected static ?string $pluralModelLabel = 'المدن';
 
+    protected static ?string $label='مدينة';
+    protected static ?string $navigationLabel='المدن';
 
     public static function form(Form $form): Form
     {

@@ -23,7 +23,10 @@ class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
 
-    protected static ?string $pluralModelLabel = 'طلباتي';
+    protected static ?string $pluralModelLabel = 'الطلبات';
+
+    protected static ?string $label='طلب';
+    protected static ?string $navigationLabel='الطلبات';
 
     protected static ?string $navigationIcon = 'heroicon-o-truck';
     public static function form(Form $form): Form

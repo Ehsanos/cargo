@@ -23,6 +23,8 @@ class PackageResource extends Resource
     protected static ?string $model = Package::class;
     protected static ?string $pluralModelLabel = 'الشحنات';
 
+    protected static ?string $label='شحنة';
+    protected static ?string $navigationLabel='الشحنات';
     protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
 
     public static function form(Form $form): Form
