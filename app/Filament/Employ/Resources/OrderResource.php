@@ -194,21 +194,7 @@ class OrderResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('is_complete')->form([
-                    Forms\Components\Select::make('status')->options([
-                        ActivateAgencyEnum::PENDING->value => ActivateAgencyEnum::PENDING->getLabel(),
-                        ActivateAgencyEnum::COMPLETE->value => ActivateAgencyEnum::COMPLETE->getLabel(),
-                        ActivateAgencyEnum::CANCELED->value => ActivateAgencyEnum::CANCELED->getLabel(),
-                    ])->label('حالة المهمة'),
-                    Forms\Components\Textarea::make('msg')->label('ملاحظات'),
-                ])->action(function($record,$data){
-                    $agency=$record->agencies()->where('user_id',auth()->id())->where('agencies.activate',ActivateAgencyEnum::PENDING->value)->first();
-                    $agency->update([
-                        'activate'=>$data['status'],
-                        'msg'=>$data['msg']
-                    ]);
-                    Notification::make('success')->title('نجاح العملية')->body('تم حفظ البيانات')->success()->send();
-                })->label('إنهاء المهمة')->button()
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -228,7 +214,7 @@ class OrderResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\AgenciesRelationManager::class,
         ];
     }
 
