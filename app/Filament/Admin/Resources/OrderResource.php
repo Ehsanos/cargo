@@ -2,6 +2,8 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Enums\CategoryTypeEnum;
+use App\Enums\LevelUserEnum;
 use App\Enums\TaskAgencyEnum;
 use App\Filament\Admin\Resources\OrderResource\Pages;
 use App\Filament\Admin\Resources\OrderResource\RelationManagers;
@@ -85,8 +87,10 @@ class OrderResource extends Resource
                                             $set('city_target_id',$branch->city_id);
                                         }
                                     })->live(),
-                                Forms\Components\DateTimePicker::make('shipping_date')->label('تاريخ الطلب'),
+                                Forms\Components\DatePicker::make('shipping_date')->label('تاريخ الطلب')->format('Y-m-d')->default(now()->format('Y-m-d')),
 
+
+                                Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل'),
                                 Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')
                                     ->afterStateUpdated(function ($state,$set){
                                         $user=User::find($state);
@@ -95,7 +99,6 @@ class OrderResource extends Resource
                                             $set('sender_address',$user->address);
                                         }
                                     })->live(),
-                                Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل'),
                                 Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل'),
 
                                 Forms\Components\Select::make('receive_id')->relationship('receive', 'name')->label('اسم المستلم')
@@ -106,10 +109,15 @@ class OrderResource extends Resource
                                             $set('receive_address',$user->address);
                                         }
                                     })->live(),
-                                Forms\Components\Select::make('category_id')
-                                    ->relationship('category','name')
+                                Forms\Components\Select::make('weight_id')
+                                    ->relationship('weight','name')
                                     ->label
-                                    ('الفئة'),
+                                    ('الوزن'),
+
+                                Forms\Components\Select::make('size_id')
+                                    ->relationship('size','name')
+                                    ->label
+                                    ('الحجم'),
                                 Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
                                 Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم'),
 
@@ -122,6 +130,7 @@ class OrderResource extends Resource
 
                                 ])->label('نوع الدفع'),
                                 Forms\Components\TextInput::make('price')->numeric()->label('التحصيل'),
+                                Forms\Components\TextInput::make('far')->numeric()->label('أجور الشحن'),
 //                                Forms\Components\TextInput::make('total_weight')->numeric()->label('الوزن الكلي'),
                                 Forms\Components\TextInput::make('canceled_info')
                                     ->hidden(fn(Forms\Get $get):bool=>!$get('active'))->live()
@@ -149,7 +158,9 @@ class OrderResource extends Resource
                 ]),
                         Tabs\Tab::make('سلسلة التوكيل')->schema([
                             Forms\Components\Repeater::make('agencies')->relationship('agencies')->schema([
-                                Forms\Components\Select::make('user_id')->options(User::pluck('name','id'))->label('الموظف')->searchable()->required(),
+                                Forms\Components\Select::make('user_id')->options(User::where(fn($query)=>
+                                $query->where('level',LevelUserEnum::DRIVER->value)->orWhere('level',LevelUserEnum::STAFF->value)
+                                )->pluck('name','id'))->label('الموظف')->searchable()->required(),
                                Forms\Components\Radio::make('status')->options([
                                    TaskAgencyEnum::TASK->value=>TaskAgencyEnum::TASK->getLabel(),
                                    TaskAgencyEnum::TAKE->value=>TaskAgencyEnum::TAKE->getLabel(),

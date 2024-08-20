@@ -18,7 +18,7 @@ enum TaskAgencyEnum:string implements HasLabel ,HasColor,HasIcon
         return match ($this) {
             self::TAKE => 'إلتقاط',
             self::DELIVER => 'تسليم',
-            self::TASK => 'مهمة إدارية',
+            self::TASK => 'نقل',
 
         };
     }

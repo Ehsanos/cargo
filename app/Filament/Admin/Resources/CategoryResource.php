@@ -33,7 +33,7 @@ class CategoryResource extends Resource
                     Forms\Components\Radio::make('type')->options([
                         CategoryTypeEnum::SIZE->value => CategoryTypeEnum::SIZE->getLabel(),
                         CategoryTypeEnum::WEIGHT->value => CategoryTypeEnum::WEIGHT->getLabel(),
-                    ])->default(CategoryTypeEnum::SIZE->value)->label('نوع الفئة'),
+                    ])->default(CategoryTypeEnum::SIZE->value)->label('نوع الفئة')->visible(fn($context)=>$context !=='edit'),
                     Forms\Components\TextInput::make('internal_price')->numeric()->label('السعر للفئة للشحن الداخلي')->required(),
                     Forms\Components\TextInput::make('external_price')->numeric()->label('السعر للفئة للشحن الخارجي')->required(),
                 ])

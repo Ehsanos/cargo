@@ -15,8 +15,8 @@ enum OrderTypeEnum:string implements HasLabel ,HasColor,HasIcon
     public function getLabel(): string
     {
         return match ($this) {
-            self::HOME => 'توصيل للمنزل',
-            self::BRANCH => 'توصيل للفرع',
+            self::HOME => 'إلتقاط من المتجر',
+            self::BRANCH => 'إلتقاط من المكتب ',
 
         };
     }

@@ -135,15 +135,15 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->label('الاسم'),
+                Tables\Columns\TextColumn::make('name')->label('الاسم')->searchable(),
                 Tables\Columns\TextColumn::make('status')->badge()->label('حالة المستخدم'),
                 Tables\Columns\TextColumn::make('level')->badge()
-                    ->label('فئة المستخدم'),
+                    ->label('فئة المستخدم')->sortable(),
 
                 Tables\Columns\TextColumn::make('job')->badge()->label('نوع الموظف'),
 
-                Tables\Columns\TextColumn::make('branch.name')->label('فرع'),
-                Tables\Columns\TextColumn::make('city.name')->label('المدينة'),
+                Tables\Columns\TextColumn::make('branch.name')->label('فرع')->sortable(),
+                Tables\Columns\TextColumn::make('city.name')->label('المدينة')->sortable(),
 
 
             ])

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CategoryTypeEnum;
 use App\Observers\OrderObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -76,8 +77,13 @@ class Order extends Model
 
 
 
-    public function category():BelongsTo{
-        return  $this->belongsTo(Category::class);
+    public function weight():BelongsTo{
+        return  $this->belongsTo(Category::class)->where('type',CategoryTypeEnum::WEIGHT->value);
+
+    }
+
+    public function size():BelongsTo{
+        return  $this->belongsTo(Category::class)->where('type',CategoryTypeEnum::SIZE->value);
 
     }
 
