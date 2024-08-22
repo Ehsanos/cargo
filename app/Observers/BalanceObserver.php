@@ -9,7 +9,7 @@ class BalanceObserver
     /**
      * Handle the Balance "created" event.
      */
-    public function creating(Balance $balance): void
+    public function created(Balance $balance): void
     {
         if ($balance->is_complete || $balance->is_complete == null) {
             $balance->total = \DB::table('balances')->where('user_id', $balance->user_id)->where('is_complete', 1)
@@ -18,6 +18,7 @@ class BalanceObserver
             $balance->total = \DB::table('balances')->where('user_id', $balance->user_id)->where('is_complete', 0)
                     ->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0 + $balance->credit - $balance->debit;
         }
+        $balance->save();
     }
 
     /**
@@ -25,13 +26,13 @@ class BalanceObserver
      */
     public function updating(Balance $balance): void
     {
-        if ($balance->is_complete || $balance->is_complete == null) {
+       /* if ($balance->is_complete || $balance->is_complete == null) {
             $balance->total = \DB::table('balances')->whereNot('id',$balance->id)->where('user_id', $balance->user_id)->where('is_complete', 1)
                     ->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0 + $balance->credit - $balance->debit;
         } else {
             $balance->total = \DB::table('balances')->whereNot('id',$balance->id)->where('user_id', $balance->user_id)->where('is_complete', 0)
                     ->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0 + $balance->credit - $balance->debit;
-        }
+        }*/
     }
 
     /**
