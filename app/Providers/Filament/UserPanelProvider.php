@@ -19,6 +19,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
 
 class UserPanelProvider extends PanelProvider
 {
@@ -33,6 +34,17 @@ class UserPanelProvider extends PanelProvider
             ->profile()
             ->colors([
                 'primary' => Color::Emerald,
+            ])
+            ->plugins([
+                FilamentEditProfilePlugin::make()
+                    ->shouldShowDeleteAccountForm(false)
+                    ->shouldShowAvatarForm()
+                    ->setNavigationLabel('الملف الشخصي')
+                    ->setNavigationGroup(' معلومات الحساب')
+                    ->setIcon('heroicon-o-user')
+                ->setSort(0)
+
+
             ])
             ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/User/Resources'), for: 'App\\Filament\\User\\Resources')

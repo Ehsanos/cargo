@@ -6,6 +6,8 @@ namespace App\Models;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Filament\Models\Contracts\HasAvatar;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,12 +17,13 @@ use Illuminate\Support\Facades\DB;
 use App\Enums\LevelUserEnum;
 use App\Enums\JobUserEnum;
 use App\Enums\ActivateStatusEnum;
+use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements HasMedia, FilamentUser
+class User extends Authenticatable implements HasMedia, FilamentUser,HasAvatar
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles, InteractsWithMedia;
     use HasPanelShield;
@@ -42,7 +45,10 @@ return false;
 
     }
 
-
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->avatar_url ? Storage::url("$this->avatar_url") : null;
+    }
 /**
  * The attributes that are mass assignable.
  *
