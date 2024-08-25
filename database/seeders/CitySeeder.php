@@ -21,7 +21,7 @@ class CitySeeder extends Seeder
         ]);
 
         City::create([
-            'name'=>'الدانا',
+            'name'=>'بنش',
             'is_main'=>false,
             'city_id'=>1,
             'status'=>ActivateStatusEnum::ACTIVE->value,

@@ -11,6 +11,14 @@ class CreateCity extends CreateRecord
 
     protected static string $resource = CityResource::class;
 
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+
+        $data['is_main'] = true;
+        return $data;
+    }
+
     protected function getRedirectUrl(): string
     {
         return $this->previousUrl ?? $this->getResource()::getUrl('index');

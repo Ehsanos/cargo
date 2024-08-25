@@ -29,9 +29,9 @@ class City extends Model
         return $this->hasMany(__CLASS__);
     }
 
-    public function branches(): HasMany
+    public function branch(): BelongsTo
     {
-        return $this->hasMany(Branch::class);
+        return $this->BelongsTo(Branch::class);
     }
 
     public function users(): HasMany

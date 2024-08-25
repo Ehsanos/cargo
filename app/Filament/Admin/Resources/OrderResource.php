@@ -222,6 +222,12 @@ class OrderResource extends Resource
             RelationManagers\AgenciesRelationManager::class,
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::where('status',  OrderStatusEnum::PENDING)->count();
+    }
+
     public static function getPages(): array
     {
         return [

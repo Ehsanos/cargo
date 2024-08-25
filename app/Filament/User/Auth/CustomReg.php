@@ -158,9 +158,11 @@ class CustomReg extends Register
         return Select::make('city_id')->
 
         options(
-            City::where('status', ActivateStatusEnum::ACTIVE->value)->pluck('name', 'id')
+            City::where('status', ActivateStatusEnum::ACTIVE->value)
+               ->where('is_main',false)
+                ->pluck('name', 'id')
         )
-            ->label('المدينة');
+            ->label('المدينة/البلدة');
 
     }
 
