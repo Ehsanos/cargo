@@ -27,6 +27,7 @@ class BalanceUserWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('name')->label('المستخدم')->searchable(),
                 Tables\Columns\TextColumn::make('net_balance')->label('الرصيد الحالي')->sortable()
             ])
+
             ;
     }
 }

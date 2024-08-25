@@ -39,6 +39,7 @@ class AdminPanelProvider extends PanelProvider
                     ->setIcon('heroicon-o-user')
                     ->setSort(0)
 
+
             ])
             ->login()
             ->colors([

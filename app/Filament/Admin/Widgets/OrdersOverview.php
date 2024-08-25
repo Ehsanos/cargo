@@ -2,6 +2,10 @@
 
 namespace App\Filament\Admin\Widgets;
 
+use App\Enums\OrderStatusEnum;
+use App\Filament\Admin\Resources\UserResource;
+use App\Models\Order;
+use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use App\Filament\Admin\Resources\OrderResource;
@@ -15,10 +19,27 @@ class OrdersOverview extends BaseWidget
 
     protected function getStats(): array
     {
+        $waitingOrders=Order::where('status',OrderStatusEnum::PENDING)->count();
+        $userCount=User::all()->count();
+
         return [
-            Stat::make('عدد الطلبات التي تحتاج تأكيد', '19')->color('success')
+
+            Stat::make('إضافة طلب', ' ')->color('success')
+                ->description(' اضغط هنا لإضافة الطلبات بسرعة')
+                ->icon('heroicon-o-squares-plus')
+                ->color('success')
+                ->extraAttributes([
+                    'class' => 'cursor-pointer',
+
+                    'wire:click' => "\$dispatch('setStatusFilter', { filter: 'processed' })",
+
+                ])
+                ->url(OrderResource::getUrl('index')),
+
+
+            Stat::make('عدد الطلبات التي تحتاج تأكيد', $waitingOrders)->color('success')
                 ->description(' ')
-                ->descriptionIcon('heroicon-o-truck')
+                ->icon('heroicon-o-truck')
                 ->color('success')
                 ->extraAttributes([
                     'class' => 'cursor-pointer',
@@ -27,12 +48,16 @@ class OrdersOverview extends BaseWidget
 
                 ])
             ->url(OrderResource::getUrl('index')),
-            Stat::make(' عدد المستخدمين', '250')
-                ->description('يوميا 5')
-                ->descriptionIcon('heroicon-o-user') ->color('info'),
-            Stat::make('Average time on page', '3:12')
-                ->description('3% increase')
-                ->descriptionIcon('heroicon-m-arrow-trending-up'),
+
+
+
+
+            Stat::make(' عدد المستخدمين', $userCount)
+                ->icon('heroicon-o-user') ->color('info')
+                ->url(UserResource::getUrl('index')),
+
+
+
         ];
     }
 
