@@ -27,6 +27,8 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
     protected static ?string $pluralModelLabel = 'المستخدمون';
 
+    protected static ?string $label='مستخدم';
+    protected static ?string $navigationLabel='المستخدمون';
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
     public static function form(Form $form): Form
@@ -133,15 +135,15 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('username')->label('الاسم'),
+                Tables\Columns\TextColumn::make('name')->label('الاسم')->searchable(),
                 Tables\Columns\TextColumn::make('status')->badge()->label('حالة المستخدم'),
                 Tables\Columns\TextColumn::make('level')->badge()
-                    ->label('فئة المستخدم'),
+                    ->label('فئة المستخدم')->sortable(),
 
                 Tables\Columns\TextColumn::make('job')->badge()->label('نوع الموظف'),
 
-                Tables\Columns\TextColumn::make('branch.name')->label('فرع'),
-                Tables\Columns\TextColumn::make('city.name')->label('المدينة'),
+                Tables\Columns\TextColumn::make('branch.name')->label('فرع')->sortable(),
+                Tables\Columns\TextColumn::make('city.name')->label('المدينة')->sortable(),
 
 
             ])
@@ -162,7 +164,8 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\BalancesRelationManager::class,
+            RelationManagers\PendingBalancesRelationManager::class
         ];
     }
 

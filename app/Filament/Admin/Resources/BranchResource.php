@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\BranchResource\Pages;
 use App\Filament\Admin\Resources\BranchResource\RelationManagers;
 use App\Models\Branch;
+use App\Models\City;
 use Filament\Actions\DeleteAction;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -21,6 +22,8 @@ class BranchResource extends Resource
 {
     protected static ?string $model = Branch::class;
     protected static ?string $pluralModelLabel = 'الأفرع';
+    protected static ?string $label='فرع';
+    protected static ?string $navigationLabel='الأفرع';
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
     public static function form(Form $form): Form
     {
@@ -28,31 +31,10 @@ class BranchResource extends Resource
             ->schema([
                 Forms\Components\Select::make('status')->options([
                     ActivateStatusEnum::ACTIVE->value=>ActivateStatusEnum::ACTIVE->getLabel(),
-                    ActivateStatusEnum::INACTIVE->value=>   ActivateStatusEnum::INACTIVE->getLabel()])->label('مفعل/غير مفعل')
-                ,
+                    ActivateStatusEnum::INACTIVE->value=>   ActivateStatusEnum::INACTIVE->getLabel()])->label('مفعل/غير مفعل'),
                 Forms\Components\TextInput::make('name')->label('اسم الفرع'),
-                Forms\Components\Select::make('city_id')->relationship('city','name')->label('يتبع الى مدينة/قرية')
-
-                ->createOptionForm([
-                    Forms\Components\TextInput::make('name')->label('المدينة'),
-                    Forms\Components\ToggleButtons::make('is_main')->label('مدينة رئيسية')->boolean()
-                        ->grouped(),
-                    Forms\Components\Select::make('status')->options(
-                        [
-                            ActivateStatusEnum::ACTIVE->value=>ActivateStatusEnum::ACTIVE->getLabel(),
-                            ActivateStatusEnum::INACTIVE->value=>ActivateStatusEnum::INACTIVE->getLabel(),
-                        ]
-
-
-                    )->label('حالة المدينة')->default('active'),
-                    Forms\Components\Select::make('city_id')->relationship('city','name')->label('تتبع الى مدينة ...')
-
-
-                ])
-                ,
-
+                Forms\Components\Select::make('city_id')->options(City::where('is_main',true)->pluck('name','id'))->label('يتبع الى مدينة')->required(),
                 Forms\Components\RichEditor::make('address')->label('عنوان الفرع ')->columnSpan(2),
-
             ]);
     }
     public static function table(Table $table): Table
@@ -61,9 +43,7 @@ class BranchResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')->label('الفرع')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('status')->label('حالة الفرع')->searchable()->sortable(),
-
-                Tables\Columns\TextColumn::make('city.name')->label('يتبع إلى مدينة/قرية')->searchable()->sortable()
-
+                Tables\Columns\TextColumn::make('city.name')->label('يتبع إلى مدينة')->searchable()->sortable()
             ])
             ->filters([
 
@@ -85,6 +65,7 @@ class BranchResource extends Resource
             //
         ];
     }
+
     public static function getPages(): array
     {
         return [

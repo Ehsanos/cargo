@@ -19,6 +19,8 @@ class UnitResource extends Resource
     protected static ?string $model = Unit::class;
     protected static ?string $pluralModelLabel = 'الوحدات في الشحن';
 
+    protected static ?string $label='وحدة';
+    protected static ?string $navigationLabel='الوحدات في الشحن';
 
     protected static ?string $navigationIcon = 'heroicon-o-chart-pie';
 

@@ -12,6 +12,7 @@ enum LevelUserEnum: string implements HasLabel ,HasColor,HasIcon
     case ADMIN = 'admin';
     case DRIVER = 'driver';
     case BRANCH = 'branch';
+    case STAFF = 'staff';
 
 
     public function getLabel(): string
@@ -21,6 +22,7 @@ enum LevelUserEnum: string implements HasLabel ,HasColor,HasIcon
             self::ADMIN => 'مدير',
             self::DRIVER => 'سائق',
             self::BRANCH => 'فرع',
+            self::STAFF => 'موظف',
         };
     }
 
@@ -31,6 +33,7 @@ enum LevelUserEnum: string implements HasLabel ,HasColor,HasIcon
             self::ADMIN => 'danger',
             self::DRIVER => 'orange',
             self::BRANCH => 'success',
+            self::STAFF => 'warning',
         };
     }
 
@@ -41,6 +44,7 @@ enum LevelUserEnum: string implements HasLabel ,HasColor,HasIcon
             self::ADMIN => 'fas-user-gear',
             self::DRIVER => 'fas-truck',
             self::BRANCH => 'fas-code-branch',
+            self::STAFF => 'fas-user',
         };
     }
 }

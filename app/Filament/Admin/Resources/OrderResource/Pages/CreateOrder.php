@@ -14,7 +14,7 @@ class CreateOrder extends CreateRecord
     {
 
 
-   $data['code']="FC".now()->format('dHis'); // الطابع الزمني بتنسيق قصير
+   $data['code']="FC".now()->format('YmdHis').'NO'; // الطابع الزمني بتنسيق قصير
 
 
         return $data;

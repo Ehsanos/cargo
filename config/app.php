@@ -109,7 +109,7 @@ return [
     |
     */
 
-    'faker_locale' => 'en_US',
+    'faker_locale' => 'ar_SA',
 
     /*
     |--------------------------------------------------------------------------
@@ -169,6 +169,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\Filament\AdminPanelProvider::class,
         App\Providers\Filament\UserPanelProvider::class,
+        App\Providers\Filament\BranchPanelProvider::class,
+        App\Providers\Filament\EmployPanelProvider::class,
         App\Providers\RouteServiceProvider::class,
     ])->toArray(),
 
