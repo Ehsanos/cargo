@@ -15,18 +15,18 @@ class BranchSeeder extends Seeder
     public function run(): void
     {
         Branch::create([
-            'name' => 'الدانا',
+            'name' => 'فرع الدانا',
             'address' => 'الدانا الشارع الرئيسي',
             'status' => ActivateStatusEnum::ACTIVE->value,
-            'city_id'=>2,
+            'city_id'=>1,
 
         ]);
 
         Branch::create([
-            'name' => 'سرمدا',
+            'name' => 'فرع سرمدا',
             'address' => 'سرمدا الشارع الرئيسي',
             'status' => ActivateStatusEnum::ACTIVE->value,
-            'city_id'=>3,
+            'city_id'=>1,
 
         ]);
     }

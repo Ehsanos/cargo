@@ -25,6 +25,9 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use libphonenumber\PhoneNumberType;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
+use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
 
 class CustomReg extends Register
 {
@@ -76,7 +79,7 @@ class CustomReg extends Register
 
     protected function sendEmailVerificationNotification(Model $user): void
     {
-        if (! $user instanceof MustVerifyEmail) {
+        if (!$user instanceof MustVerifyEmail) {
             return;
         }
 
@@ -84,7 +87,7 @@ class CustomReg extends Register
             return;
         }
 
-        if (! method_exists($user, 'notify')) {
+        if (!method_exists($user, 'notify')) {
             $userClass = $user::class;
 
             throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
@@ -97,43 +100,25 @@ class CustomReg extends Register
     }
 
 
-
-
     function form(Form $form): Form
-    {     return    $this->makeForm()
-                    ->schema([
-                        $this->getNameFormComponent(),
-                        $this->getEmailFormComponent(),
-                        $this->getUserNameFormComponent(),
-                        $this->getPhoneFormComponent(),
-                        $this->getCityComponent(),
-                        $this->getMarketNameComponent(),
-                        $this->getIdNumComponent(),
-                        $this->getPasswordFormComponent(),
-                        $this->getPasswordConfirmationFormComponent(),
-                    ])
-                    ->statePath('data');
+    {
+        return $this->makeForm()
+            ->schema([
+                $this->getNameFormComponent(),
+                $this->getEmailFormComponent(),
+                $this->getUserNameFormComponent(),
+                $this->getPhoneFormComponent(),
+                $this->getCityComponent(),
+                $this->getMarketNameComponent(),
+                $this->getIdNumComponent(),
+                $this->getPasswordFormComponent(),
+                $this->getPasswordConfirmationFormComponent(),
+            ])
+            ->statePath('data');
 
 
     }
-//    protected function getForms(): array
-//    {
-//        return [
-//            'form' => $this->form(
-//                $this->makeForm()
-//                    ->schema([
-//                        $this->getNameFormComponent(),
-//                        $this->getEmailFormComponent(),
-//                        $this->getCityComponent(),
-//                        $this->getMarketNameComponent(),
-//                        $this->getIdNumComponent(),
-//                        $this->getPasswordFormComponent(),
-//                        $this->getPasswordConfirmationFormComponent(),
-//                    ])
-//                    ->statePath('data'),
-//            ),
-//        ];
-//    }
+
     protected function getNameFormComponent(): Component
     {
         return TextInput::make('name')
@@ -146,8 +131,10 @@ class CustomReg extends Register
     protected function getUserNameFormComponent(): Component
     {
         return TextInput::make('username')
-            ->label(__('filament-panels::pages/auth/register.form.name.label'))
-            ->required()
+            ->label(__('اسم المستخدم'))
+            ->required()->minLength(8)
+            ->rule('regex:/^[a-zA-Z\s]+$/')
+            ->helperText('الاسم بالانجليزي حصرا')
             ->maxLength(255);
     }
 
@@ -166,13 +153,16 @@ class CustomReg extends Register
     }
 
 
-    protected function getCityComponent():Component{
+    protected function getCityComponent(): Component
+    {
         return Select::make('city_id')->
 
-            options(
-                City::where('status',ActivateStatusEnum::ACTIVE->value)->pluck('name','id')
+        options(
+            City::where('status', ActivateStatusEnum::ACTIVE->value)
+               ->where('is_main',false)
+                ->pluck('name', 'id')
         )
-            ->label('المدينة');
+            ->label('المدينة/البلدة');
 
     }
 
@@ -188,10 +178,14 @@ class CustomReg extends Register
 
     protected function getPhoneFormComponent(): Component
     {
-        return TextInput::make('phone')
+        return PhoneInput::make('phone')
             ->label('رقم الهاتف')
-            ->tel();
-
+            ->default('+')
+            ->showFlags(true)
+            ->separateDialCode()
+            ->locale('en')
+           ;
+//            ->helperText('الرجاء ادخال + قبل رقم الهاتف');
     }
 
     protected function getPasswordFormComponent(): Component
@@ -201,8 +195,9 @@ class CustomReg extends Register
             ->password()
             ->revealable(filament()->arePasswordsRevealable())
             ->required()
-            ->rule(Password::default())
-            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+            ->rule('regex:/^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$/')
+            ->helperText('يجب أن تحتوي كلمة المرور أحرف و أرقام')
+            ->dehydrateStateUsing(fn($state) => Hash::make($state))
             ->same('passwordConfirmation')
             ->validationAttribute(__('filament-panels::pages/auth/register.form.password.validation_attribute'));
     }
@@ -216,6 +211,7 @@ class CustomReg extends Register
             ->required()
             ->dehydrated(false);
     }
+
     public function loginAction(): Action
     {
         return Action::make('login')
@@ -239,12 +235,12 @@ class CustomReg extends Register
         return $this->userModel = $provider->getModel();
     }
 
-    public function getTitle(): string | Htmlable
+    public function getTitle(): string|Htmlable
     {
         return ('مستخدم جديد');
     }
 
-    public function getHeading(): string | Htmlable
+    public function getHeading(): string|Htmlable
     {
         return ('تسجيل مستخدم جديد');
     }

@@ -12,6 +12,7 @@
         "filament/notifications": "3.2",
         "filament/spatie-laravel-media-library-plugin": "^3.2",
         "guzzlehttp/guzzle": "^7.2",
+        "joaopaulolndev/filament-edit-profile": "^1.0",
         "lara-zeus/popover": "^1.1",
         "lara-zeus/qr": "^1.1",
         "laravel/framework": "^10.10",

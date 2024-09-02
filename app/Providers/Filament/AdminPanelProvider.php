@@ -17,6 +17,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
 use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 
 class AdminPanelProvider extends PanelProvider
@@ -29,7 +30,16 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->plugins([
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
-                FilamentApexChartsPlugin::make()
+                FilamentApexChartsPlugin::make(),
+                FilamentEditProfilePlugin::make()
+                    ->shouldShowDeleteAccountForm(false)
+                    ->shouldShowAvatarForm()
+                    ->setNavigationLabel('الملف الشخصي')
+                    ->setNavigationGroup(' معلومات الحساب')
+                    ->setIcon('heroicon-o-user')
+                    ->setSort(0)
+
+
             ])
             ->login()
             ->colors([
