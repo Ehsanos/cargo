@@ -45,7 +45,8 @@ class ListBalances extends ListRecords
                     ]),
                 Select::make('user_id')->options(User::pluck('name', 'id'))->searchable()->label('الطرف الثاني في القيد'),
                 TextInput::make('info')->label('ملاحظات')
-            ])->action(function ($data) {
+            ])
+                ->action(function ($data) {
                 $user=User::find($data['user_id']);
                 if(!$user){
                     Notification::make('success')->title('فشل العملية')->body('لم يتم العثور على المستخدم')->danger()->send();
@@ -112,7 +113,7 @@ class ListBalances extends ListRecords
 
                     }
                 }
-            }),
+            })->label('إضافة سند'),
         ];
     }
 }
