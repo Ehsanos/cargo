@@ -61,7 +61,7 @@ class BalanceResource extends Resource
                             }
                         },
                     ]),
-                    Forms\Components\Select::make('order_id')->options(function () {
+                    Forms\Components\Select::make('user_id')->options(function () {
                         $orders = auth()->user()->pendingBalances->pluck('order_id')->toArray();
                         return Order::whereIn('id', $orders)->pluck('id', 'code');
                     })->label('مرتبط بالطلب رقم'),
