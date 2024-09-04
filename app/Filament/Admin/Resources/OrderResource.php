@@ -98,25 +98,24 @@ class OrderResource extends Resource
                                           }
                                       })->live(),
 
+                                Forms\Components\Grid::make()->schema([
+                                    Forms\Components\Select::make('receive_id')->relationship('receive', 'phone')->label('هاتف المستلم')
+                                        ->afterStateUpdated(function ($state,$set){
+                                            $user=User::where('phone',$state)->first();
+                                            if($user){
+                                                $set('receive_phone',$user?->phone);
+                                                $set('receive_address',$user?->address);
 
+                                                $set('sender_name',$user?->name);
+                                            }
+                                        })->live(),
+                                    Forms\Components\TextInput::make('sender_name')->dehydrated(false)->label('اسم المستلم'),
+                                ]),
                                 Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل'),
 
                                 Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل'),
 
-                                Forms\Components\Grid::make()->schema([
-                                    Forms\Components\Select::make('receive_id')->relationship('receive', 'phone')->label('هاتف المستلم')
-                                        ->afterStateUpdated(function ($state,$set){
-                                            $user=User::find($state);
-                                            if($user){
-                                                $set('receive_phone',$user->phone);
-                                                $set('receive_address',$user->address);
-                                            }
-                                        })->live()->afterStateUpdated(function($state,$set){
-                                            $user=User::where('phone',$state)->first();
-                                            $set('sender_name',$user?->name);
-                                        }),
-                                    Forms\Components\TextInput::make('sender_name')->dehydrated(false)->label('اسم المستلم'),
-                                ]),
+
                                 Forms\Components\Select::make('weight_id')
                                     ->relationship('weight','name')
                                     ->label
