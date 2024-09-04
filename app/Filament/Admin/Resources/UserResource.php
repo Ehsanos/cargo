@@ -48,7 +48,7 @@ class UserResource extends Resource
                                 Forms\Components\TextInput::make('password')->password()->dehydrateStateUsing(fn($state) => Hash::make($state))
                                     ->dehydrated(fn($state) => filled($state))->label('كلمة المرور'),
                                 Forms\Components\TextInput::make('phone')->label('الهاتف')->tel()->required(),
-                                Forms\Components\Select::make('address')->label('العنوان'),
+                                Forms\Components\TextInput::make('address')->label('العنوان'),
                                 Forms\Components\Select::make('city_id')->relationship('city','name')->label('المدينة')->live()
                                ->reactive()->afterStateUpdated(function ($state, callable $set) {
                                     $set('branch_id', null);
