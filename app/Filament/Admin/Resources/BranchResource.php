@@ -31,10 +31,10 @@ class BranchResource extends Resource
             ->schema([
                 Forms\Components\Select::make('status')->options([
                     ActivateStatusEnum::ACTIVE->value=>ActivateStatusEnum::ACTIVE->getLabel(),
-                    ActivateStatusEnum::INACTIVE->value=>   ActivateStatusEnum::INACTIVE->getLabel()])->label('مفعل/غير مفعل'),
-                Forms\Components\TextInput::make('name')->label('اسم الفرع'),
+                    ActivateStatusEnum::INACTIVE->value=>   ActivateStatusEnum::INACTIVE->getLabel()])->label('مفعل/غير مفعل')->required(),
+                Forms\Components\TextInput::make('name')->label('اسم الفرع')->required(),
                 Forms\Components\Select::make('city_id')->options(City::where('is_main',true)->pluck('name','id'))->label('يتبع الى مدينة')->required(),
-                Forms\Components\RichEditor::make('address')->label('عنوان الفرع ')->columnSpan(2),
+                Forms\Components\TextInput::make('address')->label('عنوان الفرع ')->columnSpan(2)->required(),
             ]);
     }
     public static function table(Table $table): Table
