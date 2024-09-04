@@ -104,7 +104,7 @@ class OrderResource extends Resource
                                 Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل'),
 
                                 Forms\Components\Grid::make()->schema([
-                                    Forms\Components\Select::make('receive_id')->relationship('receive', 'phone')->label('اسم المستلم')
+                                    Forms\Components\Select::make('receive_id')->relationship('receive', 'phone')->label('هاتف المستلم')
                                         ->afterStateUpdated(function ($state,$set){
                                             $user=User::find($state);
                                             if($user){
