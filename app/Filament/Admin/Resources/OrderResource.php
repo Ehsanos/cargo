@@ -99,7 +99,7 @@ class OrderResource extends Resource
                                       })->live(),
 
                                 Forms\Components\Grid::make()->schema([
-                                    Forms\Components\Select::make('receive_id')->relationship('receive', 'phone')->label('هاتف المستلم')
+                                    Forms\Components\Select::make('receive_id')->options(User::selectRaw("CONCAT(phone,' - ',num_id) as phone,id")->pluck('phone','id'))->searchable()
                                         ->afterStateUpdated(function ($state,$set){
                                             $user=User::where('phone',$state)->first();
                                             if($user){
@@ -108,7 +108,7 @@ class OrderResource extends Resource
 
                                                 $set('sender_name',$user?->name);
                                             }
-                                        })->live(),
+                                        })->live()->label('هاتف المستلم'),
                                     Forms\Components\TextInput::make('sender_name')->dehydrated(false)->label('اسم المستلم'),
                                 ]),
                                 Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل'),
