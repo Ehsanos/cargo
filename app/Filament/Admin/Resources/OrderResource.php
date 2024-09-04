@@ -99,7 +99,7 @@ class OrderResource extends Resource
                                       })->live(),
 
                                 Forms\Components\Grid::make()->schema([
-                                    Forms\Components\Select::make('receive_id')->options(User::selectRaw("CONCAT(phone,' - ',num_id) as code,id")->pluck('code','id')->toArray())->searchable()
+                                    Forms\Components\Select::make('receive_id')->options(User::all()->pluck('name','id')->toArray())->searchable()
                                         ->afterStateUpdated(function ($state,$set){
                                             $user=User::find($state);
                                             if($user){
