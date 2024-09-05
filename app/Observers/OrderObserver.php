@@ -19,36 +19,29 @@ class OrderObserver
     public function created(Order $order): void
     {
 
-        /*
-                if (auth()->user()->id == $order->receive_id) {
-                    $admin = User::whereLevel('admin')->get();
-                    Notification::make()->title('لديك طلب جديد', auth()->user()->name)->
-                    sendToDatabase(array_merge([auth()->user()], $admin));
-                }*/
-
         if ($order->bay_type->value == BayTypeEnum::BEFORE->value) {
-info('ok');
+
             $sender = $order->sender;
             Balance::create([
                 'credit' => 0,
-                'debit' => $order->price,
+                'debit' => $order->total_price,
                 'order_id' => $order->id,
                 'user_id' => $sender->id,
                 'total' => $sender->total_balance - $order->price,
-                'info' => 'أجور شحن طلب رقم ' . $order->code,
+                'info' => 'قيمة طلب + أجور شحن #' . $order->code,
                 'is_complete'=>true,
             ]);
         } //
         elseif ($order->bay_type->value == BayTypeEnum::AFTER->value) {
-            info('No');
+
             $receive = $order->receive;
             Balance::create([
                 'credit' => 0,
-                'debit' => $order->price,
+                'debit' => $order->total_price,
                 'order_id' => $order->id,
                 'user_id' => $receive->id,
                 'total' => $receive->total_balance - $order->price,
-                'info' => 'أجور شحن طلب رقم ' . $order->code,
+                'info' => 'قيمة طلب + أجور شحن #' . $order->code,
                 'is_complete'=>true,
             ]);
         }

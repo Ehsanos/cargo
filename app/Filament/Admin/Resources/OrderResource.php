@@ -89,26 +89,33 @@ class OrderResource extends Resource
                                     })->live(),
                                 Forms\Components\DatePicker::make('shipping_date')->label('تاريخ الطلب')->format('Y-m-d')->default(now()->format('Y-m-d')),
 
+                                  Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')
+                                      ->afterStateUpdated(function ($state,$set){
+                                          $user=User::find($state);
+                                          if($user){
+                                              $set('sender_phone',$user->phone);
+                                              $set('sender_address',$user->address);
+                                          }
+                                      })->live(),
 
+                                Forms\Components\Grid::make()->schema([
+                                    Forms\Components\Select::make('receive_id')->options(User::all()->pluck('name','id')->toArray())->searchable()
+                                        ->afterStateUpdated(function ($state,$set){
+                                            $user=User::find($state);
+                                            if($user){
+                                                $set('receive_phone',$user?->phone);
+                                                $set('receive_address',$user?->address);
+
+                                                $set('sender_name',$user?->name);
+                                            }
+                                        })->live()->label('هاتف المستلم'),
+                                    Forms\Components\TextInput::make('sender_name')->dehydrated(false)->label('اسم المستلم'),
+                                ]),
                                 Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل'),
-                                Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')
-                                    ->afterStateUpdated(function ($state,$set){
-                                        $user=User::find($state);
-                                        if($user){
-                                            $set('sender_phone',$user->phone);
-                                            $set('sender_address',$user->address);
-                                        }
-                                    })->live(),
+
                                 Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل'),
 
-                                Forms\Components\Select::make('receive_id')->relationship('receive', 'name')->label('اسم المستلم')
-                                    ->afterStateUpdated(function ($state,$set){
-                                        $user=User::find($state);
-                                        if($user){
-                                            $set('receive_phone',$user->phone);
-                                            $set('receive_address',$user->address);
-                                        }
-                                    })->live(),
+
                                 Forms\Components\Select::make('weight_id')
                                     ->relationship('weight','name')
                                     ->label

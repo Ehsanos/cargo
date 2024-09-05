@@ -13,6 +13,7 @@ class CreateOrder extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['sender_id'] = auth()->id();
+        $data['code']="FC".now()->format('dHis');
         return $data;
 
     }
