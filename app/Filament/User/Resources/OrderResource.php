@@ -178,8 +178,8 @@ class OrderResource extends Resource
                 PopoverColumn::make('qr_url')
                     ->trigger('click')
                     ->placement('right')
-                    ->content(\LaraZeus\Qr\Facades\Qr::render('2222'))
-                    ->icon('heroicon-o-qr-code')->label('QR Code'),
+                    ->content(fn($record)=>\LaraZeus\Qr\Facades\Qr::render($record->code))
+                    ->icon('heroicon-o-qr-code'),
 
                 Tables\Columns\TextColumn::make('code')->label('كود الطلب'),
 

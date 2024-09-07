@@ -99,7 +99,8 @@ class OrderResource extends Resource
                                       })->live(),
 
                                 Forms\Components\Grid::make()->schema([
-                                    Forms\Components\Select::make('receive_id')->options(User::all()->pluck('name','id')->toArray())->searchable()
+                                    Forms\Components\Select::make('receive_id')->options(User::all()->pluck('phone','id')
+                                        ->toArray())->searchable()
                                         ->afterStateUpdated(function ($state,$set){
                                             $user=User::find($state);
                                             if($user){
@@ -194,8 +195,8 @@ class OrderResource extends Resource
                 PopoverColumn::make('qr_url')
                     ->trigger('click')
                     ->placement('right')
-                    ->content(\LaraZeus\Qr\Facades\Qr::render('2222'))
-            ->icon('heroicon-o-qr-code'),
+                    ->content(fn($record)=>\LaraZeus\Qr\Facades\Qr::render($record->code))
+                    ->icon('heroicon-o-qr-code'),
 
                 Tables\Columns\TextColumn::make('code'),
 
