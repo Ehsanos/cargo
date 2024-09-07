@@ -45,9 +45,9 @@ class UserResource extends Resource
                                     ->relationship('roles', 'name')->label('الصلاحيات'),
                                 Forms\Components\TextInput::make('name')->label('الاسم')->required(),
                                 Forms\Components\TextInput::make('email')->label('البريد الالكتروني')->email()->required(),
-                                Forms\Components\TextInput::make('username')->label('اسم')->required(),
+                                Forms\Components\TextInput::make('username')->label('username')->unique()->required(),
                                 Forms\Components\TextInput::make('password')->password()->dehydrateStateUsing(fn($state) => Hash::make($state))
-                                    ->dehydrated(fn($state) => filled($state))->label('كلمة المرور')->required(),
+                                    ->dehydrated(fn($state) => filled($state))->label('كلمة المرور'),
                                 Forms\Components\TextInput::make('phone')->label('الهاتف')->tel()->required(),
                                 Forms\Components\TextInput::make('address')->label('العنوان'),
                                 Forms\Components\Select::make('city_id')->options(City::where('is_main',false)->pluck
