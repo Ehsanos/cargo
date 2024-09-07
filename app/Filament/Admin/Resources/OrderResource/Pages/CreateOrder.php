@@ -14,7 +14,7 @@ class CreateOrder extends CreateRecord
     {
 
 
-   $data['code']="FC".now()->format('YmdHis').'NO'; // الطابع الزمني بتنسيق قصير
+   $data['code']="AWB".now()->format('YmdHis'); // الطابع الزمني بتنسيق قصير
 
 
         return $data;
@@ -22,6 +22,12 @@ class CreateOrder extends CreateRecord
 
 
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
 
 
 

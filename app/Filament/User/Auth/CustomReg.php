@@ -133,7 +133,7 @@ class CustomReg extends Register
         return TextInput::make('username')
             ->label(__('اسم المستخدم'))
             ->required()->minLength(8)
-            ->rule('regex:/^[a-zA-Z\s]+$/')
+            ->rule('regex:/^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$/')
             ->helperText('الاسم بالانجليزي حصرا')
             ->maxLength(255);
     }
@@ -142,7 +142,7 @@ class CustomReg extends Register
     {
         return TextInput::make('market_name')
             ->label('اسم المتجر')
-            ->maxLength(255);
+            ->maxLength(255)->required();
     }
 
     protected function getIdNumComponent(): Component
@@ -162,7 +162,7 @@ class CustomReg extends Register
                ->where('is_main',false)
                 ->pluck('name', 'id')
         )
-            ->label('المدينة/البلدة');
+            ->label('المدينة/البلدة')->required();
 
     }
 
@@ -183,7 +183,7 @@ class CustomReg extends Register
             ->default('+')
             ->showFlags(true)
             ->separateDialCode()
-            ->locale('en')
+            ->locale('en')->required()
            ;
 //            ->helperText('الرجاء ادخال + قبل رقم الهاتف');
     }

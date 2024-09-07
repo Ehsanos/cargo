@@ -10,6 +10,7 @@ use App\Enums\JobUserEnum;
 use App\Enums\LevelUserEnum;
 use App\Models\Branch;
 use App\Enums\ActivateStatusEnum;
+use App\Models\City;
 use Dotswan\MapPicker\Fields\Map;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
@@ -46,21 +47,31 @@ class UserResource extends Resource
                                 Forms\Components\TextInput::make('email')->label('البريد الالكتروني')->email()->required(),
                                 Forms\Components\TextInput::make('username')->label('اسم')->required(),
                                 Forms\Components\TextInput::make('password')->password()->dehydrateStateUsing(fn($state) => Hash::make($state))
-                                    ->dehydrated(fn($state) => filled($state))->label('كلمة المرور'),
+                                    ->dehydrated(fn($state) => filled($state))->label('كلمة المرور')->required(),
                                 Forms\Components\TextInput::make('phone')->label('الهاتف')->tel()->required(),
                                 Forms\Components\TextInput::make('address')->label('العنوان'),
-                                Forms\Components\Select::make('city_id')->relationship('city','name')->label('المدينة')->live()
+                                Forms\Components\Select::make('city_id')->options(City::where('is_main',false)->pluck
+                                ('name','id'))->required()
+                                    ->label('المدينة/البلدة')
+                                    ->live()
                                ->reactive()->afterStateUpdated(function ($state, callable $set) {
                                     $set('branch_id', null);
                                     $set('temp', Branch::where('city_id', $state)->pluck('name'));
                                 })->live(),
 
 
-                                Forms\Components\Select::make('branch_id')->label('الفرع')
-                              ->options(fn (callable $get) => $get('temp') ?? [])->hidden(fn(Forms\Get $get):bool =>
-                                    !$get('city_id'))->live(),
+
+//                                Forms\Components\Select::make('branch_id')->label('الفرع')
+//
+//
+//                              ->options(fn (callable $get) => $get('temp') ?? [])->hidden(fn(Forms\Get $get):bool =>
+//                                    !$get('city_id'))
+//
+//
+//                                    ->live(),
+
                                   Forms\Components\TextInput::make('full_name')->label('الاسم الكامل'),
-                                Forms\Components\DateTimePicker::make('birth_date')->label('تاريخ الميلاد'),
+                                Forms\Components\DatePicker::make('birth_date')->label('تاريخ الميلاد'),
 
                             ]),
 
@@ -139,6 +150,7 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('status')->badge()->label('حالة المستخدم'),
                 Tables\Columns\TextColumn::make('level')->badge()
                     ->label('فئة المستخدم')->sortable(),
+                Tables\Columns\TextColumn::make('iban')->disabled()->label('IBAN'),
 
                 Tables\Columns\TextColumn::make('job')->badge()->label('نوع الموظف'),
 
@@ -177,6 +189,8 @@ class UserResource extends Resource
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
+
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
