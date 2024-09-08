@@ -88,7 +88,7 @@ class OrderResource extends Resource
                                                     $set('active', false);
                                             }
                                         )->dehydrated(false)
-                                        ->hidden(fn(Forms\Get $get): bool => !!$get('admin'))->live()
+                                        ->hidden(fn(Forms\Get $get,$context): bool => !!$get('admin')|| $context=='view')->live()
                                         ->required()
                                     ,
 
@@ -102,7 +102,8 @@ class OrderResource extends Resource
                                                     $set('admin', false);
                                             }
                                         )->inline()
-                                        ->hidden(fn(Forms\Get $get): bool => !!$get('active'))->live()
+                                        ->hidden(fn(Forms\Get $get,$context): bool => !!$get('active') || $context=='view')
+                                        ->live()
                                 ])->columns(3),
 
 
