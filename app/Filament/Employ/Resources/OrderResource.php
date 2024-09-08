@@ -106,10 +106,10 @@ class OrderResource extends Resource
                                             $set('receive_address', $user->address);
                                         }
                                     })->live(),
-                                Forms\Components\Select::make('category_id')
+                               /* Forms\Components\Select::make('category_id')
                                     ->relationship('category', 'name')
                                     ->label
-                                    ('الفئة'),
+                                    ('الفئة'),*/
                                 Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
                                 Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم'),
 
