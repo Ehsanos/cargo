@@ -47,7 +47,7 @@ class OrderObserver
                     'debit' => $totalPrice,
                     'order_id' => $order->id,
                     'user_id' => $receive->id,
-                    'total' => $receive->total_balance - $order->price,
+                    'total' => $receive->total_balance - $totalPrice,
                     'info' => 'قيمة طلب + أجور شحن #' . $order->code,
                     'is_complete' => true,
                 ]);
@@ -76,15 +76,19 @@ class OrderObserver
     {
         if ($order->isDirty('receive_id') && $order->price>0 ){
             $balance=Balance::where('order_id',$order->id)->where('debit','>',0)->delete();
-            Balance::create([
-                'credit' => $order->price,
-                'debit' => 0,
-                'order_id' => $order->id,
-                'user_id' => $order->sender->id,
-                'total' => $order->sender->total_balance + $order->price,
-                'info' => 'قيمة طلب  #' . $order->code,
-                'is_complete' => true,
-            ]);
+            $totalPrice=$order->price+$order->far;
+            if($totalPrice>0){
+                Balance::create([
+                    'credit' => 0,
+                    'debit' => $totalPrice,
+                    'order_id' => $order->id,
+                    'user_id' => $order->receive->id,
+                    'total' => $order->receive->total_balance - $totalPrice,
+                    'info' => 'قيمة طلب  #' . $order->code,
+                    'is_complete' => true,
+                ]);
+            }
+
         }
         $oldStatus=$order->getOriginal('status');
         $newStatus=$order->status;
