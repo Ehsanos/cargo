@@ -18,9 +18,8 @@ class AgencyObServer
         /**
          * @var $order Order
          */
-        $order = $agency->order;
-        if ($order->bay_type->value == BayTypeEnum::BEFORE->value && $agency->status == TaskAgencyEnum::TAKE->value) {
-            info('ok AG');
+       /* $order = $agency->order;
+        if ($order->bay_type?->value == BayTypeEnum::BEFORE->value && $agency->status->value == TaskAgencyEnum::TAKE->value) {
             $user = $agency->user;
             Balance::create([
                 'credit' => 0,
@@ -32,8 +31,8 @@ class AgencyObServer
                 'info' => 'أجور شحن طلب رقم ' . $order->code . ' غير مستلمة ',
             ]);
 
-        } elseif ($order->bay_type->value == BayTypeEnum::AFTER->value && $agency->status == TaskAgencyEnum::DELIVER->value) {
-            info('NO AG');
+        } elseif ($order->bay_type?->value == BayTypeEnum::AFTER->value && $agency->status->value == TaskAgencyEnum::DELIVER->value) {
+
             $user = $agency->user;
             Balance::create([
                 'credit' => 0,
@@ -45,7 +44,7 @@ class AgencyObServer
                 'info' => 'أجور شحن طلب رقم ' . $order->code . ' غير مستلمة ',
             ]);
 
-        }
+        }*/
 
     }
 

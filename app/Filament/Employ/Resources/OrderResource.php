@@ -106,10 +106,7 @@ class OrderResource extends Resource
                                             $set('receive_address', $user->address);
                                         }
                                     })->live(),
-                                Forms\Components\Select::make('category_id')
-                                    ->relationship('category', 'name')
-                                    ->label
-                                    ('الفئة'),
+
                                 Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
                                 Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم'),
 
@@ -179,16 +176,16 @@ class OrderResource extends Resource
 
                 Tables\Columns\TextColumn::make('status')->label('حالة الطلب'),
                 Tables\Columns\TextColumn::make('type')->label('نوع الطلب'),
-                Tables\Columns\TextColumn::make('bay_type')->label('حالة الدفع'),
+//                Tables\Columns\TextColumn::make('bay_type')->label('حالة الدفع'),
                 Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل'),
                 Tables\Columns\TextColumn::make('citySource.name')->label('من مدينة'),
                 Tables\Columns\TextColumn::make('receive.name')->label('اسم المستلم '),
                 Tables\Columns\TextColumn::make('cityTarget.name')->label('الى مدينة '),
                 Tables\Columns\TextColumn::make('agencies.task')->formatStateUsing(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->task)->label('المهمة الموكلة'),
                 Tables\Columns\TextColumn::make('agencies.activate')
-                    ->formatStateUsing(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->activate->getLabel())
-                    ->icon(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->activate->getIcon())
-                    ->color(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->activate->getColor())
+                    ->formatStateUsing(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->activate?->getLabel())
+                    ->icon(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->activate?->getIcon())
+                    ->color(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->activate?->getColor())
                     ->label('حالة المهمة'),
 
             ])
