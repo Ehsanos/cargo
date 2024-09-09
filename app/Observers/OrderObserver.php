@@ -20,7 +20,7 @@ class OrderObserver
     public function created(Order $order): void
     {
 
-        if ($order->bay_type->value == BayTypeEnum::BEFORE->value) {
+        if ($order->bay_type?->value == BayTypeEnum::BEFORE->value) {
 
             $sender = $order->sender;
             if ($order->total_price > 0) {
