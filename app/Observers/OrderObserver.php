@@ -20,6 +20,7 @@ class OrderObserver
     public function created(Order $order): void
     {
 
+
         if ($order->bay_type?->value == BayTypeEnum::BEFORE->value) {
 
             $sender = $order->sender;
@@ -39,10 +40,11 @@ class OrderObserver
         elseif ($order->bay_type->value == BayTypeEnum::AFTER->value) {
 
             $receive = $order->receive;
-            if ($order->total_price > 0) {
+            $totalPrice=$order->price+$order->far;
+            if ($totalPrice > 0) {
                 Balance::create([
                     'credit' => 0,
-                    'debit' => $order->total_price,
+                    'debit' => $totalPrice,
                     'order_id' => $order->id,
                     'user_id' => $receive->id,
                     'total' => $receive->total_balance - $order->price,
