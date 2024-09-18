@@ -98,6 +98,10 @@ class OrderResource extends Resource
                                           }
                                       })->live(),
 
+
+                                Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل'),
+
+                                Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل'),
                                 Forms\Components\Grid::make()->schema([
                                     Forms\Components\Select::make('receive_id')->options(User::all()->pluck('phone','id')
                                         ->toArray())->searchable()
@@ -112,11 +116,10 @@ class OrderResource extends Resource
                                         })->live()->label('هاتف المستلم'),
                                     Forms\Components\TextInput::make('sender_name')->dehydrated(false)->label('اسم المستلم'),
                                 ]),
-                                Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل'),
-
-                                Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل'),
 
 
+                                Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
+                                Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم'),
                                 Forms\Components\Select::make('weight_id')
                                     ->relationship('weight','name')
                                     ->label
@@ -126,9 +129,6 @@ class OrderResource extends Resource
                                     ->relationship('size','name')
                                     ->label
                                     ('الحجم'),
-                                Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
-                                Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم'),
-
                                 Forms\Components\Select::make('city_source_id')->relationship('citySource', 'name')->label('من مدينة'),
                                 Forms\Components\Select::make('city_target_id')->relationship('cityTarget', 'name')->label('الى مدينة'),
 
