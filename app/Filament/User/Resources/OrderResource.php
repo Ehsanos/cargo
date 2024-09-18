@@ -129,7 +129,7 @@ class OrderResource extends Resource
 
                                 ])->label('نوع الدفع')->required(),
                                 Forms\Components\TextInput::make('price')->numeric()->label('السعر'),
-                                Forms\Components\TextInput::make('total_weight')->numeric()->label('الوزن الكلي'),
+//                                Forms\Components\TextInput::make('total_weight')->numeric()->label('الوزن الكلي'),
 //                                Forms\Components\TextInput::make('canceled_info')
 //                                    ->hidden(fn(Forms\Get $get): bool => !$get('active'))->live()
 //                                    ->label('سبب الارجاع في حال ارجاع الطلب'),

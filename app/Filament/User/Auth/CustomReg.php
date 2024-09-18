@@ -11,6 +11,8 @@ use Filament\Actions\ActionGroup;
 use Filament\Events\Auth\Registered;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -113,6 +115,7 @@ class CustomReg extends Register
                 $this->getIdNumComponent(),
                 $this->getPasswordFormComponent(),
                 $this->getPasswordConfirmationFormComponent(),
+                $this->getAddressFormComponent()
             ])
             ->statePath('data');
 
@@ -178,13 +181,35 @@ class CustomReg extends Register
 
     protected function getPhoneFormComponent(): Component
     {
-        return PhoneInput::make('phone')
-            ->label('رقم الهاتف')
-            ->default('+')
-            ->showFlags(true)
-            ->separateDialCode()
-            ->locale('en')->required()
-           ;
+     return Grid::make(2) // تقسيم الحقول إلى صفين
+        ->schema([
+
+         TextInput::make('phone_number')
+                ->label('رقم الهاتف')
+                ->placeholder('1234567890')
+                ->numeric() // التأكد أن الحقل يقبل الأرقام فقط
+                ->maxLength(15)
+                ->extraAttributes(['style' => 'text-align: left; direction: ltr;
+
+                '
+
+                ])
+                ->tel()
+                ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')// تخصيص عرض حقل الرمز ومحاذاة النص لليسار
+// الحد الأقصى لطول الرقم
+                ->required(),
+
+         TextInput::make('country_code')
+                ->label('رمز الدولة')
+                ->placeholder('963')
+                ->prefix('+')
+                ->maxLength(4)
+                ->extraAttributes(['style' => 'text-align: left; direction: ltr;
+                width:120px;
+                ']) // تخصيص عرض حقل الرمز ومحاذاة النص لليسار
+                // تحديد الحد الأقصى للأرقام (بما في ذلك +)
+                ->required(),
+        ]);
 //            ->helperText('الرجاء ادخال + قبل رقم الهاتف');
     }
 
@@ -211,6 +236,17 @@ class CustomReg extends Register
             ->required()
             ->dehydrated(false);
     }
+
+    protected function getAddressFormComponent(): Component
+    {
+        return RichEditor::make('address')
+            ->label('العنوان التفصيلي')
+            ->required()
+            ->autofocus();
+    }
+
+
+
 
     public function loginAction(): Action
     {

@@ -152,18 +152,19 @@ class OrderResource extends Resource
 //                                    Forms\Components\TextInput::make('height')->numeric()->label('الارتفاع'),
                                 ]),
                             ]),
-                        Tabs\Tab::make('سلسلة التوكيل')->schema([
-                            Forms\Components\Repeater::make('agencies')->relationship('agencies')->schema([
-                                Forms\Components\Select::make('user_id')->options(User::pluck('name', 'id'))->label('الموظف')->searchable()->required(),
-                                Forms\Components\Radio::make('status')->options([
-                                    TaskAgencyEnum::TASK->value => TaskAgencyEnum::TASK->getLabel(),
-                                    TaskAgencyEnum::TAKE->value => TaskAgencyEnum::TAKE->getLabel(),
-                                    TaskAgencyEnum::DELIVER->value => TaskAgencyEnum::DELIVER->getLabel(),
-                                ])->label('المهمة'),
-                                Forms\Components\TextInput::make('task')->label('المهمة المطلوب تنفيذها'),
 
-                            ])
-                        ])
+//                        Tabs\Tab::make('سلسلة التوكيل')->schema([
+//                            Forms\Components\Repeater::make('agencies')->relationship('agencies')->schema([
+//                                Forms\Components\Select::make('user_id')->options(User::pluck('name', 'id'))->label('الموظف')->searchable()->required(),
+//                                Forms\Components\Radio::make('status')->options([
+//                                    TaskAgencyEnum::TASK->value => TaskAgencyEnum::TASK->getLabel(),
+//                                    TaskAgencyEnum::TAKE->value => TaskAgencyEnum::TAKE->getLabel(),
+//                                    TaskAgencyEnum::DELIVER->value => TaskAgencyEnum::DELIVER->getLabel(),
+//                                ])->label('المهمة'),
+//                                Forms\Components\TextInput::make('task')->label('المهمة المطلوب تنفيذها'),
+//
+//                            ])
+//                        ])
 
 
                     ])->columnSpanFull()
@@ -182,7 +183,20 @@ class OrderResource extends Resource
 
                 Tables\Columns\TextColumn::make('code'),
 
-                Tables\Columns\TextColumn::make('status')->label('حالة الطلب'),
+                Tables\Columns\SelectColumn::make('status')
+                    ->options([
+                        OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel(),
+                        OrderStatusEnum::AGREE->value => OrderStatusEnum::AGREE->getLabel(),
+                        OrderStatusEnum::PICK->value => OrderStatusEnum::PICK->getLabel(),
+                        OrderStatusEnum::TRANSFER->value => OrderStatusEnum::TRANSFER->getLabel(),
+                        OrderStatusEnum::SUCCESS->value => OrderStatusEnum::SUCCESS->getLabel(),
+                        OrderStatusEnum::RETURNED->value => OrderStatusEnum::RETURNED->getLabel(),
+                        OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
+
+                    ])
+                    ->label('حالة الطلب')  ->extraAttributes([
+                        'style' => 'width:150px;', //  تحديد العرض
+                    ]),
                 Tables\Columns\TextColumn::make('type')->label('نوع الطلب'),
                 Tables\Columns\TextColumn::make('bay_type')->label('حالة الدفع'),
                 Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل'),

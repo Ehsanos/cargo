@@ -15,5 +15,5 @@ use App\Filament\Admin\Resources\UserResource;
 */
 
 Route::get('/', function () {
-    return redirect('/admin');
+    return view('welcome');
 });
