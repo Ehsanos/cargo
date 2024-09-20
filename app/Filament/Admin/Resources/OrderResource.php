@@ -8,6 +8,7 @@ use App\Enums\TaskAgencyEnum;
 use App\Filament\Admin\Resources\OrderResource\Pages;
 use App\Filament\Admin\Resources\OrderResource\RelationManagers;
 use App\Models\Branch;
+use App\Models\City;
 use App\Models\Order;
 use App\Models\User;
 use Filament\Forms;
@@ -53,8 +54,7 @@ class OrderResource extends Resource
                                 ])->label('نوع الطلب')->searchable(),
                                 Forms\Components\Select::make('status')->options(
                                     [
-
-                                        OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel(),
+                                       OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel(),
                                         OrderStatusEnum::AGREE->value => OrderStatusEnum::AGREE->getLabel(),
                                         OrderStatusEnum::PICK->value => OrderStatusEnum::PICK->getLabel(),
                                         OrderStatusEnum::TRANSFER->value => OrderStatusEnum::TRANSFER->getLabel(),
@@ -91,35 +91,53 @@ class OrderResource extends Resource
 
                                   Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')
                                       ->afterStateUpdated(function ($state,$set){
-                                          $user=User::find($state);
+                                          $user=User::with('city')->find($state);
                                           if($user){
-                                              $set('sender_phone',$user->phone);
-                                              $set('sender_address',$user->address);
-                                          }
-                                      })->live(),
+                                              $set('sender_phone',$user?->phone);
+                                              $set('sender_address',$user?->address);
+                                              $set('city_source_id',$user?->city_id);
 
+                                          }
+                                      })->live()->searchable()->preload(),
+
+                                Forms\Components\Select::make('city_source_id')
+
+                                    ->relationship('citySource', 'name')
+
+                                    ->label('من مدينة')->reactive(),
 
                                 Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل'),
+
+
 
                                 Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل'),
                                 Forms\Components\Grid::make()->schema([
                                     Forms\Components\Select::make('receive_id')->options(User::all()->pluck('phone','id')
                                         ->toArray())->searchable()
                                         ->afterStateUpdated(function ($state,$set){
-                                            $user=User::find($state);
+                                            $user=User::with('city')->find($state);
                                             if($user){
                                                 $set('receive_phone',$user?->phone);
                                                 $set('receive_address',$user?->address);
 
                                                 $set('sender_name',$user?->name);
+                                                $set('city_target_id',$user?->city_id);
                                             }
                                         })->live()->label('هاتف المستلم'),
                                     Forms\Components\TextInput::make('sender_name')->dehydrated(false)->label('اسم المستلم'),
                                 ]),
 
 
-                                Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
+
+//                                Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
                                 Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم'),
+                                Forms\Components\Select::make('city_target_id')
+                                    ->relationship('cityTarget', 'name')
+                                    ->label('الى مدينة')->reactive(),
+
+
+
+
                                 Forms\Components\Select::make('weight_id')
                                     ->relationship('weight','name')
                                     ->label
@@ -129,14 +147,13 @@ class OrderResource extends Resource
                                     ->relationship('size','name')
                                     ->label
                                     ('الحجم'),
-                                Forms\Components\Select::make('city_source_id')->relationship('citySource', 'name')->label('من مدينة'),
-                                Forms\Components\Select::make('city_target_id')->relationship('cityTarget', 'name')->label('الى مدينة'),
+
 
                                 Forms\Components\Select::make('bay_type')->options([
                                     BayTypeEnum::AFTER->value => BayTypeEnum::AFTER->getLabel(),
                                     BayTypeEnum::BEFORE->value => BayTypeEnum::BEFORE->getLabel()
 
-                                ])->label('نوع الدفع'),
+                                ])->label('نوع الدفع')->required(),
                                 Forms\Components\TextInput::make('price')->numeric()->label('التحصيل'),
                                 Forms\Components\TextInput::make('far')->numeric()->label('أجور الشحن')->default(1),
 //                                Forms\Components\TextInput::make('total_weight')->numeric()->label('الوزن الكلي'),
@@ -200,7 +217,24 @@ class OrderResource extends Resource
 
                 Tables\Columns\TextColumn::make('code'),
 
-                Tables\Columns\TextColumn::make('status')->label('حالة الطلب'),
+//                Tables\Columns\TextColumn::make('status')->label('حالة الطلب'),
+
+
+                Tables\Columns\SelectColumn::make('status')
+                    ->options([
+                        OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel(),
+                        OrderStatusEnum::AGREE->value => OrderStatusEnum::AGREE->getLabel(),
+                        OrderStatusEnum::PICK->value => OrderStatusEnum::PICK->getLabel(),
+                        OrderStatusEnum::TRANSFER->value => OrderStatusEnum::TRANSFER->getLabel(),
+                        OrderStatusEnum::SUCCESS->value => OrderStatusEnum::SUCCESS->getLabel(),
+                        OrderStatusEnum::RETURNED->value => OrderStatusEnum::RETURNED->getLabel(),
+                        OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
+
+                    ])
+                    ->label('حالة الطلب')  ->extraAttributes([
+                        'style' => 'width:150px;', //  تحديد العرض
+                    ]),
+
                 Tables\Columns\TextColumn::make('type')->label('نوع الطلب'),
                 Tables\Columns\TextColumn::make('bay_type')->label('حالة الدفع'),
                 Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل'),

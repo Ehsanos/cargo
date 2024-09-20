@@ -70,7 +70,7 @@ class UserResource extends Resource
                                         ->label('رمز الدولة')
                                         ->placeholder('963')
                                         ->prefix('+')
-                                        ->maxLength(4)
+                                        ->maxLength(3)
                                         ->extraAttributes(['style' => 'text-align: left; direction: ltr; width: 100px;']) // تخصيص عرض حقل الرمز ومحاذاة النص لليسار
                                         // تحديد الحد الأقصى للأرقام (بما في ذلك +)
                                         ->required(),

@@ -65,6 +65,8 @@ class CustomReg extends Register
         }
 
         $data = $this->form->getState();
+        $data['phone'] =$data['country_code'] . $data['phone_number'];
+        unset($data['country_code'], $data['phone_number']); // حذف الحقول المنفصلة بعد الجمع
 
         $user = $this->getUserModel()::create($data);
 
@@ -162,7 +164,7 @@ class CustomReg extends Register
 
         options(
             City::where('status', ActivateStatusEnum::ACTIVE->value)
-               ->where('is_main',false)
+                ->where('is_main', false)
                 ->pluck('name', 'id')
         )
             ->label('المدينة/البلدة')->required();
@@ -181,10 +183,10 @@ class CustomReg extends Register
 
     protected function getPhoneFormComponent(): Component
     {
-     return Grid::make(2) // تقسيم الحقول إلى صفين
+        return Grid::make(2) // تقسيم الحقول إلى صفين
         ->schema([
 
-         TextInput::make('phone_number')
+            TextInput::make('phone_number')
                 ->label('رقم الهاتف')
                 ->placeholder('1234567890')
                 ->numeric() // التأكد أن الحقل يقبل الأرقام فقط
@@ -199,11 +201,11 @@ class CustomReg extends Register
 // الحد الأقصى لطول الرقم
                 ->required(),
 
-         TextInput::make('country_code')
+            TextInput::make('country_code')
                 ->label('رمز الدولة')
                 ->placeholder('963')
                 ->prefix('+')
-                ->maxLength(4)
+                ->maxLength(3)
                 ->extraAttributes(['style' => 'text-align: left; direction: ltr;
                 width:120px;
                 ']) // تخصيص عرض حقل الرمز ومحاذاة النص لليسار
@@ -244,8 +246,6 @@ class CustomReg extends Register
             ->required()
             ->autofocus();
     }
-
-
 
 
     public function loginAction(): Action

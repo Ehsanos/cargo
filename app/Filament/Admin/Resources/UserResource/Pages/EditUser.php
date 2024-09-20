@@ -18,11 +18,29 @@ class EditUser extends EditRecord
         ];
     }
 
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        if (isset($data['phone'])) {
+            $data['country_code'] = substr($data['phone'], 0, strpos($data['phone'], ' ') ?: 3); // استخرج الرمز الدولي
+            $data['phone_number'] = substr($data['phone'], strlen($data['country_code'])); // استخرج الرقم الفعلي
+        }
+
+        return $data;
+    }
+
+
+
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $temp = City::where('id', $data['city_id'])->pluck('branch_id')->first();
 
         $data['branch_id']=$temp;
+
+        $data['phone'] = $data['country_code'] . $data['phone_number'];
+        unset($data['country_code'], $data['phone_number']); // حذف الحقول المنفصلة بعد الجمع
+
+
 
         return $data;
 
