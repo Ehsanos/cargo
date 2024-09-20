@@ -51,7 +51,9 @@ class OrderResource extends Resource
                                 Forms\Components\Select::make('type')->options([
                                     OrderTypeEnum::HOME ->value => OrderTypeEnum::HOME->getLabel(),
                                     OrderTypeEnum::BRANCH->value => OrderTypeEnum::BRANCH->getLabel(),
-                                ])->label('نوع الطلب')->searchable(),
+                                ])->label('نوع الطلب')
+                                    ->required()
+                                    ->searchable(),
                                 Forms\Components\Select::make('status')->options(
                                     [
                                        OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel(),
@@ -73,21 +75,27 @@ class OrderResource extends Resource
                                         }
 
                                     )->live(),
-                                Forms\Components\Select::make('branch_source_id')->relationship('branchSource', 'name')->label('اسم الفرع المرسل')
-                                ->afterStateUpdated(function ($state,$set){
-                                    $branch=Branch::find($state);
-                                    if($branch){
-                                        $set('city_source_id',$branch->city_id);
-                                    }
-                                })->live(),
-                                Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')
-                                    ->afterStateUpdated(function ($state,$set){
-                                        $branch=Branch::find($state);
-                                        if($branch){
-                                            $set('city_target_id',$branch->city_id);
-                                        }
-                                    })->live(),
-                                Forms\Components\DatePicker::make('shipping_date')->label('تاريخ الطلب')->format('Y-m-d')->default(now()->format('Y-m-d')),
+
+
+
+//                                ->afterStateUpdated(function ($state,$set){
+//                                    $branch=Branch::find($state);
+//                                    if($branch){
+//                                        $set('city_source_id',$branch->city_id);
+//                                    }
+//                                })
+
+
+//                                    ->afterStateUpdated(function ($state,$set){
+//                                        $branch=Branch::find($state);
+//                                        if($branch){
+//                                            $set('city_target_id',$branch->city_id);
+//                                        }
+//                                    })
+//
+
+
+//                                Forms\Components\DatePicker::make('shipping_date')->label('تاريخ الطلب')->format('Y-m-d')->default(now()->format('Y-m-d')),
 
                                   Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')
                                       ->afterStateUpdated(function ($state,$set){
@@ -96,9 +104,16 @@ class OrderResource extends Resource
                                               $set('sender_phone',$user?->phone);
                                               $set('sender_address',$user?->address);
                                               $set('city_source_id',$user?->city_id);
+                                              $set('branch_source_id',$user?->branch_id);
 
                                           }
                                       })->live()->searchable()->preload(),
+
+
+                                Forms\Components\Select::make('branch_source_id')
+                                    ->relationship('branchSource', 'name')
+                                    ->label('اسم الفرع المرسل')->reactive(),
+
 
                                 Forms\Components\Select::make('city_source_id')
 
@@ -122,6 +137,7 @@ class OrderResource extends Resource
 
                                                 $set('sender_name',$user?->name);
                                                 $set('city_target_id',$user?->city_id);
+                                                $set('branch_target_id',$user?->branch_id);
                                             }
                                         })->live()->label('هاتف المستلم'),
                                     Forms\Components\TextInput::make('sender_name')->dehydrated(false)->label('اسم المستلم'),
@@ -130,6 +146,9 @@ class OrderResource extends Resource
 
 
 //                                Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
+                                Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم') ->live(),
+
+
                                 Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم'),
                                 Forms\Components\Select::make('city_target_id')
                                     ->relationship('cityTarget', 'name')
@@ -169,7 +188,7 @@ class OrderResource extends Resource
                                 Forms\Components\Repeater::make('packages')->relationship('packages')->schema([
                                     SpatieMediaLibraryFileUpload::make('package')->label('صورة الشحنة')->collection('packages'),
 
-                                Forms\Components\TextInput::make('code')->default(fn()=>"FC". now()->format('dHis')),
+//                                Forms\Components\TextInput::make('code')->default(fn()=>"FC". now()->format('dHis')),
                                     Forms\Components\Select::make('unit_id')->relationship('unit','name')->label('الوحدة'),
 
                                     Forms\Components\TextInput::make('info')->label('معلومات الشحنة'),
@@ -235,12 +254,12 @@ class OrderResource extends Resource
                         'style' => 'width:150px;', //  تحديد العرض
                     ]),
 
-                Tables\Columns\TextColumn::make('type')->label('نوع الطلب'),
-                Tables\Columns\TextColumn::make('bay_type')->label('حالة الدفع'),
-                Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل'),
-                Tables\Columns\TextColumn::make('citySource.name')->label('من مدينة'),
-                Tables\Columns\TextColumn::make('receive.name')->label('اسم المستلم '),
-                Tables\Columns\TextColumn::make('cityTarget.name')->label('الى مدينة '),
+                Tables\Columns\TextColumn::make('type')->label('نوع الطلب')->searchable(),
+                Tables\Columns\TextColumn::make('bay_type')->label('حالة الدفع')->searchable(),
+                Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل')->searchable(),
+                Tables\Columns\TextColumn::make('citySource.name')->label('من مدينة')->searchable(),
+                Tables\Columns\TextColumn::make('receive.name')->label('اسم المستلم ')->searchable(),
+                Tables\Columns\TextColumn::make('cityTarget.name')->label('الى مدينة ')->searchable(),
 
             ])
             ->filters([

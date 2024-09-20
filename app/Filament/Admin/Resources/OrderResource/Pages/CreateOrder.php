@@ -15,9 +15,8 @@ class CreateOrder extends CreateRecord
     {
 
 
-//        $temp=User::where('user_name',$data[''])
-   $data['code']="AWB".now()->format('YmdHis'); // الطابع الزمني بتنسيق قصير
-//$data['city_source_id']=$data['']
+        $data['code'] = "AWB" . now()->format('YmdHis'); // الطابع الزمني بتنسيق قصير
+        $data['shipping_date'] = now()->format('Y-m-d');
 
         return $data;
 
@@ -29,8 +28,6 @@ class CreateOrder extends CreateRecord
     {
         return $this->getResource()::getUrl('index');
     }
-
-
 
 
 }
