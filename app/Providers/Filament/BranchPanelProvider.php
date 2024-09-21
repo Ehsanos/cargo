@@ -27,7 +27,7 @@ class BranchPanelProvider extends PanelProvider
             ->path('branch')
             ->login()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Lime,
             ])
             ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Branch/Resources'), for: 'App\\Filament\\Branch\\Resources')
