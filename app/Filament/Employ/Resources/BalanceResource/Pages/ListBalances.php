@@ -35,7 +35,7 @@ class ListBalances extends ListRecords
                         }
                     },
                 ])->required()->label('نوع السند'),
-                TextInput::make('value')->label('القيمة')->numeric()->visible(fn($get) => $get('type') === BalanceTypeEnum::PUSH->value)->required()
+                TextInput::make('value')->label('القيمة')->numeric()->required()
                     ->rules([
                         fn(): Closure => function (string $attribute, $value, Closure $fail) {
                             if ($value <= 0) {
