@@ -47,7 +47,7 @@ class OrderResource extends Resource
                                 Forms\Components\Select::make('type')->options([
                                     OrderTypeEnum::HOME->value => OrderTypeEnum::HOME->getLabel(),
                                     OrderTypeEnum::BRANCH->value => OrderTypeEnum::BRANCH->getLabel(),
-                                ])->label('نوع الطلب')->searchable(),
+                                ])->label('نوع الطلب')->searchable()->required(),
                                 Forms\Components\Select::make('status')->options(
                                     [
 
