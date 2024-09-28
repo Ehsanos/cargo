@@ -30,7 +30,7 @@ class ListBalances extends ListRecords
                             BalanceTypeEnum::CATCH->value,
                             BalanceTypeEnum::PUSH->value,
                         ];
-                        if (empty($value) || in_array($value, $validateArray)) {
+                        if (empty($value) || !in_array($value, $validateArray)) {
                             $fail('يجب إختيار نوع سند صحيح');
                         }
                     },
