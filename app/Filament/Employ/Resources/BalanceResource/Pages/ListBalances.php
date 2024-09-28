@@ -35,6 +35,7 @@ class ListBalances extends ListRecords
                         }
                     },
                 ])->required()->label('نوع السند'),
+
                 TextInput::make('value')->label('القيمة')->numeric()->required()
                     ->rules([
                         fn(): Closure => function (string $attribute, $value, Closure $fail) {
@@ -43,6 +44,9 @@ class ListBalances extends ListRecords
                             }
                         },
                     ]),
+
+
+
                 Select::make('user_id')->options(User::pluck('name', 'id'))->searchable()->label('الطرف الثاني في القيد'),
                 TextInput::make('info')->label('ملاحظات')
             ])

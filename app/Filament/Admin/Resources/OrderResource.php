@@ -152,7 +152,7 @@ class OrderResource extends Resource
                                 Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم'),
                                 Forms\Components\Select::make('city_target_id')
                                     ->relationship('cityTarget', 'name')
-                                    ->label('الى مدينة')->reactive(),
+                                    ->label('الى مدينة'),
 
 
 
@@ -274,7 +274,7 @@ Forms\Components\Radio::make('far_sender')
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+//                Tables\Actions\DeleteAction::make(),
 
             ])
             ->bulkActions([

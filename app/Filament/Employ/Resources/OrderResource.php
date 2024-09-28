@@ -209,9 +209,13 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('citySource.name')->label('من مدينة'),
                 Tables\Columns\TextColumn::make('receive.name')->label('اسم المستلم '),
                 Tables\Columns\TextColumn::make('cityTarget.name')->label('الى مدينة '),
-                Tables\Columns\TextColumn::make('agencies.task')->formatStateUsing(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->task)->label('المهمة الموكلة'),
+                Tables\Columns\TextColumn::make('agencies.task')
+                    ->formatStateUsing(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->task)
+                    ->label('المهمة الموكلة'),
+
                 Tables\Columns\TextColumn::make('agencies.activate')
-                    ->formatStateUsing(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->activate->getLabel())
+                    ->formatStateUsing(fn($record) => $record->agencies()
+                        ->where('user_id', auth()->id())->first()?->activate->getLabel())
                     ->icon(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->activate->getIcon())
                     ->color(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->activate->getColor())
                     ->label('حالة المهمة'),

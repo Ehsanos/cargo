@@ -54,7 +54,11 @@ class BalanceResource extends Resource
                                 }
                             },
                         ]),
-                    Forms\Components\TextInput::make('debit')->label('القيمة')->numeric()->visible(fn($get) => $get('type') === BalanceTypeEnum::CATCH->value)->required()->rules([
+                    Forms\Components\TextInput::make('debit')
+                        ->label('القيمة')
+                        ->numeric()
+                        ->visible(fn($get) => $get('type') === BalanceTypeEnum::CATCH->value)
+                        ->required()->rules([
                         fn(): Closure => function (string $attribute, $value, Closure $fail) {
                             if ($value <= 0) {
                                 $fail('يجب أن تكون القيمة أكبر من 0');

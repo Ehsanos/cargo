@@ -203,7 +203,7 @@ class CustomReg extends Register
 
             TextInput::make('country_code')
                 ->label('رمز الدولة')
-                ->placeholder('963')
+                ->placeholder('963')->numeric()
                 ->prefix('+')
                 ->maxLength(3)
                 ->extraAttributes(['style' => 'text-align: left; direction: ltr;
