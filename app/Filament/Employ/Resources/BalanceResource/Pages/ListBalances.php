@@ -30,12 +30,24 @@ class ListBalances extends ListRecords
                             BalanceTypeEnum::CATCH->value,
                             BalanceTypeEnum::PUSH->value,
                         ];
-                        if (empty($value) || in_array($value, $validateArray)) {
+                        if (empty($value) || !in_array($value, $validateArray)) {
                             $fail('يجب إختيار نوع سند صحيح');
                         }
                     },
                 ])->required()->label('نوع السند'),
-                TextInput::make('value')->label('القيمة')->numeric()->visible(fn($get) => $get('type') === BalanceTypeEnum::PUSH->value)->required()
+
+
+//                TextInput::make('value')->label('القيمة')->numeric()->visible(fn($get) => $get('type') === BalanceTypeEnum::PUSH->value)->required()
+//                    ->rules([
+//                        fn(): Closure => function (string $attribute, $value, Closure $fail) {
+//                            if ($value <= 0) {
+//                                $fail('يجب أن تكون القيمة أكبر من 0');
+//                            }
+//                        },
+//                    ]),
+
+
+                TextInput::make('value')->label('القيمة')->numeric()->required()
                     ->rules([
                         fn(): Closure => function (string $attribute, $value, Closure $fail) {
                             if ($value <= 0) {
@@ -43,6 +55,9 @@ class ListBalances extends ListRecords
                             }
                         },
                     ]),
+
+
+
                 Select::make('user_id')->options(User::pluck('name', 'id'))->searchable()->label('الطرف الثاني في القيد'),
                 TextInput::make('info')->label('ملاحظات')
             ])

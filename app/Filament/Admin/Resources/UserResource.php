@@ -201,7 +201,7 @@ class UserResource extends Resource
     {
         return [
             RelationManagers\BalancesRelationManager::class,
-            RelationManagers\PendingBalancesRelationManager::class
+//            RelationManagers\PendingBalancesRelationManager::class
         ];
     }
 
