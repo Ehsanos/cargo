@@ -108,7 +108,7 @@ class BalanceResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBalances::route('/'),
+'index'=>Pages\ListBalances::route('/'),
             'create' => Pages\CreateBalance::route('/create'),
             'edit' => Pages\EditBalance::route('/{record}/edit'),
         ];
