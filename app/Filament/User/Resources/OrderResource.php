@@ -143,6 +143,12 @@ class OrderResource extends Resource
                                     ->label('الوزن'),
                                 Forms\Components\DatePicker::make('shipping_date')->default(now()->format('Y-m-d'))
                                     ->label('تاريخ الطلب'),
+                                Forms\Components\Radio::make('far_sender')
+                                    ->options([
+                                        true=>'المرسل',
+                                        false=>'المستلم'
+                                    ])->required()->default(true)->inline()
+                                    ->label('أجور الشحن'),
                             ]),
 
 

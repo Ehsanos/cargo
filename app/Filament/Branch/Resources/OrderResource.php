@@ -134,6 +134,12 @@ class OrderResource extends Resource
 
                                 Forms\Components\TextInput::make('price')->numeric()->label('التحصيل'),
                                 Forms\Components\TextInput::make('far')->numeric()->label('أجور الشحن')->default(1),
+                                Forms\Components\Radio::make('far_sender')
+                                    ->options([
+                                        true=>'المرسل',
+                                        false=>'المستلم'
+                                    ])->required()->default(true)->inline()
+                                    ->label('أجور الشحن'),
                                 Forms\Components\TextInput::make('total_weight')->numeric()->label('الوزن الكلي'),
                                 Forms\Components\TextInput::make('canceled_info')
                                     ->hidden(fn(Forms\Get $get):bool=>!$get('active'))->live()
