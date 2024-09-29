@@ -4,10 +4,12 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Enums\BalanceTypeEnum;
 use App\Filament\Admin\Resources\UserResource\Pages;
 use App\Filament\Admin\Resources\UserResource\RelationManagers;
 use App\Enums\JobUserEnum;
 use App\Enums\LevelUserEnum;
+use App\Models\Balance;
 use App\Models\Branch;
 use App\Enums\ActivateStatusEnum;
 use App\Models\City;
@@ -16,6 +18,7 @@ use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -188,7 +191,29 @@ class UserResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make('credit_balance')->form([
+                    Forms\Components\TextInput::make('credit')
+                        ->required()
+                        ->minValue(0.1)->label('القيمة'),
+                    Forms\Components\TextInput::make('info')->label('ملاحظات')->required(),
+
+                ])->action(function($record,$data){
+                    if($data['credit']>0){
+                        Balance::create([
+                            'user_id'=>$record->id,
+                            'credit'=>$data['credit'],
+                            'debit'=>0,
+                            'is_complete'=>true,
+                            'info'=>$data['info'],
+                            'type'=>BalanceTypeEnum::PUSH->value,
+                            'total'=>$record->total_balance + $data['credit'],
+                        ]);
+                        Notification::make('success')->success()->title('نجاح العملية')->body("تم إضافة رصيد إلى المستخدم {$record->full_name}")->send();
+                    }
+
+
+                })
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
