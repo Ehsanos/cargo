@@ -15,7 +15,7 @@ class UserObserver
         $temp = City::where('id', $user['city_id'])->pluck('branch_id')->first();
 
         $user->update([
-            'iban' => "FC" . str_pad(random_int(0, 9999999999999999), 16, '0', STR_PAD_LEFT) . $user->id
+            'iban' => "FC" . str_pad(random_int(0, 9999999999999999), 10, '0', STR_PAD_LEFT) . $user->id
 
             , 'branch_id' => $temp
         ]);

@@ -127,7 +127,7 @@ class OrderResource extends Resource
 
                                 Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل'),
                                 Forms\Components\Grid::make()->schema([
-                                    Forms\Components\Select::make('receive_id')->options(User::all()->pluck('phone','id')
+                                    Forms\Components\Select::make('receive_id')->options(User::all()->pluck('iban','id')
                                         ->toArray())->searchable()
                                         ->afterStateUpdated(function ($state,$set){
                                             $user=User::with('city')->find($state);
@@ -139,8 +139,8 @@ class OrderResource extends Resource
                                                 $set('city_target_id',$user?->city_id);
                                                 $set('branch_target_id',$user?->branch_id);
                                             }
-                                        })->live()->label('هاتف المستلم'),
-                                    Forms\Components\TextInput::make('sender_name')->dehydrated(false)->label('اسم المستلم'),
+                                        })->live()->label('ايبان المستلم'),
+                                    Forms\Components\TextInput::make('sender_name')->dehydrated(false)->label('اسم المستلم')->maxLength(2),
                                 ]),
 
 
