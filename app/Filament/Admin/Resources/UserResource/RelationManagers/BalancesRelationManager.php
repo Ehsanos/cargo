@@ -31,7 +31,7 @@ protected static ?string $title='الرصيد';
             ->schema([
                 Forms\Components\TextInput::make('credit')
                     ->required()
-                    ->minValue(0.1),
+                    ->minValue(0.1)->label('القيمة'),
                 Forms\Components\TextInput::make('info')->label('ملاحظات')->required(),
 
             ]);

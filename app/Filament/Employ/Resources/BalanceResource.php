@@ -59,12 +59,12 @@ class BalanceResource extends Resource
                         ->numeric()
                         ->visible(fn($get) => $get('type') === BalanceTypeEnum::CATCH->value)
                         ->required()->rules([
-                        fn(): Closure => function (string $attribute, $value, Closure $fail) {
-                            if ($value <= 0) {
-                                $fail('يجب أن تكون القيمة أكبر من 0');
-                            }
-                        },
-                    ]),
+                            fn(): Closure => function (string $attribute, $value, Closure $fail) {
+                                if ($value <= 0) {
+                                    $fail('يجب أن تكون القيمة أكبر من 0');
+                                }
+                            },
+                        ]),
                     Forms\Components\Select::make('user_id')->options(function () {
                         $orders = auth()->user()->pendingBalances->pluck('order_id')->toArray();
                         return Order::whereIn('id', $orders)->pluck('id', 'code');
