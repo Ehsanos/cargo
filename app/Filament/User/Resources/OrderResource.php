@@ -107,7 +107,7 @@ class OrderResource extends Resource
                                 ])->columns(3),
 
 
-                                Forms\Components\TextInput::make('temp')->label('اسم المستلم')
+                                Forms\Components\TextInput::make('temp')->label('ايبان المستلم')
                                     ->hidden(fn(Forms\Get $get): bool => !$get('active'))
                                     ->live()->required()
                                 ,
@@ -117,18 +117,19 @@ class OrderResource extends Resource
                                     ->live(),
 
 //                                Forms\Components\Select::make('city_source_id')->relationship('citySource', 'name')->label('من مدينة'),
-                                Forms\Components\Select::make('city_target_id')->options(City::where('is_main', false)
-                                    ->pluck('name', 'id'))->label('الى مدينة/البلدة')
-                                    ->hidden(fn(Forms\Get $get): bool => !$get('active'))
-                                    ->live()
-                                ,
+//                                Forms\Components\Select::make('city_target_id')->options(City::where('is_main', false)
+//                                    ->pluck('name', 'id'))->label('الى مدينة/البلدة')
+//                                    ->hidden(fn(Forms\Get $get): bool => !$get('active'))
+//                                    ->live()
+//                                ,
 
                                 Forms\Components\Select::make('bay_type')->options([
                                     BayTypeEnum::AFTER->value => BayTypeEnum::AFTER->getLabel(),
                                     BayTypeEnum::BEFORE->value => BayTypeEnum::BEFORE->getLabel()
 
                                 ])->label('نوع الدفع')->required(),
-                                Forms\Components\TextInput::make('price')->numeric()->label('السعر'),
+
+                                Forms\Components\TextInput::make('price')->numeric()->label('التحصيل'),
 //                                Forms\Components\TextInput::make('total_weight')->numeric()->label('الوزن الكلي'),
 //                                Forms\Components\TextInput::make('canceled_info')
 //                                    ->hidden(fn(Forms\Get $get): bool => !$get('active'))->live()
@@ -142,13 +143,17 @@ class OrderResource extends Resource
                                     ->options(Category::where('type', '=', 'weight')->pluck('name', 'id'))
                                     ->label('الوزن'),
                                 Forms\Components\DatePicker::make('shipping_date')->default(now()->format('Y-m-d'))
+
                                     ->label('تاريخ الطلب'),
-                                Forms\Components\Radio::make('far_sender')
-                                    ->options([
-                                        true=>'المرسل',
-                                        false=>'المستلم'
-                                    ])->required()->default(true)->inline()
-                                    ->label('أجور الشحن'),
+
+//                                Forms\Components\Radio::make('far_sender')
+//                                    ->options([
+//                                        true=>'المرسل',
+//                                        false=>'المستلم'
+//                                    ])->required()->default(true)->inline()
+//                                    ->label('أجور الشحن'),
+
+
                             ]),
 
 

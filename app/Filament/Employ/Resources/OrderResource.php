@@ -10,9 +10,12 @@ use App\Enums\OrderTypeEnum;
 use App\Enums\TaskAgencyEnum;
 use App\Filament\Employ\Resources\OrderResource\Pages;
 use App\Filament\Employ\Resources\OrderResource\RelationManagers;
+use App\Models\Agency;
+use App\Models\Balance;
 use App\Models\Branch;
 use App\Models\Order;
 use App\Models\User;
+use Error;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Tabs;
@@ -32,8 +35,9 @@ class OrderResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $pluralModelLabel = 'الطلبات';
 
-    protected static ?string $label='طلب';
-    protected static ?string $navigationLabel='الطلبات';
+    protected static ?string $label = 'طلب';
+    protected static ?string $navigationLabel = 'الطلبات';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -106,7 +110,7 @@ class OrderResource extends Resource
                                             $set('receive_address', $user->address);
                                         }
                                     })->live(),
-                               Forms\Components\Select::make('size_id')
+                                Forms\Components\Select::make('size_id')
                                     ->relationship('size', 'name')
                                     ->label
                                     ('فئة الحجم'),
@@ -129,8 +133,8 @@ class OrderResource extends Resource
                                 Forms\Components\TextInput::make('price')->numeric()->label('التحصيل'),
                                 Forms\Components\Radio::make('far_sender')
                                     ->options([
-                                        true=>'المرسل',
-                                        false=>'المستلم'
+                                        true => 'المرسل',
+                                        false => 'المستلم'
                                     ])->required()->default(true)->inline()
                                     ->label('أجور الشحن'),
 //                                Forms\Components\TextInput::make('total_weight')->numeric()->label('الوزن الكلي'),
@@ -184,25 +188,12 @@ class OrderResource extends Resource
                 PopoverColumn::make('qr_url')
                     ->trigger('click')
                     ->placement('right')
-                    ->content(fn($record)=>\LaraZeus\Qr\Facades\Qr::render($record->code))
+                    ->content(fn($record) => \LaraZeus\Qr\Facades\Qr::render($record->code))
                     ->icon('heroicon-o-qr-code'),
 
                 Tables\Columns\TextColumn::make('code'),
 
-                Tables\Columns\SelectColumn::make('status')
-                    ->options([
-                        OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel(),
-                        OrderStatusEnum::AGREE->value => OrderStatusEnum::AGREE->getLabel(),
-                        OrderStatusEnum::PICK->value => OrderStatusEnum::PICK->getLabel(),
-                        OrderStatusEnum::TRANSFER->value => OrderStatusEnum::TRANSFER->getLabel(),
-                        OrderStatusEnum::SUCCESS->value => OrderStatusEnum::SUCCESS->getLabel(),
-                        OrderStatusEnum::RETURNED->value => OrderStatusEnum::RETURNED->getLabel(),
-                        OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
 
-                    ])
-                    ->label('حالة الطلب')  ->extraAttributes([
-                        'style' => 'width:150px;', //  تحديد العرض
-                    ]),
                 Tables\Columns\TextColumn::make('type')->label('نوع الطلب'),
                 Tables\Columns\TextColumn::make('bay_type')->label('حالة الدفع'),
                 Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل'),
@@ -213,12 +204,13 @@ class OrderResource extends Resource
                     ->formatStateUsing(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->task)
                     ->label('المهمة الموكلة'),
 
-                Tables\Columns\TextColumn::make('agencies.activate')
-                    ->formatStateUsing(fn($record) => $record->agencies()
-                        ->where('user_id', auth()->id())->first()?->activate->getLabel())
-                    ->icon(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->activate->getIcon())
-                    ->color(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->activate->getColor())
-                    ->label('حالة المهمة'),
+                /*  Tables\Columns\TextColumn::make('agencies.activate')
+                      ->formatStateUsing(fn($record) => $record->agencies()
+                          ->where('user_id', auth()->id())->first()?->activate->getLabel())
+                      ->icon(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->activate->getIcon())
+                      ->color(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->activate->getColor())
+                      ->label('حالة المهمة'),*/
+
 
             ])
             ->filters([
@@ -226,6 +218,53 @@ class OrderResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('complete_task')
+                    ->action(function ($record) {
+                        $record->agencies()->where(['agencies.activate' => ActivateAgencyEnum::PENDING->value])->whereNot('agencies.task', TaskAgencyEnum::DELIVER->value)->first()?->update([
+                            'activate' => OrderStatusEnum::SUCCESS->value,
+                        ]);
+                    })->requiresConfirmation()->label('إنهاء المهمة')
+                    ->visible(function ($record) {
+                        return Agency::where(['user_id' => auth()->id(), 'order_id' => $record->id, 'activate' => ActivateAgencyEnum::PENDING->value,])
+                            ->where('status', '!=', TaskAgencyEnum::DELIVER)->exists();
+
+                    }),
+                Tables\Actions\Action::make('complete_task_deliver')
+                    ->form(fn($record) => [
+                        Forms\Components\Placeholder::make('success')->label('تحذير')->content("أنت على وشك إنهاء الطلب و إستلام مبلغ {$record->total_price}")
+                    ])
+                    ->action(function ($record) {
+                        \DB::beginTransaction();
+                        try {
+                          Agency::where(['agencies.user_id'=>auth()->id(),'order_id' => $record->id,'agencies.activate' => ActivateAgencyEnum::PENDING->value, 'agencies.status' => TaskAgencyEnum::DELIVER->value])->update([
+                                'activate' => ActivateAgencyEnum::COMPLETE->value,
+                            ]);
+                            $record->update([
+                                'status' => OrderStatusEnum::SUCCESS->value
+                            ]);
+                            $balance = Balance::where([/*'user_id' => auth()->id(),*/ 'order_id' => $record->id, 'is_complete' => false])->update([
+                                'is_complete' => true
+                            ]);
+                            \DB::commit();
+                            Notification::make('success')->title('نجاح العملية')->success()->send();
+                        } catch (\Exception | Error $e) {
+                            \DB::rollBack();
+                            Notification::make('success')->title('فشل العملية')->danger()->body($e->getLine())->send();
+                        }
+
+                    })
+                    ->visible(function ($record) {
+                        $pending = !Agency::where([
+                            'user_id' => auth()->id(),
+                            'order_id' => $record->id,
+                            'activate' => ActivateAgencyEnum::PENDING->value,
+                        ])
+                            ->where('status', '!=', TaskAgencyEnum::DELIVER)->exists();
+
+                        $agency2 = Agency::where(['user_id' => auth()->id(), 'order_id' => $record->id, 'activate' => ActivateAgencyEnum::PENDING->value, 'status' => TaskAgencyEnum::DELIVER])
+                            ->exists();
+                        return $pending && $agency2;
+                    }),
 
             ])
             ->bulkActions([

@@ -13,7 +13,8 @@ public ?Model $record;
     protected function getStats(): array
     {
         return [
-            Stat::make('الرصيد الحالي', \DB::table('balances')->where('user_id',$this->record->id)->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total??0),
+            Stat::make('رصيد قيد التحصيل', \DB::table('balances')->where('user_id',$this->record->id)->where('balances.is_complete','=',false)->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total??0),
+            Stat::make('الرصيد الحالي', \DB::table('balances')->where('user_id',$this->record->id)->where('balances.is_complete','=',true)->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total??0),
         ];
     }
 }

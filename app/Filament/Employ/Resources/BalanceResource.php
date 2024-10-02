@@ -69,7 +69,9 @@ class BalanceResource extends Resource
                         $orders = auth()->user()->pendingBalances->pluck('order_id')->toArray();
                         return Order::whereIn('id', $orders)->pluck('id', 'code');
                     })->label('مرتبط بالطلب رقم'),
-                    Forms\Components\TextInput::make('info')->label('ملاحظات')
+                    Forms\Components\TextInput::make('info')->label('ملاحظات'),
+                    Forms\Components\TextInput::make('customer_name')->required()->label('اسم الزبون  المستلم')
+
                 ])
             ]);
     }
@@ -80,7 +82,8 @@ class BalanceResource extends Resource
             ->modifyQueryUsing(fn($query) => $query->where('user_id', auth()->id()))
             ->columns([
                 Tables\Columns\TextColumn::make('credit')->label('إيداع'),
-                Tables\Columns\TextColumn::make('debit')->label('إيداع'),
+                Tables\Columns\TextColumn::make('debit')->label('قبض'),
+                Tables\Columns\TextColumn::make('customer_name')->label('اسم الزبون المستلم'),
                 Tables\Columns\TextColumn::make('info')->label('الملاحظات'),
                 Tables\Columns\TextColumn::make('total')->label('الرصيد'),
 

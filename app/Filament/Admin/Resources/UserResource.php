@@ -190,9 +190,12 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
+
+                Tables\Actions\ViewAction::make(),
+
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-                Tables\Actions\Action::make('credit_balance')->form([
+                Tables\Actions\Action::make('credit_balance')->label('اضافة رصيد')->form([
                     Forms\Components\TextInput::make('credit')
                         ->required()
                         ->minValue(0.1)->label('القيمة'),
@@ -213,7 +216,7 @@ class UserResource extends Resource
                     }
 
 
-                })
+                })->label('إضافة رصيد')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

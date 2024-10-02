@@ -23,36 +23,42 @@ class OrderObserver
         $totalPrice = $order->price + $order->far;
         $sender = $order->sender;
         $receive = $order->receive;
-        if ($order->bay_type?->value == BayTypeEnum::BEFORE->value) {
-
-
-            if ($order->price > 0) {
-                Balance::create([
-                    'credit' => 0,
-                    'debit' => $order->price,
-                    'order_id' => $order->id,
-                    'user_id' => $sender->id,
-                    'total' => $sender->total_balance - $order->price,
-                    'info' => 'قيمة طلب  #' . $order->code,
-                    'is_complete' => true,
-                ]);
-            }
-
-        } //
-        elseif ($order->bay_type->value == BayTypeEnum::AFTER->value) {
-
-
             if ($totalPrice > 0) {
-                Balance::create([
-                    'credit' => 0,
-                    'debit' => $order->price,
-                    'order_id' => $order->id,
-                    'user_id' => $receive->id,
-                    'total' => $receive->total_balance - $order->price,
-                    'info' => 'قيمة طلب  #' . $order->code,
-                    'is_complete' => true,
-                ]);
-                if ($order->price > 0) {
+                if($order->far>0){
+                    if($order->far_sender==true){
+                        Balance::create([
+                            'credit' => 0,
+                            'debit' => $order->price,
+                            'order_id' => $order->id,
+                            'user_id' => $sender->id,
+                            'total' => $sender->total_balance - $order->far,
+                            'info' => 'قيمة طلب  #' . $order->code,
+                            'is_complete' => true,
+                        ]);
+                    }else{
+                        Balance::create([
+                            'credit' => 0,
+                            'debit' => $order->price,
+                            'order_id' => $order->id,
+                            'user_id' => $receive->id,
+                            'total' => $receive->total_balance - $order->far,
+                            'info' => 'قيمة طلب  #' . $order->code,
+                            'is_complete' => true,
+                        ]);
+                    }
+
+                }
+                if($order->price>0){
+                    Balance::create([
+                        'credit' => 0,
+                        'debit' => $order->price,
+                        'order_id' => $order->id,
+                        'user_id' => $receive->id,
+                        'total' => $receive->total_balance - $order->price,
+                        'info' => 'قيمة طلب  #' . $order->code,
+                        'is_complete' => true,
+                    ]);
+
                     Balance::create([
                         'credit' => $order->price,
                         'debit' => 0,
@@ -63,32 +69,13 @@ class OrderObserver
                         'is_complete' => true,
                     ]);
                 }
+
+
             }
 
-        }
-        if ($order->far > 0) {
-            if ($order->far_sender == true) {
-                Balance::create([
-                    'credit' => 0,
-                    'debit' => $order->far,
-                    'order_id' => $order->id,
-                    'user_id' => $sender->id,
-                    'total' => $sender->total_balance - $order->far,
-                    'info' => 'أجور شحن طلب  #' . $order->code,
-                    'is_complete' => true,
-                ]);
-            } else {
-                Balance::create([
-                    'credit' => 0,
-                    'debit' => $order->far,
-                    'order_id' => $order->id,
-                    'user_id' => $receive->id,
-                    'total' => $receive->total_balance - $order->far,
-                    'info' => 'أجور شحن طلب  #' . $order->code,
-                    'is_complete' => true,
-                ]);
-            }
-        }
+//        }
+
+
 
     }
 
@@ -97,28 +84,27 @@ class OrderObserver
      */
     public function updated(Order $order): void
     {
-        $totalPrice = $order->price + $order->far;
         $sender = $order->sender;
         if ($order->isDirty('receive_id') && $order->price > 0) {
             Balance::where('order_id', $order->id)->delete();
 
-            if ($order->bay_type?->value == BayTypeEnum::BEFORE->value) {
+//            if ($order->bay_type?->value == BayTypeEnum::BEFORE->value) {
 
-
-                if ($order->price > 0) {
-                    Balance::create([
-                        'credit' => 0,
-                        'debit' => $order->price,
-                        'order_id' => $order->id,
-                        'user_id' => $sender->id,
-                        'total' => $sender->total_balance - $order->price,
-                        'info' => 'قيمة طلب  #' . $order->code,
-                        'is_complete' => true,
-                    ]);
-                }
-
-            } //
-            elseif ($order->bay_type->value == BayTypeEnum::AFTER->value) {
+//
+//                if ($order->price > 0) {
+//                    Balance::create([
+//                        'credit' => 0,
+//                        'debit' => $order->price,
+//                        'order_id' => $order->id,
+//                        'user_id' => $sender->id,
+//                        'total' => $sender->total_balance - $order->price,
+//                        'info' => 'قيمة طلب  #' . $order->code,
+//                        'is_complete' => false,
+//                    ]);
+//                }
+//
+//            } //
+//            elseif ($order->bay_type->value == BayTypeEnum::AFTER->value) {
 
                 $receive = $order->receive;
 
@@ -130,7 +116,7 @@ class OrderObserver
                         'user_id' => $receive->id,
                         'total' => $receive->total_balance - $order->price,
                         'info' => 'قيمة طلب  #' . $order->code,
-                        'is_complete' => true,
+                        'is_complete' => false,
                     ]);
                     if ($order->price > 0) {
                         Balance::create([
@@ -140,14 +126,16 @@ class OrderObserver
                             'user_id' => $order->sender->id,
                             'total' => $receive->total_balance + $order->price,
                             'info' => 'قيمة طلب  #' . $order->code,
-                            'is_complete' => true,
+                            'is_complete' => false,
                         ]);
                     }
                 }
 
             }
 
-        }
+
+
+//        }
         $oldStatus = $order->getOriginal('status');
         $newStatus = $order->status;
         if ($oldStatus !== OrderStatusEnum::RETURNED && $newStatus == OrderStatusEnum::RETURNED) {
