@@ -140,7 +140,9 @@ class OrderResource extends Resource
                                                 $set('branch_target_id',$user?->branch_id);
                                             }
                                         })->live()->label('ايبان المستلم'),
-                                    Forms\Components\TextInput::make('sender_name')->dehydrated(false)->label('اسم المستلم')->maxLength(2),
+                                    Forms\Components\TextInput::make('sender_name')->dehydrated(false)->label('اسم المستلم')
+//                                        ->maxLength(2)
+                                    ,
                                 ]),
 
 
