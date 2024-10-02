@@ -4,6 +4,7 @@ namespace App\Filament\Employ\Resources;
 
 use App\Enums\ActivateAgencyEnum;
 use App\Enums\ActivateStatusEnum;
+use App\Enums\BalanceTypeEnum;
 use App\Enums\BayTypeEnum;
 use App\Enums\OrderStatusEnum;
 use App\Enums\OrderTypeEnum;
@@ -26,7 +27,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\DB;
 use LaraZeus\Popover\Tables\PopoverColumn;
+
 
 class OrderResource extends Resource
 {
@@ -219,31 +222,121 @@ class OrderResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('complete_task')
+                    ->form(function ($record) {
+                        $agency = Agency::whereNot('status', TaskAgencyEnum::DELIVER->value)->where([
+                            'user_id' => auth()->id(),
+                            'order_id' => $record->id,
+                            'activate' => ActivateAgencyEnum::PENDING->value,
+                        ])->first();
+                        if ($agency->status == TaskAgencyEnum::TAKE && $record->far > 0 && $record->far_sender == true) {
+                            return [
+                                Forms\Components\Placeholder::make('place')->content('هل أنت متأكد من إنهاء المهمة وإستلام أجور الشحن ' . $record->far . ' $')
+                            ];
+
+                        }
+                        return [Forms\Components\Placeholder::make('place')->label('هل أنت متأكد من إنهاء المهمة')];
+
+
+                    })
                     ->action(function ($record) {
-                        $record->agencies()->where(['agencies.activate' => ActivateAgencyEnum::PENDING->value])->whereNot('agencies.task', TaskAgencyEnum::DELIVER->value)->first()?->update([
-                            'activate' => OrderStatusEnum::SUCCESS->value,
-                        ]);
+                        $agency = Agency::whereNot('status', TaskAgencyEnum::DELIVER->value)->where([
+                            'user_id' => auth()->id(),
+                            'order_id' => $record->id,
+                            'activate' => ActivateAgencyEnum::PENDING->value,
+
+                        ])->first();
+                        \DB::beginTransaction();
+                        try {
+                            if ($agency->status == TaskAgencyEnum::TAKE && $record->far > 0) {
+                                Balance::create([
+                                    'type' => BalanceTypeEnum::CATCH->value,
+                                    'credit' => 0,
+                                    'debit' => $record->far,
+                                    'info' => 'تحصيل أجور شحن الطلب #' . $record->id,
+                                    'user_id' => $agency->user->id,
+                                    'total' => $agency->user->total_balance - $record->far,
+                                    'is_complete' => true,
+                                ]);
+                                $user = $record->sender;
+                                if ($record->far_sender === false) {
+                                    $user = $record->receive;
+                                }
+                                Balance::create([
+                                    'type' => BalanceTypeEnum::PUSH->value,
+                                    'credit' => $record->far,
+                                    'debit' => 0,
+                                    'info' => 'دفع أجور شحن الطلب #' . $record->id,
+                                    'user_id' => $user->id,
+                                    'total' => $user->total_balance + $record->far,
+                                    'is_complete' => true,
+                                ]);
+                            }
+                            $agency?->update([
+                                'activate' => ActivateAgencyEnum::COMPLETE->value,
+                            ]);
+                            \DB::commit();
+                            Notification::make('success')->title('تمت العملية بنجاح')->success()->send();
+                        } catch (\Exception | Error $e) {
+
+                            DB::rollBack();
+                            Notification::make('success')->title('فشلت العملية ')->body($e->getMessage().'- '.$e->getLine())->danger()->send();
+                        }
+
                     })->requiresConfirmation()->label('إنهاء المهمة')
                     ->visible(function ($record) {
-                        return Agency::where(['user_id' => auth()->id(), 'order_id' => $record->id, 'activate' => ActivateAgencyEnum::PENDING->value,])
-                            ->where('status', '!=', TaskAgencyEnum::DELIVER)->exists();
+                        return Agency::whereNot('status', TaskAgencyEnum::DELIVER->value)->where([
+                            'user_id' => auth()->id(),
+                            'order_id' => $record->id,
+                            'activate' => ActivateAgencyEnum::PENDING->value,
+
+                        ])->exists();
 
                     }),
-                Tables\Actions\Action::make('complete_task_deliver')
+                // Complete
+                Tables\Actions\Action::make('complete_task_deliver')->label('إنهاء المهمة')
                     ->form(fn($record) => [
-                        Forms\Components\Placeholder::make('success')->label('تحذير')->content("أنت على وشك إنهاء الطلب و إستلام مبلغ {$record->total_price}")
+                        Forms\Components\Placeholder::make('success')->label('تنبيه')->content(function($record){
+                           if($record->far_sender==false){
+                               return "أنت على وشك إنهاء الطلب و إستلام مبلغ {$record->total_price} $";
+                           }
+                            return "أنت على وشك إنهاء الطلب و إستلام مبلغ {$record->price} $";
+
+                        })->extraAttributes(['style'=>'color:red'])
                     ])
                     ->action(function ($record) {
                         \DB::beginTransaction();
                         try {
-                          Agency::where(['agencies.user_id'=>auth()->id(),'order_id' => $record->id,'agencies.activate' => ActivateAgencyEnum::PENDING->value, 'agencies.status' => TaskAgencyEnum::DELIVER->value])->update([
+                          $agency=  Agency::where(['agencies.user_id' => auth()->id(), 'order_id' => $record->id, 'agencies.activate' => ActivateAgencyEnum::PENDING->value, 'agencies.status' => TaskAgencyEnum::DELIVER->value])->first();
+                          $agency->update([
                                 'activate' => ActivateAgencyEnum::COMPLETE->value,
                             ]);
                             $record->update([
                                 'status' => OrderStatusEnum::SUCCESS->value
                             ]);
-                            $balance = Balance::where([/*'user_id' => auth()->id(),*/ 'order_id' => $record->id, 'is_complete' => false])->update([
-                                'is_complete' => true
+                            $price=$record->total_price;
+
+                            if($record->far_sender==true){
+                                $price=$record->price;
+                            }
+                            Balance::create([
+                                'debit'=>$price,
+                                'credit'=>0,
+                                'type'=>BalanceTypeEnum::CATCH->value,
+                                'info'=>'إستلام قيمة الطلب #'.$record->id,
+                                'is_complete'=>true,
+                                'order_id'=>$record->id,
+                                'total'=>$agency->user->total_balance - $price,
+                                'user_id'=>$agency->user->id,
+                            ]);
+                            Balance::create([
+                                'debit'=>0,
+                                'credit'=>$price,
+                                'type'=>BalanceTypeEnum::PUSH->value,
+                                'info'=>'إستلام قيمة الطلب #'.$record->id,
+                                'is_complete'=>true,
+                                'order_id'=>$record->id,
+                                'total'=>$agency->user->total_balance + $price,
+                                'user_id'=>$record->receive->id,
                             ]);
                             \DB::commit();
                             Notification::make('success')->title('نجاح العملية')->success()->send();
@@ -254,15 +347,19 @@ class OrderResource extends Resource
 
                     })
                     ->visible(function ($record) {
-                        $pending = !Agency::where([
+                        $pending = Agency::where([
                             'user_id' => auth()->id(),
                             'order_id' => $record->id,
                             'activate' => ActivateAgencyEnum::PENDING->value,
-                        ])
-                            ->where('status', '!=', TaskAgencyEnum::DELIVER)->exists();
+                            'status' => TaskAgencyEnum::DELIVER->value
+                        ])->exists();
 
-                        $agency2 = Agency::where(['user_id' => auth()->id(), 'order_id' => $record->id, 'activate' => ActivateAgencyEnum::PENDING->value, 'status' => TaskAgencyEnum::DELIVER])
-                            ->exists();
+                        $agency2 = !Agency::whereNot('status', TaskAgencyEnum::DELIVER->value)->where([
+                            'user_id' => auth()->id(),
+                            'order_id' => $record->id,
+                            'activate' => ActivateAgencyEnum::PENDING->value,
+
+                        ])->exists();
                         return $pending && $agency2;
                     }),
 
