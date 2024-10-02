@@ -88,6 +88,7 @@ class OrderObserver
                     'is_complete' => true,
                 ]);
             }
+
         }
 
     }
@@ -97,7 +98,6 @@ class OrderObserver
      */
     public function updated(Order $order): void
     {
-        $totalPrice = $order->price + $order->far;
         $sender = $order->sender;
         if ($order->isDirty('receive_id') && $order->price > 0) {
             Balance::where('order_id', $order->id)->delete();
@@ -113,7 +113,7 @@ class OrderObserver
                         'user_id' => $sender->id,
                         'total' => $sender->total_balance - $order->price,
                         'info' => 'قيمة طلب  #' . $order->code,
-                        'is_complete' => true,
+                        'is_complete' => false,
                     ]);
                 }
 
@@ -130,7 +130,7 @@ class OrderObserver
                         'user_id' => $receive->id,
                         'total' => $receive->total_balance - $order->price,
                         'info' => 'قيمة طلب  #' . $order->code,
-                        'is_complete' => true,
+                        'is_complete' => false,
                     ]);
                     if ($order->price > 0) {
                         Balance::create([
@@ -140,12 +140,14 @@ class OrderObserver
                             'user_id' => $order->sender->id,
                             'total' => $receive->total_balance + $order->price,
                             'info' => 'قيمة طلب  #' . $order->code,
-                            'is_complete' => true,
+                            'is_complete' => false,
                         ]);
                     }
                 }
 
             }
+
+
 
         }
         $oldStatus = $order->getOriginal('status');

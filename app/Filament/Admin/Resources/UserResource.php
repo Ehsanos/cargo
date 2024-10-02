@@ -213,7 +213,7 @@ class UserResource extends Resource
                     }
 
 
-                })
+                })->label('إضافة رصيد')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
