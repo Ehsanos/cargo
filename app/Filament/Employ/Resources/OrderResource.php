@@ -193,20 +193,7 @@ class OrderResource extends Resource
 
                 Tables\Columns\TextColumn::make('code'),
 
-                Tables\Columns\TextColumn::make('status')
-                    /* ->options([
-                         OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel(),
-                         OrderStatusEnum::AGREE->value => OrderStatusEnum::AGREE->getLabel(),
-                         OrderStatusEnum::PICK->value => OrderStatusEnum::PICK->getLabel(),
-                         OrderStatusEnum::TRANSFER->value => OrderStatusEnum::TRANSFER->getLabel(),
-                         OrderStatusEnum::SUCCESS->value => OrderStatusEnum::SUCCESS->getLabel(),
-                         OrderStatusEnum::RETURNED->value => OrderStatusEnum::RETURNED->getLabel(),
-                         OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
 
-                     ])*/
-                    ->label('حالة الطلب')->extraAttributes([
-                        'style' => 'width:150px;', //  تحديد العرض
-                    ]),
                 Tables\Columns\TextColumn::make('type')->label('نوع الطلب'),
                 Tables\Columns\TextColumn::make('bay_type')->label('حالة الدفع'),
                 Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل'),

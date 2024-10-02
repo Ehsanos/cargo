@@ -192,7 +192,7 @@ class UserResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-                Tables\Actions\Action::make('credit_balance')->form([
+                Tables\Actions\Action::make('credit_balance')->label('اضافة رصيد')->form([
                     Forms\Components\TextInput::make('credit')
                         ->required()
                         ->minValue(0.1)->label('القيمة'),
