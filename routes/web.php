@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OrderStatusController;
 use Illuminate\Support\Facades\Route;
 use App\Filament\Admin\Resources\UserResource;
 
@@ -17,3 +18,7 @@ use App\Filament\Admin\Resources\UserResource;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/ship', [OrderStatusController::class, 'index']);
+
+Route::post('/track-shipment',[OrderStatusController::class,'show'])->name('trackShipment');
