@@ -185,7 +185,7 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('city.name')->label('المدينة')->sortable(),
 
 
-            ])
+            ])->defaultSort('created_at', 'desc')
             ->filters([
                 //
             ])

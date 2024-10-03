@@ -282,7 +282,7 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم'),
                 Tables\Columns\TextColumn::make('cityTarget.name')->label('الى مدينة ')->searchable(),
 
-            ])
+            ])->defaultSort('created_at', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل'),
                 Tables\Filters\SelectFilter::make('receive_id')->relationship('receive', 'name')->label('اسم المستلم'),

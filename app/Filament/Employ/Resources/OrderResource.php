@@ -215,7 +215,7 @@ class OrderResource extends Resource
                       ->label('حالة المهمة'),*/
 
 
-            ])
+            ])->defaultSort('created_at', 'desc')
             ->filters([
                 //
             ])

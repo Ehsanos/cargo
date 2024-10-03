@@ -203,7 +203,7 @@ class OrderResource extends Resource
                     ->label('اسم المستلم '),
                 Tables\Columns\TextColumn::make('cityTarget.name')->label('الى مدينة '),
 
-            ])
+            ])->defaultSort('created_at', 'desc')
             ->filters([
                 //
             ])
