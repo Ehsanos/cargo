@@ -75,7 +75,7 @@ class OrderResource extends Resource
 
                                     }
 
-                                )->live(),
+                                )->live()->required(),
 
 
 //                                ->afterStateUpdated(function ($state,$set){
@@ -97,7 +97,7 @@ class OrderResource extends Resource
 
 //                                Forms\Components\DatePicker::make('shipping_date')->label('تاريخ الطلب')->format('Y-m-d')->default(now()->format('Y-m-d')),
 
-                                Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')
+                                Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')->required()
                                     ->afterStateUpdated(function ($state, $set) {
                                         $user = User::with('city')->find($state);
                                         if ($user) {
@@ -112,17 +112,17 @@ class OrderResource extends Resource
 
                                 Forms\Components\Select::make('branch_source_id')
                                     ->relationship('branchSource', 'name')
-                                    ->label('اسم الفرع المرسل')->reactive(),
+                                    ->label('اسم الفرع المرسل')->reactive()->required(),
 
 
                                 Forms\Components\Select::make('city_source_id')
                                     ->relationship('citySource', 'name')
-                                    ->label('من مدينة')->reactive(),
+                                    ->label('من مدينة')->reactive()->required(),
 
-                                Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل'),
+                                Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل')->required(),
 
 
-                                Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل'),
+                                Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل')->required(),
                                 Forms\Components\Grid::make()->schema([
                                     Forms\Components\Select::make('receive_id')->options(User::all()->pluck('iban', 'id')
                                         ->toArray())->searchable()
@@ -141,17 +141,17 @@ class OrderResource extends Resource
 //                                        ->maxLength(2)
                                     ,
                                 ]),
-                                Forms\Components\TextInput::make('global_name')->label('اسم المستلم'),
+                                Forms\Components\TextInput::make('global_name')->label('اسم المستلم')->required(),
 
 
 //                                Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
-                                Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')->live(),
+                                Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')->live()->required(),
 
 
-                                Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم'),
+                                Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم')->required(),
                                 Forms\Components\Select::make('city_target_id')
                                     ->relationship('cityTarget', 'name')
-                                    ->label('الى مدينة'),
+                                    ->label('الى مدينة')->required(),
 
 
                                 Forms\Components\Select::make('weight_id')
@@ -194,7 +194,7 @@ class OrderResource extends Resource
                                     SpatieMediaLibraryFileUpload::make('package')->label('صورة الشحنة')->collection('packages'),
 
 //                                Forms\Components\TextInput::make('code')->default(fn()=>"FC". now()->format('dHis')),
-                                    Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة'),
+                                    Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة')->required(),
 
                                     Forms\Components\TextInput::make('info')->label('معلومات الشحنة'),
 //                                    Forms\Components\Select::make('weight')->relationship('category','name')->label('من فئة '),
