@@ -123,6 +123,7 @@ class OrderResource extends Resource
 
 
                                 Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل')->required(),
+
                                 Forms\Components\Grid::make()->schema([
                                     Forms\Components\Select::make('receive_id')->options(User::all()->pluck('iban', 'id')
                                         ->toArray())->searchable()
@@ -137,11 +138,26 @@ class OrderResource extends Resource
                                                 $set('branch_target_id', $user?->branch_id);
                                             }
                                         })->live()->label('ايبان المستلم'),
-                                    Forms\Components\TextInput::make('sender_name')->dehydrated(false)->label('معرف المستلم')
+
+                                    Forms\Components\Select::make('sender_name')->label('معرف المستلم')
+                                    ->options(User::all()->pluck('name','id')->toArray())->searchable()
+                                        ->afterStateUpdated(function ($state, $set) {
+                                            $user = User::with('city')->find($state);
+                                            if ($user) {
+                                                $set('receive_phone', $user?->phone);
+                                                $set('receive_address', $user?->address);
+
+                                                $set('sender_name', $user?->name);
+                                                $set('city_target_id', $user?->city_id);
+                                                $set('branch_target_id', $user?->branch_id);
+                                                $set('receive_id',$user?->id);
+                                            }
+                                        })->live()->dehydrated(false)
 //                                        ->maxLength(2)
                                     ,
                                 ]),
-                                Forms\Components\TextInput::make('global_name')->label('اسم المستلم')->required(),
+
+                                Forms\Components\TextInput::make('global_name')->label('اسم المستلم'),
 
 
 //                                Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
