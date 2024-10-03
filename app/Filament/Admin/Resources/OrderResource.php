@@ -279,11 +279,11 @@ class OrderResource extends Resource
                 Tables\Filters\SelectFilter::make('status')->options([
                     OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel(),
                     OrderStatusEnum::AGREE->value => OrderStatusEnum::AGREE->getLabel(),
-                        OrderStatusEnum::PICK->value => OrderStatusEnum::PICK->getLabel(),
-                        OrderStatusEnum::TRANSFER->value => OrderStatusEnum::TRANSFER->getLabel(),
-                        OrderStatusEnum::SUCCESS->value => OrderStatusEnum::SUCCESS->getLabel(),
-                        OrderStatusEnum::RETURNED->value => OrderStatusEnum::RETURNED->getLabel(),
-                        OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
+                    OrderStatusEnum::PICK->value => OrderStatusEnum::PICK->getLabel(),
+                    OrderStatusEnum::TRANSFER->value => OrderStatusEnum::TRANSFER->getLabel(),
+                    OrderStatusEnum::SUCCESS->value => OrderStatusEnum::SUCCESS->getLabel(),
+                    OrderStatusEnum::RETURNED->value => OrderStatusEnum::RETURNED->getLabel(),
+                    OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
 
 
                 ])->label('حالة الطلب'),
@@ -293,7 +293,9 @@ class OrderResource extends Resource
 
                 Tables\Filters\SelectFilter::make('city_source_id')
                     ->relationship('citySource', 'name')
-                    ->label('من مدينة'),
+                    ->label('من مدينة')
+                ,
+
                 Tables\Filters\Filter::make('created_at')
                     ->form([
                         Forms\Components\DatePicker::make('created_from')->label('من تاريخ'),
@@ -303,17 +305,16 @@ class OrderResource extends Resource
                         return $query
                             ->when(
                                 $data['created_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
                             )
                             ->when(
                                 $data['created_until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
                     })
 
             ])->filtersFormMaxHeight('300px')
-
-        ->actions([
+            ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
 //                Tables\Actions\DeleteAction::make(),
