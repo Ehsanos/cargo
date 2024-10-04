@@ -193,7 +193,7 @@ class OrderResource extends Resource
                     ->content(fn($record)=>\LaraZeus\Qr\Facades\Qr::render($record->code))
                     ->icon('heroicon-o-qr-code'),
 
-                Tables\Columns\TextColumn::make('code')->label('كود الطلب'),
+                Tables\Columns\TextColumn::make('code')->label('كود الطلب')->copyable(),
 
                 Tables\Columns\TextColumn::make('status')->label('حالة الطلب'),
                 Tables\Columns\TextColumn::make('type')->label('نوع الطلب'),
