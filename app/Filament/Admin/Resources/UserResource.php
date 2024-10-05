@@ -74,6 +74,7 @@ class UserResource extends Resource
                                         ->placeholder('963')
                                         ->prefix('+')
                                         ->maxLength(3)
+                                        ->numeric()
                                         ->extraAttributes(['style' => 'text-align: left; direction: ltr; width: 100px;']) // تخصيص عرض حقل الرمز ومحاذاة النص لليسار
                                         // تحديد الحد الأقصى للأرقام (بما في ذلك +)
                                         ->required(),
