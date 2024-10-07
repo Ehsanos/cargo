@@ -59,7 +59,7 @@ class OrderResource extends Resource
                                 Forms\Components\Select::make('status')->options(
                                     [
 
-                                        OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel(),
+//                                        OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel(),
                                         OrderStatusEnum::AGREE->value => OrderStatusEnum::AGREE->getLabel(),
 //                                        OrderStatusEnum::PICK->value => OrderStatusEnum::PICK->getLabel(),
 //                                        OrderStatusEnum::TRANSFER->value => OrderStatusEnum::TRANSFER->getLabel(),
