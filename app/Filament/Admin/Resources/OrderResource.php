@@ -227,7 +227,6 @@ class OrderResource extends Resource
 //                                    Forms\Components\TextInput::make('width')->numeric()->label('العرض'),
 //                                    Forms\Components\TextInput::make('height')->numeric()->label('الارتفاع'),
                                 ])
-                                    ->grid(2)
                                     ->label('محتويات الطلب')
                                     ->addable(false)
                                     ->deletable(false)
@@ -250,6 +249,7 @@ class OrderResource extends Resource
 
                             ])->defaultItems(3)->minItems(2)
                                 ->collapsible()
+                                ->grid(3)
                                 ->collapsed()
                                 ->deletable(false)
                                 ->addActionLabel('إضافة مهمة')
