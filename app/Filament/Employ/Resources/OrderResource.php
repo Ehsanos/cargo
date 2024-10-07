@@ -61,11 +61,11 @@ class OrderResource extends Resource
 
                                         OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel(),
                                         OrderStatusEnum::AGREE->value => OrderStatusEnum::AGREE->getLabel(),
-                                        OrderStatusEnum::PICK->value => OrderStatusEnum::PICK->getLabel(),
-                                        OrderStatusEnum::TRANSFER->value => OrderStatusEnum::TRANSFER->getLabel(),
-                                        OrderStatusEnum::SUCCESS->value => OrderStatusEnum::SUCCESS->getLabel(),
-                                        OrderStatusEnum::RETURNED->value => OrderStatusEnum::RETURNED->getLabel(),
-                                        OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
+//                                        OrderStatusEnum::PICK->value => OrderStatusEnum::PICK->getLabel(),
+//                                        OrderStatusEnum::TRANSFER->value => OrderStatusEnum::TRANSFER->getLabel(),
+//                                        OrderStatusEnum::SUCCESS->value => OrderStatusEnum::SUCCESS->getLabel(),
+//                                        OrderStatusEnum::RETURNED->value => OrderStatusEnum::RETURNED->getLabel(),
+//                                        OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
 
                                     ]
                                 )->label('حالة الطلب')->reactive()->afterStateUpdated(
@@ -132,14 +132,16 @@ class OrderResource extends Resource
                                     BayTypeEnum::AFTER->value => BayTypeEnum::AFTER->getLabel(),
                                     BayTypeEnum::BEFORE->value => BayTypeEnum::BEFORE->getLabel()
 
-                                ])->label('نوع الدفع'),
+                                ])->label('نوع الدفع')->hidden(),
                                 Forms\Components\TextInput::make('price')->numeric()->label('التحصيل'),
+                                Forms\Components\TextInput::make('far')->numeric()->label('أجور الشحن')->default(1),
+
                                 Forms\Components\Radio::make('far_sender')
                                     ->options([
                                         true => 'المرسل',
                                         false => 'المستلم'
                                     ])->required()->default(true)->inline()
-                                    ->label('أجور الشحن'),
+                                    ->label('أجور الشحن')->default(1),
 //                                Forms\Components\TextInput::make('total_weight')->numeric()->label('الوزن الكلي'),
                                 Forms\Components\TextInput::make('canceled_info')
                                     ->hidden(fn(Forms\Get $get): bool => !$get('active'))->live()

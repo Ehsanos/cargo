@@ -129,6 +129,13 @@ class OrderResource extends Resource
 
                                 ])->label('نوع الدفع')->required(),
 
+                                Forms\Components\Radio::make('far_sender')
+                                    ->options([
+                                        true => 'المرسل',
+                                        false => 'المستلم'
+                                    ])->required()->default(true)->inline()
+                                    ->label('أجور الشحن')->default(1),
+
                                 Forms\Components\TextInput::make('price')->numeric()->label('التحصيل'),
 //                                Forms\Components\TextInput::make('total_weight')->numeric()->label('الوزن الكلي'),
 //                                Forms\Components\TextInput::make('canceled_info')
