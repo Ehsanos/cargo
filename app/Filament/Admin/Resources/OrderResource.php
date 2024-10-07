@@ -251,7 +251,7 @@ class OrderResource extends Resource
                                 ->collapsible()
                                 ->grid(3)
                                 ->collapsed()
-                                ->deletable(false)
+                                ->deletable(true)
                                 ->addActionLabel('إضافة مهمة')
                                 ->label('المهام')
                                 ->itemLabel(fn (array $state): ?string => $state['package_name'] ?? ' مهمة...'), //
