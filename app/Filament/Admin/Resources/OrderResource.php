@@ -140,7 +140,7 @@ class OrderResource extends Resource
                                         })->live()->label('ايبان المستلم'),
 
                                     Forms\Components\Select::make('sender_name')->label('معرف المستلم')
-                                    ->options(User::all()->pluck('name','id')->toArray())->searchable()
+                                        ->options(User::all()->pluck('name', 'id')->toArray())->searchable()
                                         ->afterStateUpdated(function ($state, $set) {
                                             $user = User::with('city')->find($state);
                                             if ($user) {
@@ -150,7 +150,7 @@ class OrderResource extends Resource
                                                 $set('sender_name', $user?->name);
                                                 $set('city_target_id', $user?->city_id);
                                                 $set('branch_target_id', $user?->branch_id);
-                                                $set('receive_id',$user?->id);
+                                                $set('receive_id', $user?->id);
                                             }
                                         })->live()->dehydrated(false)
 //                                        ->maxLength(2)
@@ -181,6 +181,13 @@ class OrderResource extends Resource
                                     ('الحجم'),
 
 
+                                Forms\Components\Repeater::make('packages')->relationship('packages')->schema([
+
+                                    Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة')->required()])
+                                    ->deletable(false)
+                                    ->addable(false)->label('نوع الشحنة'),
+
+
                                 Forms\Components\Select::make('bay_type')->options([
                                     BayTypeEnum::AFTER->value => BayTypeEnum::AFTER->getLabel(),
                                     BayTypeEnum::BEFORE->value => BayTypeEnum::BEFORE->getLabel()
@@ -202,7 +209,7 @@ class OrderResource extends Resource
                                     ->label('سبب الارجاع في حال ارجاع الطلب'),
 
 
-                            ]),
+                            ])->icon('heroicon-o-cog'),
 
                         Tabs\Tab::make('محتويات الطلب')
                             ->schema([
@@ -210,7 +217,7 @@ class OrderResource extends Resource
                                     SpatieMediaLibraryFileUpload::make('package')->label('صورة الشحنة')->collection('packages'),
 
 //                                Forms\Components\TextInput::make('code')->default(fn()=>"FC". now()->format('dHis')),
-                                    Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة')->required(),
+//                                    Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة')->required(),
 
                                     Forms\Components\TextInput::make('info')->label('معلومات الشحنة'),
 //                                    Forms\Components\Select::make('weight')->relationship('category','name')->label('من فئة '),
@@ -219,10 +226,18 @@ class OrderResource extends Resource
 //                                    Forms\Components\TextInput::make('length')->numeric()->label('الطول'),
 //                                    Forms\Components\TextInput::make('width')->numeric()->label('العرض'),
 //                                    Forms\Components\TextInput::make('height')->numeric()->label('الارتفاع'),
-                                ]),
-                            ]),
+                                ])
+                                    ->grid(2)
+                                    ->label('محتويات الطلب')
+                                    ->addable(false)
+                                    ->deletable(false)
+
+                            ])->icon('heroicon-o-cube')
+
+                        ,
                         Tabs\Tab::make('سلسلة التوكيل')->schema([
-                            Forms\Components\Repeater::make('agencies')->relationship('agencies')->schema([
+                            Forms\Components\Repeater::make('agencies')->relationship('agencies')
+                                ->schema([
 
                                 Forms\Components\Select::make('user_id')->options(User::where(fn($query) => $query->where('level', LevelUserEnum::DRIVER->value)->orWhere('level', LevelUserEnum::STAFF->value)
                                 )->pluck('name', 'id'))->label('الموظف')->searchable()->required(),
@@ -234,7 +249,17 @@ class OrderResource extends Resource
                                 Forms\Components\TextInput::make('task')->label('المهمة المطلوب تنفيذها'),
 
                             ])->defaultItems(3)->minItems(2)
-                        ])
+                                ->collapsible()
+                                ->collapsed()
+                                ->deletable(false)
+                                ->addActionLabel('إضافة مهمة')
+                                ->label('المهام')
+                                ->itemLabel(fn (array $state): ?string => $state['package_name'] ?? ' مهمة...'), //
+                            // استخدام اسم الشحنة كتسمية
+
+
+
+                        ])->icon('heroicon-o-clipboard-document-list')
 
 
                     ])->columnSpanFull()
