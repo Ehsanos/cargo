@@ -85,7 +85,7 @@ class OrderResource extends Resource
                                         if ($branch) {
                                             $set('city_source_id', $branch->city_id);
                                         }
-                                    })->live(),
+                                    })->live()->required(),
                                 Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')
                                     ->afterStateUpdated(function ($state, $set) {
                                         $branch = Branch::find($state);
@@ -177,6 +177,7 @@ class OrderResource extends Resource
                                 ]),
                             ]),
                         Tabs\Tab::make('سلسلة التوكيل')->schema([
+
                             Forms\Components\Repeater::make('agencies')->relationship('agencies')
                                 ->schema([
 
