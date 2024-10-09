@@ -23,7 +23,7 @@ class CityResource extends Resource
     protected static ?string $pluralModelLabel = 'المدن الرئيسية';
 
     protected static ?string $label='مدينة رئيسية';
-    protected static ?string $navigationLabel='المدن';
+    protected static ?string $navigationLabel='المدن الرئيسية';
 
     public static function form(Form $form): Form
     {

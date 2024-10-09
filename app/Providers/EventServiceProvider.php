@@ -30,7 +30,7 @@ class EventServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Order::observe(OrderObserver::class);
-        Agency::observe(AgencyObServer::class);
+       // Agency::observe(AgencyObServer::class);
     }
 
     /**

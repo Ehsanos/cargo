@@ -30,12 +30,13 @@ class ListBalances extends ListRecords
                             BalanceTypeEnum::CATCH->value,
                             BalanceTypeEnum::PUSH->value,
                         ];
-                        if (empty($value) || in_array($value, $validateArray)) {
+                        if (empty($value) || !in_array($value, $validateArray)) {
                             $fail('يجب إختيار نوع سند صحيح');
                         }
                     },
                 ])->required()->label('نوع السند'),
-                TextInput::make('value')->label('القيمة')->numeric()->visible(fn($get) => $get('type') === BalanceTypeEnum::PUSH->value)->required()
+
+                TextInput::make('value')->label('القيمة')->numeric()->required()
                     ->rules([
                         fn(): Closure => function (string $attribute, $value, Closure $fail) {
                             if ($value <= 0) {
@@ -43,7 +44,11 @@ class ListBalances extends ListRecords
                             }
                         },
                     ]),
+
+
+
                 Select::make('user_id')->options(User::pluck('name', 'id'))->searchable()->label('الطرف الثاني في القيد'),
+               TextInput::make('customer_name')->required()->label('اسم المستلم'),
                 TextInput::make('info')->label('ملاحظات')
             ])
                 ->action(function ($data) {
@@ -64,6 +69,7 @@ class ListBalances extends ListRecords
                             'user_id' => auth()->id(),
                             'total' => auth()->user()->total_balance - $data['value'],
                             'info' => $data['info'],
+                            'customer_name'=>$data['customer_name'],
                         ]);
                         Balance::create([
                             'credit' => $data['value'],
@@ -73,6 +79,8 @@ class ListBalances extends ListRecords
                             'user_id' => $data['user_id'],
                             'total' => $user->total_balance + $data['value'],
                             'info' => $data['info'],
+                            'customer_name'=>$data['customer_name'],
+
                         ]);
                         \DB::commit();
                         Notification::make('success')->title('نجاح العملية')->body('تم إضافة السند')->success()->send();
@@ -94,6 +102,8 @@ class ListBalances extends ListRecords
                             'user_id' => auth()->id(),
                             'total' => auth()->user()->total_balance + $data['value'],
                             'info' => $data['info'],
+                            'customer_name'=>$data['customer_name'],
+
                         ]);
 
                         Balance::create([
@@ -104,6 +114,8 @@ class ListBalances extends ListRecords
                             'user_id' => $data['user_id'],
                             'total' => $user->total_balance - $data['value'],
                             'info' => $data['info'],
+                            'customer_name'=>$data['customer_name'],
+
                         ]);
                         \DB::commit();
                         Notification::make('success')->title('نجاح العملية')->body('تم إضافة السند')->success()->send();

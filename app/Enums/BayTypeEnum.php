@@ -15,8 +15,8 @@ enum BayTypeEnum:string implements HasLabel ,HasColor,HasIcon
     public function getLabel(): string
     {
         return match ($this) {
-            self::AFTER => 'آجل',
-            self::BEFORE => 'مسبق الدفع',
+            self::AFTER => 'على المستلم',
+            self::BEFORE => 'على المرسل',
 
         };
     }
