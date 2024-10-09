@@ -92,16 +92,20 @@ class OrderResource extends Resource
                                             $set('city_target_id', $branch->city_id);
                                         }
                                     })->live(),
-                                Forms\Components\DateTimePicker::make('shipping_date')->label('تاريخ الطلب'),
+                                Forms\Components\DatePicker::make('shipping_date')->label('تاريخ الطلب')->default(now
+                                    ()->format('Y-m-d')),
 
                                 Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')->searchable()->preload()
                                     ->afterStateUpdated(function ($state, $set) {
-                                        $user = User::find($state);
+                                        $user = User::with('city')->find($state);
                                         if ($user) {
                                             $set('sender_phone', $user->phone);
                                             $set('sender_address', $user->address);
+                                            $set('city_source_id', $user?->city_id);
+                                            $set('branch_source_id', $user?->branch_id);
+
                                         }
-                                    })->live(),
+                                    })->live()->preload()->searchable(),
                                 Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل'),
                                 Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل'),
 
@@ -111,6 +115,9 @@ class OrderResource extends Resource
                                         if ($user) {
                                             $set('receive_phone', $user->phone);
                                             $set('receive_address', $user->address);
+                                            $set('sender_name', $user?->name);
+                                            $set('city_target_id', $user?->city_id);
+                                            $set('branch_target_id', $user?->branch_id);
                                         }
                                     })->live(),
                                 Forms\Components\Select::make('size_id')
