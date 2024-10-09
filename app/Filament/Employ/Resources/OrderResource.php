@@ -201,6 +201,7 @@ class OrderResource extends Resource
                                 ])->defaultItems(1)->minItems(1)
                                 ->collapsible()
                                 ->grid(1)
+                                ->addable(false)
                                 ->collapsed()->deletable(false)
                                 ->label('المهام')
                                 ->itemLabel(fn (array $state): ?string => $state['package_name'] ?? ' مهمة...'), //
