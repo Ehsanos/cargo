@@ -93,7 +93,7 @@ class OrderResource extends Resource
                                             $set('city_target_id', $branch->city_id);
                                         }
                                     })->live(),
-                                Forms\Components\DateTimePicker::make('shipping_date')->label('تاريخ الطلب'),
+                                Forms\Components\DatePicker::make('shipping_date')->label('تاريخ الطلب')->default(now()),
 
                                 Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')
                                     ->afterStateUpdated(function ($state, $set) {
