@@ -6,6 +6,7 @@ use App\Enums\ActivateAgencyEnum;
 use App\Enums\ActivateStatusEnum;
 use App\Enums\BalanceTypeEnum;
 use App\Enums\BayTypeEnum;
+use App\Enums\LevelUserEnum;
 use App\Enums\OrderStatusEnum;
 use App\Enums\OrderTypeEnum;
 use App\Enums\TaskAgencyEnum;
@@ -92,20 +93,18 @@ class OrderResource extends Resource
                                             $set('city_target_id', $branch->city_id);
                                         }
                                     })->live(),
-                                Forms\Components\DatePicker::make('shipping_date')->label('تاريخ الطلب')->default(now
-                                    ()->format('Y-m-d')),
+                                Forms\Components\DateTimePicker::make('shipping_date')->label('تاريخ الطلب'),
 
-                                Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')->searchable()->preload()
+                                Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')
                                     ->afterStateUpdated(function ($state, $set) {
-                                        $user = User::with('city')->find($state);
+                                        $user = User::find($state);
                                         if ($user) {
                                             $set('sender_phone', $user->phone);
                                             $set('sender_address', $user->address);
                                             $set('city_source_id', $user?->city_id);
                                             $set('branch_source_id', $user?->branch_id);
-
                                         }
-                                    })->live()->preload()->searchable(),
+                                    })->live(),
                                 Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل'),
                                 Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل'),
 
@@ -115,21 +114,15 @@ class OrderResource extends Resource
                                         if ($user) {
                                             $set('receive_phone', $user->phone);
                                             $set('receive_address', $user->address);
-                                            $set('sender_name', $user?->name);
                                             $set('city_target_id', $user?->city_id);
                                             $set('branch_target_id', $user?->branch_id);
+
                                         }
                                     })->live(),
                                 Forms\Components\Select::make('size_id')
                                     ->relationship('size', 'name')
                                     ->label
                                     ('فئة الحجم'),
-                                Forms\Components\Repeater::make('packages')->relationship('packages')->schema([
-
-                                    Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة')->required()])
-                                    ->deletable(false)
-                                    ->addable(false)->label('نوع الشحنة'),
-
 
                                 Forms\Components\Select::make('weight_id')
                                     ->relationship('weight', 'name')
@@ -168,7 +161,8 @@ class OrderResource extends Resource
                                 Forms\Components\Repeater::make('packages')->relationship('packages')->schema([
                                     SpatieMediaLibraryFileUpload::make('package')->label('صورة الشحنة')->collection('packages'),
 
-//                                    Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة'),
+                                    Forms\Components\TextInput::make('code')->default(fn() => "FC" . now()->format('dHis')),
+                                    Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة'),
 
                                     Forms\Components\TextInput::make('info')->label('معلومات الشحنة'),
 //                                    Forms\Components\Select::make('weight')->relationship('category','name')->label('من فئة '),
@@ -179,6 +173,32 @@ class OrderResource extends Resource
 //                                    Forms\Components\TextInput::make('height')->numeric()->label('الارتفاع'),
                                 ]),
                             ]),
+                        Tabs\Tab::make('سلسلة التوكيل')->schema([
+                            Forms\Components\Repeater::make('agencies')->relationship('agencies')
+                                ->schema([
+
+                                    Forms\Components\Select::make('user_id')
+
+
+                                        ->options(User::where('id',auth()->user()->id)->pluck('name', 'id'))
+
+                                        ->label('الموظف')->required(),
+                                    Forms\Components\Radio::make('status')->options([
+                                        TaskAgencyEnum::TAKE->value => TaskAgencyEnum::TAKE->getLabel(),
+                                    ])->label('المهمة'),
+                                    Forms\Components\TextInput::make('task')->label('المهمة المطلوب تنفيذها'),
+
+                                ])->defaultItems(1)->minItems(1)
+                                ->collapsible()
+                                ->grid(1)
+                                ->collapsed()->deletable(false)
+                                ->label('المهام')
+                                ->itemLabel(fn (array $state): ?string => $state['package_name'] ?? ' مهمة...'), //
+                            // استخدام اسم الشحنة كتسمية
+
+
+
+                        ])->icon('heroicon-o-clipboard-document-list')
 
 //                        Tabs\Tab::make('سلسلة التوكيل')->schema([
 //                            Forms\Components\Repeater::make('agencies')->relationship('agencies')->schema([
