@@ -38,7 +38,6 @@ class EmployPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Employ/Widgets'), for: 'App\\Filament\\Employ\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

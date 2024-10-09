@@ -182,7 +182,7 @@ class OrderResource extends Resource
 //                                    Forms\Components\TextInput::make('height')->numeric()->label('الارتفاع'),
                                 ]),
                             ]),
-                        Tabs\Tab::make('سلسلة التوكيل')->schema([
+                        Tabs\Tab::make('تأكيد الالتقاط ')->schema([
 
                             Forms\Components\Repeater::make('agencies')->relationship('agencies')
                                 ->schema([
@@ -195,8 +195,8 @@ class OrderResource extends Resource
                                         ->label('الموظف')->required(),
                                     Forms\Components\Radio::make('status')->options([
                                         TaskAgencyEnum::TAKE->value => TaskAgencyEnum::TAKE->getLabel(),
-                                    ])->label('المهمة'),
-                                    Forms\Components\TextInput::make('task')->label('المهمة المطلوب تنفيذها'),
+                                    ])->label('المهمة')->required(),
+                                    Forms\Components\TextInput::make('task')->label('  ملاحظاتك '),
 
                                 ])->defaultItems(1)->minItems(1)
                                 ->collapsible()
