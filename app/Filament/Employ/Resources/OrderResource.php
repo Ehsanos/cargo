@@ -94,7 +94,7 @@ class OrderResource extends Resource
                                     })->live(),
                                 Forms\Components\DateTimePicker::make('shipping_date')->label('تاريخ الطلب'),
 
-                                Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')
+                                Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')->searchable()->preload()
                                     ->afterStateUpdated(function ($state, $set) {
                                         $user = User::find($state);
                                         if ($user) {
@@ -155,7 +155,6 @@ class OrderResource extends Resource
                                 Forms\Components\Repeater::make('packages')->relationship('packages')->schema([
                                     SpatieMediaLibraryFileUpload::make('package')->label('صورة الشحنة')->collection('packages'),
 
-                                    Forms\Components\TextInput::make('code')->default(fn() => "FC" . now()->format('dHis')),
                                     Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة'),
 
                                     Forms\Components\TextInput::make('info')->label('معلومات الشحنة'),
