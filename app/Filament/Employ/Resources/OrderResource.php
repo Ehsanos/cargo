@@ -117,6 +117,12 @@ class OrderResource extends Resource
                                     ->relationship('size', 'name')
                                     ->label
                                     ('فئة الحجم'),
+                                Forms\Components\Repeater::make('packages')->relationship('packages')->schema([
+
+                                    Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة')->required()])
+                                    ->deletable(false)
+                                    ->addable(false)->label('نوع الشحنة'),
+
 
                                 Forms\Components\Select::make('weight_id')
                                     ->relationship('weight', 'name')
@@ -155,7 +161,7 @@ class OrderResource extends Resource
                                 Forms\Components\Repeater::make('packages')->relationship('packages')->schema([
                                     SpatieMediaLibraryFileUpload::make('package')->label('صورة الشحنة')->collection('packages'),
 
-                                    Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة'),
+//                                    Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة'),
 
                                     Forms\Components\TextInput::make('info')->label('معلومات الشحنة'),
 //                                    Forms\Components\Select::make('weight')->relationship('category','name')->label('من فئة '),
