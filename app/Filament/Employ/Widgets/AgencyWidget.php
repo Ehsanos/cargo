@@ -155,7 +155,7 @@ class AgencyWidget extends BaseWidget
                                 'total' => $record->user->total_balance + $price,
                                 'user_id' => $record->order->receive->id,
                             ]);
-                            Balance::where('order_id', $record->order->id)->where('user_id',$record->order->receive->id)->update(['is_complete'=>true]);
+                            Balance::where('order_id', $record->order->id)->update(['is_complete'=>true]);
                             \DB::commit();
                             Notification::make('success')->title('نجاح العملية')->success()->send();
                         } catch (\Exception | Error $e) {
