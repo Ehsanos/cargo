@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 
 class AgencyWidget extends BaseWidget
 {
-   protected static ?string $heading="المهام";
+    protected static ?string $heading = "المهام";
 
 
     public function table(Table $table): Table
@@ -38,7 +38,6 @@ class AgencyWidget extends BaseWidget
 
 
                 Tables\Columns\TextColumn::make('order.code')->label('كود الطلب')->searchable(),
-
 
 
             ])->actions([
@@ -66,16 +65,28 @@ class AgencyWidget extends BaseWidget
                                 Balance::create([
                                     'type' => BalanceTypeEnum::CATCH->value,
                                     'credit' => 0,
-                                    'debit' => $record->far,
+                                    'debit' => $record->order->far,
                                     'info' => 'تحصيل أجور شحن الطلب #' . $record->id,
                                     'user_id' => $record->user->id,
                                     'total' => $record->user->total_balance - $record->far,
                                     'is_complete' => true,
+                                   // 'order_id' => $record->order->id
                                 ]);
                                 $user = $record->order->sender;
                                 if ($record->order->far_sender === false) {
                                     $user = $record->order->receive;
                                 }
+
+                                Balance::create([
+                                    'type' => BalanceTypeEnum::PUSH->value,
+                                    'credit' => 0,
+                                    'debit' => $record->order->far,
+                                    'info' => ' أجور شحن الطلب #' . $record->order->id,
+                                    'user_id' => $user->id,
+                                    'total' => $user->total_balance - $record->order->far,
+                                    'is_complete' => true,
+                                   // 'order_id' => $record->order->id
+                                ]);
                                 Balance::create([
                                     'type' => BalanceTypeEnum::PUSH->value,
                                     'credit' => $record->order->far,
@@ -84,6 +95,7 @@ class AgencyWidget extends BaseWidget
                                     'user_id' => $user->id,
                                     'total' => $user->total_balance + $record->order->far,
                                     'is_complete' => true,
+                                   // 'order_id' => $record->order->id
                                 ]);
                             }
 
@@ -143,11 +155,12 @@ class AgencyWidget extends BaseWidget
                                 'total' => $record->user->total_balance + $price,
                                 'user_id' => $record->order->receive->id,
                             ]);
+                            Balance::where('order_id', $record->order->id)->where('user_id',$record->order->receive->id)->update(['is_complete'=>true]);
                             \DB::commit();
                             Notification::make('success')->title('نجاح العملية')->success()->send();
                         } catch (\Exception | Error $e) {
                             \DB::rollBack();
-                            Notification::make('success')->title('فشل العملية')->danger()->body($e->getLine())->send();
+                            Notification::make('success')->title('فشل العملية')->danger()->body($e->getMessage())->send();
                         }
 
                     })
