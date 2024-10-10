@@ -33,8 +33,9 @@ class BranchResource extends Resource
                     ActivateStatusEnum::ACTIVE->value=>ActivateStatusEnum::ACTIVE->getLabel(),
                     ActivateStatusEnum::INACTIVE->value=>   ActivateStatusEnum::INACTIVE->getLabel()])->label('مفعل/غير مفعل')->required(),
                 Forms\Components\TextInput::make('name')->label('اسم الفرع')->required(),
-                Forms\Components\Select::make('city_id')->options(City::where('is_main',true)->pluck('name','id'))->label('يتبع الى مدينة')->required(),
-                Forms\Components\TextInput::make('address')->label('عنوان الفرع ')->columnSpan(2)->required(),
+                Forms\Components\Select::make('city_id')->options(City::where('is_main',true)->pluck('name','id'))
+                    ->label('يتبع الى مدينة')->required()->searchable()->preload(),
+                Forms\Components\TextInput::make('address')->label('عنوان الفرع ')->columnSpan(2),
             ]);
     }
     public static function table(Table $table): Table
