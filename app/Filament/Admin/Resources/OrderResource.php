@@ -322,7 +322,6 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم'),
                 Tables\Columns\TextColumn::make('cityTarget.name')->label('الى مدينة ')->searchable(),
                 Tables\Columns\TextColumn::make('created_at')->label('تاريخ الشحنة')
-                    ->formatStateUsing()
                     ->formatStateUsing(fn ($state) => Carbon::parse($state)->diffForHumans()) // عرض الزمن بشكل نسبي
 
 
