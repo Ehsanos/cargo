@@ -21,4 +21,8 @@ Route::get('/', function () {
 
 Route::get('/ship', [OrderStatusController::class, 'index']);
 
+Route::get('phone/{num}',function ($num){
+    redirect('wa.me/'.$num);
+});
+
 Route::post('/track-shipment',[OrderStatusController::class,'show'])->name('trackShipment');

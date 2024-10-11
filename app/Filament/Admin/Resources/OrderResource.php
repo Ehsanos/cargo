@@ -11,6 +11,7 @@ use App\Models\Branch;
 use App\Models\City;
 use App\Models\Order;
 use App\Models\User;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
@@ -246,25 +247,24 @@ class OrderResource extends Resource
                             Forms\Components\Repeater::make('agencies')->relationship('agencies')
                                 ->schema([
 
-                                Forms\Components\Select::make('user_id')->options(User::where(fn($query) => $query->where('level', LevelUserEnum::DRIVER->value)->orWhere('level', LevelUserEnum::STAFF->value)
-                                )->pluck('name', 'id'))->label('الموظف')->searchable()->required(),
-                                Forms\Components\Radio::make('status')->options([
-                                    TaskAgencyEnum::TASK->value => TaskAgencyEnum::TASK->getLabel(),
-                                    TaskAgencyEnum::TAKE->value => TaskAgencyEnum::TAKE->getLabel(),
-                                    TaskAgencyEnum::DELIVER->value => TaskAgencyEnum::DELIVER->getLabel(),
-                                ])->label('المهمة'),
-                                Forms\Components\TextInput::make('task')->label('المهمة المطلوب تنفيذها'),
+                                    Forms\Components\Select::make('user_id')->options(User::where(fn($query) => $query->where('level', LevelUserEnum::DRIVER->value)->orWhere('level', LevelUserEnum::STAFF->value)
+                                    )->pluck('name', 'id'))->label('الموظف')->searchable()->required(),
+                                    Forms\Components\Radio::make('status')->options([
+                                        TaskAgencyEnum::TASK->value => TaskAgencyEnum::TASK->getLabel(),
+                                        TaskAgencyEnum::TAKE->value => TaskAgencyEnum::TAKE->getLabel(),
+                                        TaskAgencyEnum::DELIVER->value => TaskAgencyEnum::DELIVER->getLabel(),
+                                    ])->label('المهمة'),
+                                    Forms\Components\TextInput::make('task')->label('المهمة المطلوب تنفيذها'),
 
-                            ])->defaultItems(3)->minItems(2)
+                                ])->defaultItems(3)->minItems(2)
                                 ->collapsible()
                                 ->grid(3)
                                 ->collapsed()
                                 ->deletable(true)
                                 ->addActionLabel('إضافة مهمة')
                                 ->label('المهام')
-                                ->itemLabel(fn (array $state): ?string => $state['package_name'] ?? ' مهمة...'), //
+                                ->itemLabel(fn(array $state): ?string => $state['package_name'] ?? ' مهمة...'), //
                             // استخدام اسم الشحنة كتسمية
-
 
 
                         ])->icon('heroicon-o-clipboard-document-list')
@@ -308,12 +308,23 @@ class OrderResource extends Resource
 
                 Tables\Columns\TextColumn::make('type')->label('نوع الطلب')->searchable(),
                 Tables\Columns\TextColumn::make('bay_type')->label('حالة الدفع')->searchable(),
+
+
+                Tables\Columns\TextColumn::make('price')->label('التحصيل'),
                 Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل')->searchable(),
 
                 Tables\Columns\TextColumn::make('citySource.name')->label('من مدينة')->searchable(),
                 Tables\Columns\TextColumn::make('receive.name')->label('معرف المستلم ')->searchable(),
+                Tables\Columns\TextColumn::make('receive.address')->label('عنوان المستلم ')->searchable(),
+                Tables\Columns\TextColumn::make('receive.phone')->label('هاتف المستلم ')
+                    ->url(fn($record)=>url('https://wa.me/'.ltrim($record->receive->phone,'+')))->openUrlInNewTab()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم'),
                 Tables\Columns\TextColumn::make('cityTarget.name')->label('الى مدينة ')->searchable(),
+                Tables\Columns\TextColumn::make('created_at')->label('تاريخ الشحنة')
+                    ->formatStateUsing()
+                    ->formatStateUsing(fn ($state) => Carbon::parse($state)->diffForHumans()) // عرض الزمن بشكل نسبي
+
 
             ])->defaultSort('created_at', 'desc')
             ->filters([
