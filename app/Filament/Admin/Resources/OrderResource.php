@@ -311,6 +311,7 @@ class OrderResource extends Resource
 
 
                 Tables\Columns\TextColumn::make('price')->label('التحصيل'),
+                Tables\Columns\TextColumn::make('far')->label('أجور الشحن'),
                 Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل')->searchable(),
                 Tables\Columns\TextColumn::make('sender.phone')->label('هاتف المرسل')
                     ->url(fn($record)=>url('https://wa.me/'.ltrim($record->receive->phone,'+')))->openUrlInNewTab()
