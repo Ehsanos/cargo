@@ -259,7 +259,6 @@ class OrderResource extends Resource
                                 ])->defaultItems(3)->minItems(2)
                                 ->collapsible()
                                 ->grid(3)
-                                ->collapsed()
                                 ->deletable(true)
                                 ->addActionLabel('إضافة مهمة')
                                 ->label('المهام')
