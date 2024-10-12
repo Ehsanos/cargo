@@ -13,6 +13,7 @@ use App\Enums\ActivateStatusEnum;
 use App\Enums\OrderTypeEnum;
 use App\Enums\OrderStatusEnum;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 
 class Order extends Model
@@ -64,6 +65,12 @@ class Order extends Model
     public function packages(): HasMany
     {
         return $this->hasMany(Package::class);
+    }
+
+
+
+    public function fofo():HasOne {
+        return $this->hasOne(Package::class);
     }
 
     public function agencies(): HasMany

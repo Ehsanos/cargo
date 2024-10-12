@@ -37,8 +37,8 @@ class OrderResource extends Resource
     protected static ?string $model = Order::class;
     protected static ?string $pluralModelLabel = 'الطلبات';
 
-    protected static ?string $label = 'طلب';
-    protected static ?string $navigationLabel = 'الطلبات';
+    protected static ?string $label = 'شحنة';
+    protected static ?string $navigationLabel = 'الشحنات';
     protected static ?string $navigationIcon = 'heroicon-o-truck';
 
 //
@@ -126,7 +126,7 @@ class OrderResource extends Resource
 
                                 Forms\Components\Select::make('city_source_id')
                                     ->relationship('citySource', 'name')
-                                    ->label('من مدينة')->reactive()->required(),
+                                    ->label('من مدينة')->reactive()->required()->searchable()->preload(),
 
                                 Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل')->required(),
 
@@ -176,25 +176,30 @@ class OrderResource extends Resource
                                 Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم')->required(),
                                 Forms\Components\Select::make('city_target_id')
                                     ->relationship('cityTarget', 'name')
-                                    ->label('الى مدينة')->required(),
+                                    ->label('الى مدينة')->required()->searchable()->preload(),
 
 
                                 Forms\Components\Select::make('weight_id')
                                     ->relationship('weight', 'name')
                                     ->label
-                                    ('الوزن'),
+                                    ('الوزن')->searchable()->preload(),
 
                                 Forms\Components\Select::make('size_id')
                                     ->relationship('size', 'name')
                                     ->label
-                                    ('الحجم'),
+                                    ('الحجم')->searchable()->preload(),
 
 
-                                Forms\Components\Repeater::make('packages')->relationship('packages')->schema([
 
-                                    Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة')->required()])
+
+                                Forms\Components\Repeater::make('packages')->relationship('packages')
+                                    ->schema([
+
+                                    Forms\Components\Select::make('unit_id')
+                                        ->relationship('unit', 'name')->label('الوحدة')->required()])
                                     ->deletable(false)
-                                    ->addable(false)->label('نوع الشحنة'),
+                                    ->addable(false)->label('نوع الشحنة')
+                                ->maxItems(1),
 
 
                                 Forms\Components\Select::make('bay_type')->options([
@@ -308,6 +313,7 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('type')->label('نوع الطلب')->searchable(),
                 Tables\Columns\TextColumn::make('bay_type')->label('حالة الدفع')->searchable(),
 
+                Tables\Columns\TextColumn::make('packages.unit.name')->label('نوع الشحنة'),
 
                 Tables\Columns\TextColumn::make('price')->label('التحصيل'),
                 Tables\Columns\TextColumn::make('far')->label('أجور الشحن'),
