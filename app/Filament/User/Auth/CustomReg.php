@@ -167,7 +167,7 @@ class CustomReg extends Register
                 ->where('is_main', false)
                 ->pluck('name', 'id')
         )
-            ->label('المدينة/البلدة')->required();
+            ->label('المدينة/البلدة')->searchable()->preload()->required();
 
     }
 

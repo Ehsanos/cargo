@@ -86,7 +86,7 @@ class UserResource extends Resource
                                 Forms\Components\Select::make('city_id')->options(City::where('is_main', false)->pluck
                                 ('name', 'id'))->required()
                                     ->label('المدينة/البلدة')
-                                    ->live()
+                                    ->live()->searchable()->preload()
                                     ->reactive()->afterStateUpdated(function ($state, callable $set) {
                                         $set('branch_id', null);
                                         $set('temp', Branch::where('city_id', $state)->pluck('name'));
