@@ -73,20 +73,10 @@ class AgencyWidget extends BaseWidget
                                    // 'order_id' => $record->order->id
                                 ]);
                                 $user = $record->order->sender;
-                                if ($record->order->far_sender === false) {
+                               /* if ($record->order->far_sender === false) {
                                     $user = $record->order->receive;
-                                }
+                                }*/
 
-                                Balance::create([
-                                    'type' => BalanceTypeEnum::PUSH->value,
-                                    'credit' => 0,
-                                    'debit' => $record->order->far,
-                                    'info' => ' أجور شحن الطلب #' . $record->order->id,
-                                    'user_id' => $user->id,
-                                    'total' => $user->total_balance - $record->order->far,
-                                    'is_complete' => true,
-                                   // 'order_id' => $record->order->id
-                                ]);
                                 Balance::create([
                                     'type' => BalanceTypeEnum::PUSH->value,
                                     'credit' => $record->order->far,
@@ -130,29 +120,31 @@ class AgencyWidget extends BaseWidget
                             $record->order->update([
                                 'status' => OrderStatusEnum::SUCCESS->value
                             ]);
-                            $price = $record->order->total_price;
 
+                            $far=$record->order->far;
+                            $price = $record->order->price;
+                            $totalPrice=$price+$far;
                             if ($record->order->far_sender == true) {
-                                $price = $record->order->price;
+                                $totalPrice = $price;
                             }
                             Balance::create([
-                                'debit' => $price,
+                                'debit' => $totalPrice,
                                 'credit' => 0,
                                 'type' => BalanceTypeEnum::CATCH->value,
                                 'info' => 'إستلام قيمة الطلب #' . $record->order->id,
                                 'is_complete' => true,
                                 'order_id' => $record->order->id,
-                                'total' => $record->user->total_balance - $price,
+                                'total' => $record->user->total_balance - $totalPrice,
                                 'user_id' => $record->user->id,
                             ]);
                             Balance::create([
                                 'debit' => 0,
-                                'credit' => $price,
+                                'credit' => $totalPrice,
                                 'type' => BalanceTypeEnum::PUSH->value,
-                                'info' => 'إستلام قيمة الطلب #' . $record->order->id,
+                                'info' => 'دفع قيمة الطلب #' . $record->order->id,
                                 'is_complete' => true,
                                 'order_id' => $record->order->id,
-                                'total' => $record->user->total_balance + $price,
+                                'total' => $record->order->receive->total_balance + $totalPrice,
                                 'user_id' => $record->order->receive->id,
                             ]);
                             Balance::where('order_id', $record->order->id)->update(['is_complete'=>true]);
