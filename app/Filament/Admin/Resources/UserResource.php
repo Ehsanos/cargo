@@ -25,6 +25,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Hash;
 use Filament\Forms\Components\Tabs;
+use PHPUnit\Exception;
 
 class UserResource extends Resource
 {
@@ -103,7 +104,7 @@ class UserResource extends Resource
 
                                 Forms\Components\TextInput::make('full_name')->label('الاسم الكامل'),
                                 Forms\Components\DatePicker::make('birth_date')->label('تاريخ الميلاد')
-                                ->format('Y-m-d')->default(now()),
+                                    ->format('Y-m-d')->default(now()),
 
                             ]),
 
@@ -202,18 +203,38 @@ class UserResource extends Resource
                         ->minValue(0.1)->label('القيمة'),
                     Forms\Components\TextInput::make('info')->label('ملاحظات')->required(),
 
-                ])->action(function($record,$data){
-                    if($data['credit']>0){
-                        Balance::create([
-                            'user_id'=>$record->id,
-                            'credit'=>$data['credit'],
-                            'debit'=>0,
-                            'is_complete'=>true,
-                            'info'=>$data['info'],
-                            'type'=>BalanceTypeEnum::PUSH->value,
-                            'total'=>$record->total_balance + $data['credit'],
-                        ]);
-                        Notification::make('success')->success()->title('نجاح العملية')->body("تم إضافة رصيد إلى المستخدم {$record->full_name}")->send();
+                ])->action(function ($record, $data) {
+
+                    if ($data['credit'] > 0) {
+                        \DB::beginTransaction();
+                        try {
+                            Balance::create([
+                                'user_id' => $record->id,
+                                'credit' => $data['credit'],
+                                'debit' => 0,
+                                'is_complete' => true,
+                                'info' => $data['info'],
+                                'type' => BalanceTypeEnum::PUSH->value,
+                                'total' => $record->total_balance + $data['credit'],
+                            ]);
+                            Balance::create([
+                                'user_id' => auth()->id(),
+                                'credit' => 0,
+                                'debit' => $data['credit'],
+                                'is_complete' => true,
+                                'info' => "شحن رصيد للمستخدم {$record->full_name}",
+                                'type' => BalanceTypeEnum::CATCH->value,
+                                'total' => auth()->user()->total_balance - $data['credit'],
+                            ]);
+                            \DB::commit();
+                            Notification::make('success')->success()->title('نجاح العملية')->body("تم إضافة رصيد إلى المستخدم {$record->full_name}")->send();
+
+                        } catch (Exception | \Error $e) {
+                            \DB::rollBack();
+                            Notification::make('success')->danger()->title('فشل العملية')->body($e->getMessage())->send();
+
+                        }
+
                     }
 
 

@@ -55,17 +55,29 @@ protected static ?string $title='الرصيد';
             ->headerActions([
                 Tables\Actions\CreateAction::make()->action(function ($data, $livewire) {
                     $user = $livewire->ownerRecord;
+                    \DB::beginTransaction();
                     try {
                         if ($data['credit'] <= 0) {
                             throw new \Exception('يرجى إدخال قيمة أكبر من 0');
                         }
+
                         Balance::create([
                             'credit' => $data['credit'],
                             'debit' => 0,
                             'info' => $data['info'],
                             'user_id' => $user->id,
+                            'type' => BalanceTypeEnum::PUSH->value,
+                            'is_complete' => true,
+                            'total'=>$user->total_balance + $data['credit']
+                        ]);
+                        Balance::create([
+                            'credit' => 0,
+                            'debit' => $data['credit'],
+                            'info' => $data['info'] . " شحن رصيد للمستخدم {$user->full_name}",
+                            'user_id' => auth()->id(),
                             'type' => BalanceTypeEnum::CATCH->value,
                             'is_complete' => true,
+                            'total'=> auth()->user()->total_balance - $data['credit'],
                         ]);
                         Notification::make('success')->title('نجاح العملية')->body('تم إضافة المبلغ إلى الرصيد')->danger()->send();
 
