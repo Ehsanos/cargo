@@ -14,6 +14,9 @@ return [
     |
     */
 
+
+    'brand' => 'ihsanos',
+
     'broadcasting' => [
 
         // 'echo' => [
