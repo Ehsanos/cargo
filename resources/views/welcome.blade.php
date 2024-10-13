@@ -91,11 +91,32 @@
             margin-top: 65px;
         }
 
-        .img{
+        .img {
             height: 250px;
             width: 250px;
             margin: auto;
             object-fit: contain;
+        }
+
+        .footer {
+            background: linear-gradient(to right, #0066ff, #00ccff);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+
+        }
+
+        .footer a {
+    text-decoration: none;
+            color:whitesmoke ;
+        }
+
+        .footer p {
+            margin: 0;
+            font-size: 1rem;
         }
     </style>
     <!-- Fonts -->
@@ -116,7 +137,13 @@
     <a class="button" href="https://fatihcargo.com/user">استكشف خدماتنا</a>
 
 </div>
+<div class="footer">
 
+    <a href="#">
+        <p> تطوير شركة مدى للبرمجيات 2024</p>
+    </a>
+
+</div>
 
 </body>
 </html>
