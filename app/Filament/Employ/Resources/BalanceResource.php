@@ -34,12 +34,12 @@ class BalanceResource extends Resource
                 Forms\Components\Section::make('سندات')->schema([
                     Forms\Components\Select::make('type')->options([
                         BalanceTypeEnum::CATCH->value => BalanceTypeEnum::CATCH->getLabel(),
-                        BalanceTypeEnum::PUSH->value => BalanceTypeEnum::PUSH->getLabel(),
-                    ])->default(BalanceTypeEnum::PUSH->value)->live()->rules([
+                        //BalanceTypeEnum::PUSH->value => BalanceTypeEnum::PUSH->getLabel(),
+                    ])->default(BalanceTypeEnum::CATCH->value)->live()->rules([
                         fn(): Closure => function (string $attribute, $value, Closure $fail) {
                             $validateArray = [
                                 BalanceTypeEnum::CATCH->value,
-                                BalanceTypeEnum::PUSH->value,
+                               // BalanceTypeEnum::PUSH->value,
                             ];
                             if (empty($value) || in_array($value, $validateArray)) {
                                 $fail('يجب إختيار نوع سند صحيح');
