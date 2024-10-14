@@ -116,12 +116,14 @@ class OrderResource extends Resource
                                 Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم')->hidden(fn(Forms\Get $get): bool => !$get('active'))
                                     ->live(),
 
+
 //                                Forms\Components\Select::make('city_source_id')->relationship('citySource', 'name')->label('من مدينة'),
 //                                Forms\Components\Select::make('city_target_id')->options(City::where('is_main', false)
 //                                    ->pluck('name', 'id'))->label('الى مدينة/البلدة')
 //                                    ->hidden(fn(Forms\Get $get): bool => !$get('active'))
 //                                    ->live()
 //                                ,
+                                Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم  '),
 
                                 Forms\Components\Select::make('bay_type')->options([
                                     BayTypeEnum::AFTER->value => BayTypeEnum::AFTER->getLabel(),

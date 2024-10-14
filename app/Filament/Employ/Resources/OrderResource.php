@@ -134,6 +134,9 @@ class OrderResource extends Resource
                                 Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
                                 Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم'),
 
+                                Forms\Components\TextInput::make('global_name')->label('اسم المستلم'),
+
+
                                 Forms\Components\Select::make('city_target_id')->relationship('cityTarget', 'name')
                                     ->label('الى مدينة')->searchable()->preload(),
 
@@ -211,7 +214,7 @@ class OrderResource extends Resource
                                 ->collapsible()
                                 ->grid(1)
                                 ->addable(false)
-                                ->collapsed()->deletable(false)
+                                ->deletable(false)
                                 ->label('المهام')
                                 ->itemLabel(fn(array $state): ?string => $state['package_name'] ?? ' مهمة...'), //
                             // استخدام اسم الشحنة كتسمية
@@ -260,7 +263,8 @@ class OrderResource extends Resource
                     ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive->phone, '+')))->openUrlInNewTab()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('citySource.name')->label('من مدينة'),
-                Tables\Columns\TextColumn::make('receive.name')->label('اسم المستلم '),
+                Tables\Columns\TextColumn::make('receive.name')->label('معرف المستلم '),
+                Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم '),
                 Tables\Columns\TextColumn::make('receive.address')->label('عنوان المستلم ')->searchable(),
                 Tables\Columns\TextColumn::make('receive.phone')->label('هاتف المستلم ')
                     ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive->phone, '+')))->openUrlInNewTab()

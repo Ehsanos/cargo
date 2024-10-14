@@ -176,7 +176,13 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')->label('الاسم')->searchable(),
-                Tables\Columns\TextColumn::make('status')->badge()->label('حالة المستخدم'),
+                Tables\Columns\SelectColumn::make('status')->label('حالة المستخدم')
+                ->options([
+                    ActivateStatusEnum::ACTIVE->value=>ActivateStatusEnum::ACTIVE->getLabel(),
+                    ActivateStatusEnum::PENDING->value=>ActivateStatusEnum::PENDING->getLabel(),
+                    ActivateStatusEnum::BLOCK->value=>ActivateStatusEnum::BLOCK->getLabel()
+
+                ]),
                 Tables\Columns\TextColumn::make('level')->badge()
                     ->label('فئة المستخدم')->sortable(),
                 Tables\Columns\TextColumn::make('iban')->disabled()->label('IBAN'),
@@ -196,7 +202,7 @@ class UserResource extends Resource
                 Tables\Actions\ViewAction::make(),
 
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+//                Tables\Actions\DeleteAction::make(),
                 Tables\Actions\Action::make('credit_balance')->label('اضافة رصيد')->form([
                     Forms\Components\TextInput::make('credit')
                         ->required()
@@ -222,7 +228,7 @@ class UserResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+//                    Tables\Actions\DeleteBulkAction::make(),
 //                    ExportBulkAction::make()
 
                 ]),
