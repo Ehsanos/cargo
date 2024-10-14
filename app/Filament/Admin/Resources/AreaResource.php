@@ -38,7 +38,7 @@ class AreaResource extends Resource
                 Forms\Components\Select::make('city_id')->options(City::where('is_main',true)->pluck('name','id'))
                 ->label('تتبع الى مدينة')->required(),
                 Forms\Components\Select::make('branch_id')->options(Branch::all()->pluck('name','id'))
-                ->label('تتبع لفرع ')->required(),
+                ->label('تتبع لفرع ')->searchable()->preload()->required(),
 
 
 

@@ -25,7 +25,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Hash;
 use Filament\Forms\Components\Tabs;
+
 use PHPUnit\Exception;
+
 
 class UserResource extends Resource
 {
@@ -86,7 +88,7 @@ class UserResource extends Resource
                                 Forms\Components\Select::make('city_id')->options(City::where('is_main', false)->pluck
                                 ('name', 'id'))->required()
                                     ->label('المدينة/البلدة')
-                                    ->live()
+                                    ->live()->searchable()->preload()
                                     ->reactive()->afterStateUpdated(function ($state, callable $set) {
                                         $set('branch_id', null);
                                         $set('temp', Branch::where('city_id', $state)->pluck('name'));
@@ -235,6 +237,7 @@ class UserResource extends Resource
 
                         }
 
+
                     }
 
 
@@ -243,6 +246,8 @@ class UserResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+//                    ExportBulkAction::make()
+
                 ]),
             ]);
     }

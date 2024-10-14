@@ -17,6 +17,7 @@ use App\Models\Balance;
 use App\Models\Branch;
 use App\Models\Order;
 use App\Models\User;
+use Carbon\Carbon;
 use Error;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -244,9 +245,24 @@ class OrderResource extends Resource
 
                 Tables\Columns\TextColumn::make('type')->label('نوع الطلب'),
                 Tables\Columns\TextColumn::make('bay_type')->label('حالة الدفع'),
+                Tables\Columns\TextColumn::make('price')->label('التحصيل'),
+                Tables\Columns\TextColumn::make('far')->label('أجور الشحن'),
+
                 Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل'),
+                Tables\Columns\TextColumn::make('sender.phone')->label('هاتف المرسل')
+                    ->url(fn($record)=>url('https://wa.me/'.ltrim($record->receive->phone,'+')))->openUrlInNewTab()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('citySource.name')->label('من مدينة'),
                 Tables\Columns\TextColumn::make('receive.name')->label('اسم المستلم '),
+                Tables\Columns\TextColumn::make('receive.address')->label('عنوان المستلم ')->searchable(),
+                Tables\Columns\TextColumn::make('receive.phone')->label('هاتف المستلم ')
+                    ->url(fn($record)=>url('https://wa.me/'.ltrim($record->receive->phone,'+')))->openUrlInNewTab()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('created_at')->label('تاريخ الشحنة')
+                    ->formatStateUsing(fn ($state) => Carbon::parse($state)->diffForHumans()), // عرض الزمن بشكل نسبي
+
+
+
                 Tables\Columns\TextColumn::make('cityTarget.name')->label('الى مدينة '),
                 Tables\Columns\TextColumn::make('agencies.task')
                     ->formatStateUsing(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->task)
