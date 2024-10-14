@@ -117,6 +117,7 @@
         .footer p {
             margin: 0;
             font-size: 1rem;
+            padding: 1px;
         }
     </style>
     <!-- Fonts -->
