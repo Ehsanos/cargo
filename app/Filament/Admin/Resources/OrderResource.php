@@ -196,7 +196,7 @@ class OrderResource extends Resource
                                     ->schema([
 
                                     Forms\Components\Select::make('unit_id')
-                                        ->relationship('unit', 'name')->label('الوحدة')->required()])
+                                        ->relationship('unit', 'name')->label('الوحدة')])
                                     ->deletable(false)
                                     ->addable(false)->label('نوع الشحنة')
                                 ->maxItems(1),
