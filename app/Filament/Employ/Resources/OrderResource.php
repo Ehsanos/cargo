@@ -97,7 +97,7 @@ class OrderResource extends Resource
                                             $set('city_source_id', $user?->city_id);
                                             $set('branch_source_id', $user?->branch_id);
                                         }
-                                    })->live(),
+                                    })->live()->searchable()->preload(),
 
 
                                 Forms\Components\Select::make('branch_source_id')->relationship('branchSource', 'name')->label('اسم الفرع المرسل')
@@ -106,12 +106,12 @@ class OrderResource extends Resource
                                         if ($branch) {
                                             $set('city_source_id', $branch->city_id);
                                         }
-                                    })->live()->required(),
+                                    })->live()->required()->searchable()->preload(),
                                 Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل'),
                                 Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل'),
                                 Forms\Components\Select::make('city_source_id')->relationship('citySource', 'name')
                                     ->label('من مدينة')->searchable()->preload(),
-                                Forms\Components\Select::make('receive_id')->relationship('receive', 'name')->label('اسم المستلم')
+                                Forms\Components\Select::make('receive_id')->relationship('receive', 'name')->label('معرف المستلم')->searchable()->preload()
                                     ->afterStateUpdated(function ($state, $set) {
                                         $user = User::find($state);
                                         if ($user) {
@@ -123,13 +123,13 @@ class OrderResource extends Resource
                                         }
                                     })->live(),
 
-                                Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')
+                                Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')->searchable()->preload()
                                     ->afterStateUpdated(function ($state, $set) {
                                         $branch = Branch::find($state);
                                         if ($branch) {
                                             $set('city_target_id', $branch->city_id);
                                         }
-                                    })->live(),
+                                    })->live()->searchable()->preload(),
 
                                 Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
                                 Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم'),
