@@ -187,7 +187,7 @@ class UserResource extends Resource
                 ]),
                 Tables\Columns\TextColumn::make('level')->badge()
                     ->label('فئة المستخدم')->sortable(),
-                Tables\Columns\TextColumn::make('iban')->disabled()->label('IBAN'),
+                Tables\Columns\TextColumn::make('iban')->disabled()->label('IBAN')->copyable(),
 
                 Tables\Columns\TextColumn::make('job')->badge()->label('نوع الموظف'),
 
