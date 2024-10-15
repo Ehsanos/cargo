@@ -296,6 +296,14 @@ class OrderResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ReplicateAction::make()->excludeAttributes([
+                    'total_price'
+                ])->beforeReplicaSaved(function (Model $replica): void {
+
+                    $replica['code']="AWB" . now()->format('YmdHis'); // الطابع الزمني بتنسيق قصير
+
+                }),
+
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

@@ -190,16 +190,14 @@ class OrderResource extends Resource
                                     ('الحجم')->searchable()->preload(),
 
 
-
-
                                 Forms\Components\Repeater::make('packages')->relationship('packages')
                                     ->schema([
 
-                                    Forms\Components\Select::make('unit_id')
-                                        ->relationship('unit', 'name')->label('الوحدة')])
+                                        Forms\Components\Select::make('unit_id')
+                                            ->relationship('unit', 'name')->label('الوحدة')])
                                     ->deletable(false)
                                     ->addable(false)->label('نوع الشحنة')
-                                ->maxItems(1),
+                                    ->maxItems(1),
 
 
                                 Forms\Components\Select::make('bay_type')->options([
@@ -319,18 +317,18 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('far')->label('أجور الشحن'),
                 Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل')->searchable(),
                 Tables\Columns\TextColumn::make('sender.phone')->label('هاتف المرسل')
-                    ->url(fn($record)=>url('https://wa.me/'.ltrim($record->receive?->phone,'+')))->openUrlInNewTab()
+                    ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive?->phone, '+')))->openUrlInNewTab()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('citySource.name')->label('من مدينة')->searchable(),
                 Tables\Columns\TextColumn::make('receive.name')->label('معرف المستلم ')->searchable(),
                 Tables\Columns\TextColumn::make('receive.address')->label('عنوان المستلم ')->searchable(),
                 Tables\Columns\TextColumn::make('receive.phone')->label('هاتف المستلم ')
-                    ->url(fn($record)=>url('https://wa.me/'.ltrim($record->receive?->phone,'+')))->openUrlInNewTab()
+                    ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive?->phone, '+')))->openUrlInNewTab()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم'),
                 Tables\Columns\TextColumn::make('cityTarget.name')->label('الى مدينة ')->searchable(),
                 Tables\Columns\TextColumn::make('created_at')->label('تاريخ الشحنة')
-                    ->formatStateUsing(fn ($state) => Carbon::parse($state)->diffForHumans()) // عرض الزمن بشكل نسبي
+                    ->formatStateUsing(fn($state) => Carbon::parse($state)->diffForHumans()) // عرض الزمن بشكل نسبي
 
 
             ])->defaultSort('created_at', 'desc')
@@ -382,8 +380,17 @@ class OrderResource extends Resource
 
             ])->filtersFormMaxHeight('300px')
             ->actions([
+                Tables\Actions\ReplicateAction::make()->excludeAttributes([
+                    'total_price'
+                ])->beforeReplicaSaved(function (Model $replica): void {
+
+                    $replica['code']="AWB" . now()->format('YmdHis'); // الطابع الزمني بتنسيق قصير
+
+                }),
+
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+
 //                Tables\Actions\DeleteAction::make(),
 
             ])
