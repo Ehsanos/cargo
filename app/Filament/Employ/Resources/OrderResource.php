@@ -263,14 +263,16 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('packages.unit.name')->label('نوع الشحنة'),
                 Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل'),
                 Tables\Columns\TextColumn::make('sender.phone')->label('هاتف المرسل')
-                    ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive->phone, '+')))->openUrlInNewTab()
+                    ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive?->phone, '+')))
+                    ->openUrlInNewTab()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('citySource.name')->label('من مدينة'),
                 Tables\Columns\TextColumn::make('receive.name')->label('معرف المستلم '),
                 Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم '),
                 Tables\Columns\TextColumn::make('receive.address')->label('عنوان المستلم ')->searchable(),
                 Tables\Columns\TextColumn::make('receive.phone')->label('هاتف المستلم ')
-                    ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive->phone, '+')))->openUrlInNewTab()
+                    ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive?->phone, '+')))
+                    ->openUrlInNewTab()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')->label('تاريخ الشحنة')
                     ->formatStateUsing(fn($state) => Carbon::parse($state)->diffForHumans()), // عرض الزمن بشكل نسبي
