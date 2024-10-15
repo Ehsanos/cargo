@@ -319,13 +319,13 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('far')->label('أجور الشحن'),
                 Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل')->searchable(),
                 Tables\Columns\TextColumn::make('sender.phone')->label('هاتف المرسل')
-                    ->url(fn($record)=>url('https://wa.me/'.ltrim($record->receive->phone,'+')))->openUrlInNewTab()
+                    ->url(fn($record)=>url('https://wa.me/'.ltrim($record->receive?->phone,'+')))->openUrlInNewTab()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('citySource.name')->label('من مدينة')->searchable(),
                 Tables\Columns\TextColumn::make('receive.name')->label('معرف المستلم ')->searchable(),
                 Tables\Columns\TextColumn::make('receive.address')->label('عنوان المستلم ')->searchable(),
                 Tables\Columns\TextColumn::make('receive.phone')->label('هاتف المستلم ')
-                    ->url(fn($record)=>url('https://wa.me/'.ltrim($record->receive->phone,'+')))->openUrlInNewTab()
+                    ->url(fn($record)=>url('https://wa.me/'.ltrim($record->receive?->phone,'+')))->openUrlInNewTab()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم'),
                 Tables\Columns\TextColumn::make('cityTarget.name')->label('الى مدينة ')->searchable(),
