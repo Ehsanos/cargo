@@ -32,21 +32,25 @@ class AgencyWidget extends BaseWidget
                 ])->orderBy('order_id')
             )
             ->columns([
-                Tables\Columns\TextColumn::make('task')->label('المهمة'),
-                Tables\Columns\TextColumn::make('status')->label('نوع المهمة'),
-                Tables\Columns\TextColumn::make('activate')->label('حالة المهمة'),
+                Tables\Columns\TextColumn::make('task')->label('المهمة')->sortable(),
+                Tables\Columns\TextColumn::make('status')->label('نوع المهمة')->sortable(),
+                Tables\Columns\TextColumn::make('activate')->label('حالة المهمة')->sortable(),
                 Tables\Columns\TextColumn::make('msg')->label('ملاحظات'),
 
 
-                Tables\Columns\TextColumn::make('order.code')->label('كود الطلب')->searchable(),
-                Tables\Columns\TextColumn::make('order.sender.name')->label('اسم المرسل'),
-                Tables\Columns\TextColumn::make('order.global_name')->label('اسم المستلم'),
-                Tables\Columns\TextColumn::make('order.created_at')->label('تاريخ الطلب')
+                Tables\Columns\TextColumn::make('order.code')->label('كود الطلب')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('order.far_sender')->label('الاجور على المرسل ')->formatStateUsing(fn
+                ($state) => $state ? '✅' : '❌') ->sortable() // استخدام الرموز التعبيرية
+                ,
+                Tables\Columns\TextColumn::make('order.sender.name')->label('اسم المرسل')->sortable(),
+                Tables\Columns\TextColumn::make('order.global_name')->label('اسم المستلم')->sortable(),
+                Tables\Columns\TextColumn::make('order.created_at')->label('تاريخ الطلب')->sortable()
                     ->formatStateUsing(fn($state) => Carbon::parse($state)->diffForHumans()), // عرض الزمن بشكل نسبي
 
 
 
-            ])->actions([
+            ])
+            ->actions([
                 Tables\Actions\Action::make('complete_task')
                     ->form(function ($record) {
 
