@@ -123,7 +123,7 @@ class OrderResource extends Resource
 //                                    ->hidden(fn(Forms\Get $get): bool => !$get('active'))
 //                                    ->live()
 //                                ,
-                                Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم  '),
+                                Forms\Components\TextInput::make('global_name')->label('اسم المستلم  '),
 
                                 Forms\Components\Select::make('bay_type')->options([
                                     BayTypeEnum::AFTER->value => BayTypeEnum::AFTER->getLabel(),

@@ -170,7 +170,9 @@ class OrderResource extends Resource
 
 
 //                                Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
-                                Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')->live()->required(),
+                                Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')
+                                    ->searchable()->preload()
+                                    ->live()->required(),
 
 
                                 Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم')->required(),

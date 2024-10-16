@@ -40,7 +40,7 @@ class AgencyWidget extends BaseWidget
 
                 Tables\Columns\TextColumn::make('order.code')->label('كود الطلب')->searchable(),
                 Tables\Columns\TextColumn::make('order.sender.name')->label('اسم المرسل'),
-                Tables\Columns\TextColumn::make('order.receive.name')->label('اسم المستلم'),
+                Tables\Columns\TextColumn::make('order.global_name')->label('اسم المستلم'),
                 Tables\Columns\TextColumn::make('order.created_at')->label('تاريخ الطلب')
                     ->formatStateUsing(fn($state) => Carbon::parse($state)->diffForHumans()), // عرض الزمن بشكل نسبي
 
