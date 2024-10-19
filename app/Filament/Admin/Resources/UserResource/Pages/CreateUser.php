@@ -18,6 +18,8 @@ class CreateUser extends CreateRecord
 //    }
 
     protected static string $resource = UserResource::class;
+
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
 
@@ -31,6 +33,7 @@ class CreateUser extends CreateRecord
                 break;
             }
         }
+
 
 
         $data['phone'] = '+'.$data['country_code'] . $data['phone_number'];

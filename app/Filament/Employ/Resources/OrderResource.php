@@ -150,10 +150,10 @@ class OrderResource extends Resource
                                 Forms\Components\Repeater::make('packages')->relationship('packages')->schema([
 
                                     Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة')
-                                        ])
+                                ])
                                     ->deletable(false)
                                     ->addable(false)->label('نوع الشحنة')
-                                ->maxItems(1)
+                                    ->maxItems(1)
                                 ,
 
                                 Forms\Components\Select::make('weight_id')
@@ -246,6 +246,7 @@ class OrderResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->poll(10)
             ->columns([
                 PopoverColumn::make('qr_url')
                     ->trigger('click')
@@ -299,6 +300,116 @@ class OrderResource extends Resource
 
 
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('success_pick')
+                    ->form(function ($record) {
+                        if ($record->far_sender == true && $record->far) {
+                            return [
+                                Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد إلتقاط الطلب وإستلام أجور الشحن {$record->far}")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
+                            ];
+                        }
+                        return [
+                            Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد إلتقاط الطلب ")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
+                        ];
+                    })
+                    ->action(function ($record, $data) {
+                        DB::beginTransaction();
+                        try {
+                            $sender = $record->sender;
+                            $staff = $record->pick;
+                            if ($record->far_sender == true && $record->far && $record->far > 0) {
+
+                                Balance::create([
+                                    'user_id' => $sender->id,
+                                    'credit' => $record->far,
+                                    'debit' => 0,
+                                    'info' => 'دفع أجور الشحن الطلب #' . $record->qr_code,
+                                    'is_complete' => true,
+                                    'order_id' => $record->id,
+                                    'total' => $sender->total_balance + $record->far,
+                                ]);
+
+                                Balance::create([
+                                    'user_id' => $staff->id,
+                                    'credit' => 0,
+                                    'debit' => $record->far,
+                                    'info' => 'دفع أجور الشحن الطلب #' . $record->qr_code,
+                                    'is_complete' => true,
+                                    'order_id' => $record->id,
+                                    'total' => $staff->total_balance - $record->far,
+                                ]);
+
+                            }
+                            $record->update(['status' => OrderStatusEnum::PICK->value]);
+                            DB::commit();
+                            Notification::make('success')->title('نجاح العملية')->body('تم تأكيد إلتقاط الطلب')->success()->send();
+                        } catch (\Exception | Error $e) {
+                            Notification::make('error')->title('فشل العملية')->body($e->getLine())->danger()->send();
+                        }
+                    })
+                    ->label('تأكيد إلتقاط الشحنة')->button()->color('info')
+                    ->visible(fn($record)=>$record->pick_id==auth()->id() && $record->status==OrderStatusEnum::AGREE),
+
+                Tables\Actions\Action::make('success_given')
+                    ->form(function ($record) {
+                        $price=$record->price;
+                        $far=$record->far;
+                        $totalPrice=$price;
+                        if ($record->far_sender == false&& $record->far>0) {
+                            $totalPrice = $price + $far;
+                        }
+                        if($totalPrice>0){
+                            return [
+                                Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد تسليم الطلب وإستلام أجور الشحن {$totalPrice}")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
+                            ];
+                        }
+                        return [
+                            Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد تسليم الطلب ")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
+                        ];
+                    })
+                    ->action(function ($record, $data) {
+                        DB::beginTransaction();
+                        try {
+                            $price=$record->price;
+                            $far=$record->far;
+                            $totalPrice=$price;
+                            if ($record->far_sender == false&& $record->far>0) {
+                                $totalPrice = $price + $far;
+                            }
+
+                            if ($totalPrice>0) {
+                                $sender = $record->receive;
+                                $staff = $record->given;
+                                Balance::create([
+                                    'user_id' => $sender->id,
+                                    'credit' => $totalPrice,
+                                    'debit' => 0,
+                                    'info' => 'دفع أجور الشحن الطلب #' . $record->qr_code,
+                                    'is_complete' => true,
+                                    'order_id' => $record->id,
+                                    'total' => $sender->total_balance + $record->far,
+                                ]);
+
+                                Balance::create([
+                                    'user_id' => $staff->id,
+                                    'credit' => 0,
+                                    'debit' => $totalPrice,
+                                    'info' => 'دفع أجور الشحن الطلب #' . $record->qr_code,
+                                    'is_complete' => true,
+                                    'order_id' => $record->id,
+                                    'total' => $staff->total_balance - $record->far,
+                                ]);
+
+                            }
+                            $record->update(['status' => OrderStatusEnum::SUCCESS->value]);
+                            DB::commit();
+                            Notification::make('success')->title('نجاح العملية')->body('تم تأكيد تسليم الطلب')->success()->send();
+                        } catch (\Exception | Error $e) {
+                            Notification::make('error')->title('فشل العملية')->body($e->getLine())->danger()->send();
+                        }
+                    })->label('تأكيد تسليم الشحنة')->button()->color('info')
+                    ->visible(fn($record)=>$record->given_id==auth()->id() && ($record->status==OrderStatusEnum::TRANSFER || $record->status==OrderStatusEnum::PICK))
+
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -308,12 +419,12 @@ class OrderResource extends Resource
     }
 
 
-    public static function getEloquentQuery(): Builder
+    /*public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
             ->whereHas('agencies', fn($query) => $query->where('agencies.user_id', auth()->id()))
             ->orWhere(['orders.take_id' => auth()->user()->id, 'orders.delivery_id' => auth()->user()->id]);
-    }
+    }*/
 
     public static function getRelations(): array
     {

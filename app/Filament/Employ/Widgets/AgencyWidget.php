@@ -19,8 +19,15 @@ use Illuminate\Support\Facades\DB;
 
 class AgencyWidget extends BaseWidget
 {
-    protected static ?string $heading = "المهام";
+    protected static ?string $heading = "مهام إدارية";
 
+    /**
+     * @return int|int[]|null[]|string
+     */
+    public function getColumnSpan(): array|int|string
+    {
+        return 2;
+    }
 
     public function table(Table $table): Table
     {

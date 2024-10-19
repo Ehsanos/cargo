@@ -99,4 +99,14 @@ class Order extends Model
         return $this->belongsTo(Unit::class);
     }
 
+    public function pick(): BelongsTo
+    {
+        return $this->belongsTo(User::class,'pick_id');
+    }
+
+    public function given(): BelongsTo
+    {
+        return $this->belongsTo(User::class,'given_id');
+    }
+
 }

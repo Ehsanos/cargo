@@ -95,14 +95,10 @@ class UserResource extends Resource
                                     })->live(),
 
 
-//                                Forms\Components\Select::make('branch_id')->label('الفرع')
-//
-//
-//                              ->options(fn (callable $get) => $get('temp') ?? [])->hidden(fn(Forms\Get $get):bool =>
-//                                    !$get('city_id'))
-//
-//
-//                                    ->live(),
+                                Forms\Components\Select::make('branch_id')->label('الفرع')
+
+
+                              ->options(Branch::pluck('name','id'))->searchable()->visible(fn($get)=>$get('level')==LevelUserEnum::STAFF->value || $get('level')==LevelUserEnum::DRIVER->value || $get('level')==LevelUserEnum::BRANCH->value)->required(),
 
                                 Forms\Components\TextInput::make('full_name')->label('الاسم الكامل'),
                                 Forms\Components\DatePicker::make('birth_date')->label('تاريخ الميلاد')

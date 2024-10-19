@@ -54,7 +54,7 @@ class EditUser extends EditRecord
     {
         $temp = City::where('id', $data['city_id'])->pluck('branch_id')->first();
 
-        $data['branch_id'] = $temp;
+
 
         $data['phone'] = $data['country_code'] . $data['phone_number'];
         unset($data['country_code'], $data['phone_number']); // حذف الحقول المنفصلة بعد الجمع

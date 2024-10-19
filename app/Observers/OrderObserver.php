@@ -103,11 +103,6 @@ class OrderObserver
         if ($order->isDirty('status') && $order->status->value == OrderStatusEnum::RETURNED->value && $order->getOriginal('status') != OrderStatusEnum::PENDING) {
             $order->balances()->delete();
         }
-
-
-        // Old
-
-
     }
 
     /**
