@@ -38,7 +38,7 @@ class User extends Authenticatable implements HasMedia, FilamentUser,HasAvatar
             return true;
         } elseif ($panel->getId() === 'branch' && $this->level == LevelUserEnum::BRANCH) {
             return true;
-        } elseif ($panel->getId() === 'employ' && ($this->level === LevelUserEnum::DRIVER || $this->level === LevelUserEnum::STAFF)) {
+        } elseif ($panel->getId() === 'employ' && ($this->level === LevelUserEnum::STAFF )) {
             return true;
         } elseif($panel->getId()==='user' && $this->level === LevelUserEnum::USER) {
             return true;

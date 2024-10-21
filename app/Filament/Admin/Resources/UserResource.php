@@ -94,15 +94,28 @@ class UserResource extends Resource
                                         $set('temp', Branch::where('city_id', $state)->pluck('name'));
                                     })->live(),
 
-
+                                Forms\Components\Radio::make('level')->options(
+                                    [
+                                        LevelUserEnum::ADMIN->value => LevelUserEnum::ADMIN->getLabel(),
+                                        LevelUserEnum::BRANCH->value => LevelUserEnum::BRANCH->getLabel(),
+                                        LevelUserEnum::STAFF->value => LevelUserEnum::STAFF->getLabel(),
+                                        LevelUserEnum::USER->value => LevelUserEnum::USER->getLabel(),
+                                    ]
+                                )->default(LevelUserEnum::USER->value)->label('رتبة المستخدم')->required()->live(),
                                 Forms\Components\Select::make('branch_id')->label('الفرع')
 
 
-                              ->options(Branch::pluck('name','id'))->searchable()->visible(fn($get)=>$get('level')==LevelUserEnum::STAFF->value || $get('level')==LevelUserEnum::DRIVER->value || $get('level')==LevelUserEnum::BRANCH->value)->required(),
+                              ->options(fn($get,$context,$record)=> Branch::when($context=='create' && $get('level')===LevelUserEnum::BRANCH->value,
+                                  fn($query)=>$query->whereDoesntHave('users',fn($query)=>$query->where('level',LevelUserEnum::BRANCH->value)))
+                                  ->when($context=='edit' && $get('level')===LevelUserEnum::BRANCH->value,
+                                      fn($query)=>$query
+                                          ->whereDoesntHave('users',fn($query)=>$query->where('level',LevelUserEnum::BRANCH->value))
+                                          ->orWhereHas('users',fn($query)=>$query->where('level',LevelUserEnum::BRANCH->value)->where('users.id',$record->id)))
+                                  ->pluck('name','id'))->searchable()->visible(fn($get)=>$get('level')==LevelUserEnum::STAFF->value || $get('level')==LevelUserEnum::STAFF->value || $get('level')==LevelUserEnum::BRANCH->value)->required(),
 
                                 Forms\Components\TextInput::make('full_name')->label('الاسم الكامل'),
                                 Forms\Components\DatePicker::make('birth_date')->label('تاريخ الميلاد')
-                                    ->format('Y-m-d')->default(now()),
+                                    ->format('Y-m-d')->default(now())
 
                             ]),
 
@@ -116,14 +129,7 @@ class UserResource extends Resource
 
                                     ]
                                 )->label('حالة المستخدم')->default('active'),
-                                Forms\Components\Select::make('level')->options(
-                                    [
-                                        LevelUserEnum::USER->value => LevelUserEnum::USER->getLabel(),
-                                        LevelUserEnum::ADMIN->value => LevelUserEnum::ADMIN->getLabel(),
-                                        LevelUserEnum::DRIVER->value => LevelUserEnum::DRIVER->getLabel(),
-                                        LevelUserEnum::BRANCH->value => LevelUserEnum::BRANCH->getLabel(),
-                                    ]
-                                )->label('رتبة المستخدم'),
+
                                 Forms\Components\Select::make('job')->options(
                                     [
                                         JobUserEnum::STAFF->value => JobUserEnum::STAFF->getLabel(),

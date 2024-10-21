@@ -67,16 +67,6 @@ class OrderResource extends Resource
                                     [OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel()]
 
                                 ),
-//                                Forms\Components\Select::make('branch_source_id')
-//                                    ->label('اسم الفرع المرسل'),
-//                                Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم'),
-
-
-//                                Forms\Components\TextInput::make('sender_id')->()->label('اسم المرسل'),
-//                                Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل'),
-//                                Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل'),
-
-
                                 Forms\Components\Grid::make()->schema([
 
                                     Forms\Components\Checkbox::make('cheack')->label('هل المستلم عنده حساب على البرنامج ؟')
@@ -116,13 +106,6 @@ class OrderResource extends Resource
                                 Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم')->hidden(fn(Forms\Get $get): bool => !$get('active'))
                                     ->live(),
 
-
-//                                Forms\Components\Select::make('city_source_id')->relationship('citySource', 'name')->label('من مدينة'),
-//                                Forms\Components\Select::make('city_target_id')->options(City::where('is_main', false)
-//                                    ->pluck('name', 'id'))->label('الى مدينة/البلدة')
-//                                    ->hidden(fn(Forms\Get $get): bool => !$get('active'))
-//                                    ->live()
-//                                ,
                                 Forms\Components\TextInput::make('global_name')->label('اسم المستلم  '),
 
                                 Forms\Components\Select::make('bay_type')->options([
@@ -137,32 +120,17 @@ class OrderResource extends Resource
                                         false => 'المستلم'
                                     ])->required()->default(true)->inline()
                                     ->label('أجور الشحن')->default(1),
-
                                 Forms\Components\TextInput::make('price')->numeric()->label('التحصيل'),
-//                                Forms\Components\TextInput::make('total_weight')->numeric()->label('الوزن الكلي'),
-//                                Forms\Components\TextInput::make('canceled_info')
-//                                    ->hidden(fn(Forms\Get $get): bool => !$get('active'))->live()
-//                                    ->label('سبب الارجاع في حال ارجاع الطلب'),
-
+                                Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة')
+                                    ->label('نوع الشحنة') ,
                                 Forms\Components\Select::make('size_id')
                                     ->options(Category::where('type', '=', 'size')->pluck('name', 'id'))
                                     ->label('الحجم'),
-
                                 Forms\Components\Select::make('weight_id')
                                     ->options(Category::where('type', '=', 'weight')->pluck('name', 'id'))
                                     ->label('الوزن'),
                                 Forms\Components\DatePicker::make('shipping_date')->default(now()->format('Y-m-d'))
-
                                     ->label('تاريخ الطلب'),
-
-//                                Forms\Components\Radio::make('far_sender')
-//                                    ->options([
-//                                        true=>'المرسل',
-//                                        false=>'المستلم'
-//                                    ])->required()->default(true)->inline()
-//                                    ->label('أجور الشحن'),
-
-
                             ]),
 
 

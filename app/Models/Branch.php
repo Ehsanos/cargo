@@ -37,4 +37,9 @@ class Branch extends Model
         return $this->hasMany(Order::class,'branch_source_id');
     }
 
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class);
+    }
+
 }

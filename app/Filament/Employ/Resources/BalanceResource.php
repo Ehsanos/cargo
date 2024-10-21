@@ -34,8 +34,9 @@ class BalanceResource extends Resource
                 Forms\Components\Section::make('سندات')->schema([
                     Forms\Components\Select::make('type')->options([
                         BalanceTypeEnum::CATCH->value => BalanceTypeEnum::CATCH->getLabel(),
-                        //BalanceTypeEnum::PUSH->value => BalanceTypeEnum::PUSH->getLabel(),
-                    ])->default(BalanceTypeEnum::CATCH->value)->live()->rules([
+
+                    ])->default(BalanceTypeEnum::CATCH->value)->live()
+                        ->rules([
                         fn(): Closure => function (string $attribute, $value, Closure $fail) {
                             $validateArray = [
                                 BalanceTypeEnum::CATCH->value,

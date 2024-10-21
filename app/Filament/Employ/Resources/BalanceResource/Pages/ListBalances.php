@@ -8,6 +8,7 @@ use App\Models\Balance;
 use App\Models\User;
 use Closure;
 use Filament\Actions;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -21,8 +22,8 @@ class ListBalances extends ListRecords
     {
         return [
             Actions\Action::make('add')->form([
-                Select::make('type')->options([
-                    BalanceTypeEnum::CATCH->value => BalanceTypeEnum::CATCH->getLabel(),
+             /*   Select::make('type')->options([
+//                    BalanceTypeEnum::CATCH->value => BalanceTypeEnum::CATCH->getLabel(),
                     BalanceTypeEnum::PUSH->value => BalanceTypeEnum::PUSH->getLabel(),
                 ])->default(BalanceTypeEnum::PUSH->value)->live()->rules([
                     fn(): Closure => function (string $attribute, $value, Closure $fail) {
@@ -34,13 +35,17 @@ class ListBalances extends ListRecords
                             $fail('يجب إختيار نوع سند صحيح');
                         }
                     },
-                ])->required()->label('نوع السند'),
+                ])->required()->label('نوع السند'),*/
+                Placeholder::make('type')->dehydrated(false)->content('سند دفع'),
 
                 TextInput::make('value')->label('القيمة')->numeric()->required()
                     ->rules([
                         fn(): Closure => function (string $attribute, $value, Closure $fail) {
                             if ($value <= 0) {
                                 $fail('يجب أن تكون القيمة أكبر من 0');
+                            }
+                            if(auth()->user()->total_balance<$value){
+                                $fail('لا تملك رصيد كافي');
                             }
                         },
                     ]),
@@ -58,40 +63,6 @@ class ListBalances extends ListRecords
 
                     return ;
                 }
-                if ($data['type'] == BalanceTypeEnum::CATCH->value) {
-                    \DB::beginTransaction();
-                    try {
-                        Balance::create([
-                            'credit' => 0,
-                            'debit' => $data['value'],
-                            'type' => BalanceTypeEnum::CATCH->value,
-                            'is_complete' => true,
-                            'user_id' => auth()->id(),
-                            'total' => auth()->user()->total_balance - $data['value'],
-                            'info' => $data['info'],
-                            'customer_name'=>$data['customer_name'],
-                        ]);
-                        Balance::create([
-                            'credit' => $data['value'],
-                            'debit' => 0,
-                            'type' => BalanceTypeEnum::PUSH->value,
-                            'is_complete' => true,
-                            'user_id' => $data['user_id'],
-                            'total' => $user->total_balance + $data['value'],
-                            'info' => $data['info'],
-                            'customer_name'=>$data['customer_name'],
-
-                        ]);
-                        \DB::commit();
-                        Notification::make('success')->title('نجاح العملية')->body('تم إضافة السند')->success()->send();
-                    } catch (\Exception | \Error $e) {
-                        \DB::rollBack();
-                        Notification::make('success')->title('فشل العملية')->body('لم يتم إضافة السند')->danger()->send();
-
-                    }
-                }
-                //
-                else{
                     \DB::beginTransaction();
                     try {
                         Balance::create([
@@ -124,7 +95,7 @@ class ListBalances extends ListRecords
                         Notification::make('success')->title('فشل العملية')->body('لم يتم إضافة السند')->danger()->send();
 
                     }
-                }
+
             })->label('إضافة سند'),
         ];
     }
