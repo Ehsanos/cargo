@@ -25,7 +25,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements HasMedia, FilamentUser,HasAvatar
+class User extends Authenticatable implements HasMedia, FilamentUser, HasAvatar
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles, InteractsWithMedia;
     use HasPanelShield;
@@ -38,12 +38,12 @@ class User extends Authenticatable implements HasMedia, FilamentUser,HasAvatar
             return true;
         } elseif ($panel->getId() === 'branch' && $this->level == LevelUserEnum::BRANCH) {
             return true;
-        } elseif ($panel->getId() === 'employ' && ($this->level === LevelUserEnum::STAFF )) {
+        } elseif ($panel->getId() === 'employ' && ($this->level === LevelUserEnum::STAFF)) {
             return true;
-        } elseif($panel->getId()==='user' && $this->level === LevelUserEnum::USER) {
+        } elseif ($panel->getId() === 'user' && $this->level === LevelUserEnum::USER) {
             return true;
         }
-return false;
+        return false;
 
     }
 
@@ -51,11 +51,11 @@ return false;
     {
         return $this->avatar_url ? Storage::url("$this->avatar_url") : null;
     }
-/**
- * The attributes that are mass assignable.
- *
- * @var array<int, string>
- */
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
 //    protected $fillable = [
 //        'name',
 //        'username',
@@ -69,77 +69,76 @@ return false;
 //        'job'
 //
 //    ];
-protected
-$guarded = [];
-/**
- * The attributes that should be hidden for serialization.
- *
- * @var array<int, string>
- */
-protected
-$hidden = [
-    'password',
-    'remember_token',
-];
+    protected
+        $guarded = [];
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected
+        $hidden = [
+        'password',
+        'remember_token',
+    ];
 
-/**
- * The attributes that should be cast.
- *
- * @var array<string, string>
- */
-protected
-$casts = [
-    'email_verified_at' => 'datetime',
-    'password' => 'hashed',
-    'level' => LevelUserEnum::class,
-    'status' => ActivateStatusEnum::class,
-    'job' => JobUserEnum::class,
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected
+        $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'level' => LevelUserEnum::class,
+        'status' => ActivateStatusEnum::class,
+        'job' => JobUserEnum::class,
 
-];
+    ];
 
 
-public  function city(): BelongsTo
-{
-    return $this->belongsTo(City::class);
-}
+    public function city(): BelongsTo
+    {
+        return $this->belongsTo(City::class);
+    }
 
-public function branch(): BelongsTo
-{
-    return $this->belongsTo(Branch::class);
-}
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
+    }
 
-public function sentOrders(): HasMany
-{
-    return $this->hasMany(Order::class, 'sender_id');
-}
+    public function sentOrders(): HasMany
+    {
+        return $this->hasMany(Order::class, 'sender_id');
+    }
 
-public function receivedOrders(): HasMany
-{
-    return $this->hasMany(Order::class, 'receive_id');
-}
+    public function receivedOrders(): HasMany
+    {
+        return $this->hasMany(Order::class, 'receive_id');
+    }
 
-public  function balances(): HasMany
-{
-    return $this->hasMany(Balance::class)->where('balances.is_complete', 1);
-}
+    public function balances(): HasMany
+    {
+        return $this->hasMany(Balance::class)->where('balances.is_complete', 1);
+    }
 
-public function pendingBalances(): HasMany
-{
-    return $this->hasMany(Balance::class)->where('balances.is_complete', 0);
-}
+    public function pendingBalances(): HasMany
+    {
+        return $this->hasMany(Balance::class)->where('balances.is_complete', 0);
+    }
 
-public function getTotalBalanceAttribute(): float
-{
-    $total = DB::table('balances')->where('user_id', $this->id)->where('is_complete', true)->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0;
-    return sprintf('%.2f', $total);
-}
+    public function getTotalBalanceAttribute(): float
+    {
+        $total = DB::table('balances')->where('user_id', $this->id)->where('is_complete', true)->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0;
+        return sprintf('%.2f', $total);
+    }
 
-public function getPendingBalanceAttribute(): float
-{
-    $total = DB::table('balances')->where('user_id', $this->id)->where('is_complete', false)->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0;
-    return sprintf('%.2f', $total);
-}
-
+    public function getPendingBalanceAttribute(): float
+    {
+        $total = DB::table('balances')->where('user_id', $this->id)->where('is_complete', false)->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0;
+        return sprintf('%.2f', $total);
+    }
 
 
 }

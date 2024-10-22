@@ -64,48 +64,6 @@ class OrderResource extends Resource
                             ])->label('نوع الطلب')
                                 ->required()
                                 ->searchable(),
-                        /*    Forms\Components\Select::make('status')->options(
-                                [
-                                    OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel(),
-                                    OrderStatusEnum::AGREE->value => OrderStatusEnum::AGREE->getLabel(),
-//                                        OrderStatusEnum::PICK->value => OrderStatusEnum::PICK->getLabel(),
-//                                        OrderStatusEnum::TRANSFER->value => OrderStatusEnum::TRANSFER->getLabel(),
-//                                        OrderStatusEnum::SUCCESS->value => OrderStatusEnum::SUCCESS->getLabel(),
-//                                        OrderStatusEnum::RETURNED->value => OrderStatusEnum::RETURNED->getLabel(),
-//                                        OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
-
-                                ]
-                            )->label('حالة الطلب')->reactive()->afterStateUpdated(
-                                function ($state, callable $set) {
-                                    if (OrderStatusEnum::RETURNED->value === $state)
-                                        $set('active', true);
-                                    else
-                                        $set('active', false);
-
-                                }
-
-                            )->live()->required(),*/
-
-
-//                                ->afterStateUpdated(function ($state,$set){
-//                                    $branch=Branch::find($state);
-//                                    if($branch){
-//                                        $set('city_source_id',$branch->city_id);
-//                                    }
-//                                })
-
-
-//                                    ->afterStateUpdated(function ($state,$set){
-//                                        $branch=Branch::find($state);
-//                                        if($branch){
-//                                            $set('city_target_id',$branch->city_id);
-//                                        }
-//                                    })
-//
-
-
-//                                Forms\Components\DatePicker::make('shipping_date')->label('تاريخ الطلب')->format('Y-m-d')->default(now()->format('Y-m-d')),
-
                             Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')->required()
                                 ->afterStateUpdated(function ($state, $set) {
                                     $user = User::with('city')->find($state);
@@ -236,7 +194,7 @@ class OrderResource extends Resource
                                 ->schema([
 
                                     Forms\Components\Select::make('user_id')->options(User::where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)
-                                    )->pluck('name', 'id'))->label('الموظف')->searchable()->required(),
+                                    )->pluck('name', 'id'))->label('الموظف')->searchable(),
                                     Forms\Components\Radio::make('status')->options([
                                         TaskAgencyEnum::TASK->value => TaskAgencyEnum::TASK->getLabel(),
                                         TaskAgencyEnum::TRANSPORT->value => TaskAgencyEnum::TRANSPORT->getLabel(),
@@ -244,7 +202,7 @@ class OrderResource extends Resource
                                     ])->label('المهمة'),
                                     Forms\Components\TextInput::make('task')->label('المهمة المطلوب تنفيذها'),
 
-                                ])->defaultItems(2)->minItems(2)
+                                ])->defaultItems(2)
                                 ->collapsible()
                                 ->grid(2)
                                 ->deletable(true)
