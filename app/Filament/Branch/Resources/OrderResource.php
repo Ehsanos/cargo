@@ -304,7 +304,7 @@ class OrderResource extends Resource
                             $records->update(['pick_id' => $data['pick_id'],'status'=>OrderStatusEnum::AGREE->value]);
                             Notification::make('success')->title('نجاح العملية')->body('تم تحديد موظف الإلتقاط بنجاح')->success()->send();
                         })
-                        ->visible(fn($record) => $record->pick_id == null)
+
                         ->label('تحديد موظف الإلتقاط'),
                     Tables\Actions\BulkAction::make('given_id_check')->form([
                         Forms\Components\Select::make('given_id')->options(User::where('users.branch_id',auth()->user()->branch_id)->where(fn($query)=>$query->where('level',LevelUserEnum::STAFF->value)->orWhere('level',LevelUserEnum::BRANCH->value))->pluck('name','id'))->searchable()->label('موظف الإلتقاط')
@@ -313,7 +313,7 @@ class OrderResource extends Resource
                             $records->update(['given_id' => $data['given_id']]);
                             Notification::make('success')->title('نجاح العملية')->body('تم تحديد موظف التسليم بنجاح')->success()->send();
                         })
-                        ->visible(fn($record) => $record->given_id == null)
+
                         ->label('تحديد موظف التسليم')->color('info')
                 ]),
             ]);
