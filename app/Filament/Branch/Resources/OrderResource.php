@@ -58,19 +58,19 @@ class OrderResource extends Resource
                                          if ($user) {
                                              $set('sender_phone', $user?->phone);
                                              $set('sender_address', $user?->address);
-                                             $set('city_source_id', $user?->city_id);
-                                             $set('branch_source_id', $user?->branch_id);
+                                            /* $set('city_source_id', $user?->city_id);
+                                             $set('branch_source_id', $user?->branch_id);*/
 
                                          }
                                      })->live()->searchable()->preload(),
 
-                                 Forms\Components\Select::make('city_source_id')
+                               /*  Forms\Components\Select::make('city_source_id')
                                      ->relationship('citySource', 'name')
                                      ->label('من مدينة')->reactive()->required()->searchable()->preload(),
 
                                  Forms\Components\Select::make('branch_source_id')
-                                     ->relationship('branchSource', 'name'/*,fn($query,$get)=>$query->where('city_id',$get('city_source_id'))*/)
-                                     ->label('اسم الفرع المرسل')->reactive()->required(),
+                                     ->relationship('branchSource', 'name',fn($query,$get)=>$query->where('city_id',$get('city_source_id')))
+                                     ->label('اسم الفرع المرسل')->reactive()->required(),*/
 
 
 
@@ -204,123 +204,13 @@ class OrderResource extends Resource
                      ]),
 
                  ]);
-        /*    ->schema([
 
-                Tabs::make('Tabs')
-                    ->tabs([
-                        Tabs\Tab::make('معلومات الطلب')
-                            ->schema([
-
-                                Forms\Components\Select::make('type')->options([
-                                    OrderTypeEnum::HOME->value => OrderTypeEnum::HOME->getLabel(),
-                                    OrderTypeEnum::BRANCH->value => OrderTypeEnum::BRANCH->getLabel(),
-                                ])->label('نوع الطلب')->searchable(),
-
-                                Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')
-                                    ->afterStateUpdated(function ($state, $set) {
-                                        $branch = Branch::find($state);
-                                        if ($branch) {
-                                            $set('city_target_id', $branch->city_id);
-                                        }
-                                    })->live(),
-
-                                Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')
-                                    ->afterStateUpdated(function ($state, $set) {
-                                        $user = User::find($state);
-                                        if ($user) {
-                                            $set('sender_phone', $user->phone);
-                                            $set('sender_address', $user->address);
-                                            $set('city_source_id', $user?->city_id);
-                                        }
-                                    })->live(),
-                                Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل'),
-                                Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل'),
-
-                                Forms\Components\Select::make('receive_id')->relationship('receive', 'name')->label('اسم المستلم')
-                                    ->afterStateUpdated(function ($state, $set) {
-                                        $user = User::find($state);
-                                        if ($user) {
-                                            $set('receive_phone', $user->phone);
-                                            $set('receive_address', $user->address);
-                                            $set('city_target_id', $user?->city_id);
-                                            $set('branch_target_id', $user?->branch_id);
-                                        }
-                                    })->live(),
-                                Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
-                                Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم'),
-
-                                Forms\Components\Select::make('city_source_id')->relationship('citySource', 'name')
-                                    ->label('من مدينة')->reactive(),
-                                Forms\Components\Select::make('city_target_id')->relationship('cityTarget', 'name')
-                                    ->reactive()
-                                    ->label('الى مدينة'),
-
-                                Forms\Components\Select::make('bay_type')->options([
-                                    BayTypeEnum::AFTER->value => BayTypeEnum::AFTER->getLabel(),
-                                    BayTypeEnum::BEFORE->value => BayTypeEnum::BEFORE->getLabel()
-
-                                ])->label('نوع الدفع')->required(),
-
-
-                                Forms\Components\Select::make('weight_id')
-                                    ->relationship('weight', 'name')
-                                    ->label
-                                    ('الوزن'),
-
-                                Forms\Components\Select::make('size_id')
-                                    ->relationship('size', 'name')
-                                    ->label
-                                    ('الحجم'),
-                                Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة'),
-                                Forms\Components\TextInput::make('price')->numeric()->label('التحصيل'),
-                                Forms\Components\TextInput::make('far')->numeric()->label('أجور الشحن')->default(1),
-                                Forms\Components\Radio::make('far_sender')
-                                    ->options([
-                                        true => 'المرسل',
-                                        false => 'المستلم'
-                                    ])->required()->default(true)->inline()
-                                    ->label('أجور الشحن'),
-                                Forms\Components\TextInput::make('total_weight')->numeric()->label('الوزن الكلي'),
-
-                            ]),
-
-                        Tabs\Tab::make('محتويات الطلب')
-                            ->schema([
-                                Forms\Components\Repeater::make('packages')->relationship('packages')->schema([
-                                    SpatieMediaLibraryFileUpload::make('package')->label('صورة الشحنة')->collection('packages'),
-
-                                    Forms\Components\TextInput::make('code')->default(fn() => "FC" . now()->format('dHis')),
-                                    Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة'),
-                                    Forms\Components\TextInput::make('info')->label('معلومات الشحنة'),
-                                    Forms\Components\TextInput::make('weight')->label('وزن الشحنة'),
-                                    Forms\Components\TextInput::make('quantity')->numeric()->label('الكمية'),
-//                                    Forms\Components\TextInput::make('length')->numeric()->label('الطول'),
-//                                    Forms\Components\TextInput::make('width')->numeric()->label('العرض'),
-//                                    Forms\Components\TextInput::make('height')->numeric()->label('الارتفاع'),
-                                ]),
-                            ]),
-                        Tabs\Tab::make('سلسلة التوكيل')->schema([
-                            Forms\Components\Repeater::make('agencies')->relationship('agencies')->schema([
-                                Forms\Components\Select::make('user_id')->options(User::pluck('name', 'id'))->label('الموظف')->searchable()->required(),
-                                Forms\Components\Radio::make('status')->options([
-                                    TaskAgencyEnum::TASK->value => TaskAgencyEnum::TASK->getLabel(),
-//                                    TaskAgencyEnum::TAKE->value => TaskAgencyEnum::TAKE->getLabel(),
-                                    TaskAgencyEnum::DELIVER->value => TaskAgencyEnum::DELIVER->getLabel(),
-                                ])->label('المهمة'),
-                                Forms\Components\TextInput::make('task')->label('المهمة المطلوب تنفيذها'),
-
-                            ])
-                        ])
-                    ])->columnSpanFull()
-
-
-            ]);*/
     }
 
     public static function table(Table $table): Table
     {
         return $table
-           // ->poll(10)
+            ->poll(10)
             ->columns([
                 PopoverColumn::make('qr_url')
                     ->trigger('click')
@@ -437,13 +327,6 @@ class OrderResource extends Resource
     }
 
 
-   /* public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->where('orders.sender_id', auth()->user()->id)
-            ->orWhere('orders.branch_target_id', auth()->user()->id)
-            ->orWhere('orders.branch_source_id', auth()->user()->id);
-    }*/
 
 
     public static function getPages(): array
