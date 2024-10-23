@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\User\Auth\CustomLogin;
 use App\Filament\User\Auth\CustomReg;
+use App\Http\Middleware\RedirectToUserMiddleware;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -71,6 +72,7 @@ class UserPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                RedirectToUserMiddleware::class
             ])
             ->databaseNotifications();
         ;

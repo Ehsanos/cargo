@@ -7,7 +7,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class RedirectToPanelMiddleware
+class RedirectToEmployMiddleware
 {
     /**
      * Handle an incoming request.
@@ -21,16 +21,15 @@ class RedirectToPanelMiddleware
                 return redirect('/branch');
             }
 
-           elseif(auth()->user()->level==LevelUserEnum::STAFF){
-                return redirect('/employ');
+            elseif(auth()->user()->level==LevelUserEnum::BRANCH){
+                return redirect('/branch');
             }
-            elseif (auth()->user()->level==LevelUserEnum::ADMIN){
+            elseif (auth()->user()->level==LevelUserEnum::STAFF){
                 return $next($request);
             }else{
                 abort(403,'ليس لديك صلاحية للدخول');
             }
         }
-
 
     }
 }

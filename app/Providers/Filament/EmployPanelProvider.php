@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Http\Middleware\IsBranchMiddleware;
+use App\Http\Middleware\RedirectToEmployMiddleware;
 use App\Http\Middleware\RedirectToPanelMiddleware;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -55,7 +56,8 @@ class EmployPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-                IsBranchMiddleware::class
+                IsBranchMiddleware::class,
+                RedirectToEmployMiddleware::class
 
             ]);
     }
