@@ -20,6 +20,10 @@ class RedirectToPanelMiddleware
             if(auth()->user()->level==LevelUserEnum::BRANCH){
                 return redirect('/branch');
             }
+
+           elseif(auth()->user()->level==LevelUserEnum::STAFF){
+                return redirect('/employ');
+            }
         }
         return $next($request);
     }
