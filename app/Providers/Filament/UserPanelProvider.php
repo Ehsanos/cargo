@@ -72,7 +72,7 @@ class UserPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-                RedirectToUserMiddleware::class
+//                RedirectToUserMiddleware::class
             ])
             ->databaseNotifications();
         ;

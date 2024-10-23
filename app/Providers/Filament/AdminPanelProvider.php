@@ -71,7 +71,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-                RedirectToPanelMiddleware::class
+//                RedirectToPanelMiddleware::class
             ]);
     }
 

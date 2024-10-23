@@ -57,7 +57,7 @@ class EmployPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
                 IsBranchMiddleware::class,
-                RedirectToEmployMiddleware::class
+//                RedirectToEmployMiddleware::class
 
             ]);
     }
