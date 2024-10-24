@@ -52,10 +52,10 @@ class ReportResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')->label('الاسم')
                     ,
-                Tables\Columns\TextColumn::make('numbers')
+                Tables\Columns\TextColumn::make('$numbers')
                     ->label('عدد الطلبات المرسلة')
-                    ->sortable() // يسمح بالترتيب
-                    ->searchable() // يسمح بالبحث
+                    ->sortable()
+                    ->searchable() //
                     ->getStateUsing(fn($record) => $record->sentOrders->count()),
                 Tables\Columns\TextColumn::make('numbers2')
                     ->label('عدد الطلبات المستلمة')
@@ -69,8 +69,8 @@ class ReportResource extends Resource
 
                 Tables\Columns\TextColumn::make('numbers3')
                     ->label('عدد الطلبات المرتجعة ')
-                    ->sortable() // يسمح بالترتيب
-                    ->searchable() // يسمح بالبحث
+                    ->sortable() //
+                    ->searchable() //
                     ->getStateUsing(fn($record) => DB::table('orders')
                         ->where('sender_id', $record->id)
                         ->where('status', '=', OrderStatusEnum::CANCELED->value)
@@ -79,22 +79,10 @@ class ReportResource extends Resource
 
             ])->paginated(false)
             ->filters([
-                Tables\Filters\SelectFilter::make('name')->label('زبون')
-                    ->options(User::where('level', LevelUserEnum::USER->value)->pluck('name', 'id')),
+                Tables\Filters\SelectFilter::make('id')->label('المستخدم')
+                    ->options(User::all()->pluck('name', 'id'))
 
-//                Tables\Filters\SelectFilter::make('name2')->label('موظف')
-//                    ->options(User::where('level',LevelUserEnum::STAFF->value)
-//                        ->pluck('name','id')),
-//                Tables\Filters\SelectFilter::make('name3')->label('فرع')
-//                    ->options(User::where('level',LevelUserEnum::BRANCH->value)
-//                        ->pluck('name','id')),
-//                Tables\Filters\SelectFilter::make('name4')->label('سائق')
-//                    ->options(User::where('level',LevelUserEnum::DRIVER->value)
-//                        ->pluck('name','id')),
-//                Tables\Filters\SelectFilter::make('name5')->label('مدير')
-//                    ->options(User::where('level',LevelUserEnum::ADMIN->value)
-//                        ->pluck('name','id')),
-//                Tables\Filters\SelectFilter::make('receive_id')->relationship('receive', 'name')->label('اسم المستلم'),
+                ,
 
                 Tables\Filters\Filter::make('created_at')
                     ->form([
@@ -117,14 +105,14 @@ class ReportResource extends Resource
 
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
 
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+
+            ;
     }
 
     public static function getRelations(): array
