@@ -33,6 +33,11 @@ class ReportResource extends Resource
         return false;
     }
 
+    public static function canCreate(): bool
+    {
+    return    false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -74,7 +79,7 @@ class ReportResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('name')->label('زبون')
-                ->options(User::where('level',LevelUserEnum::USER->value)->pluck('name','id')),
+                    ->options(User::where('level', LevelUserEnum::USER->value)->pluck('name', 'id')),
 
 //                Tables\Filters\SelectFilter::make('name2')->label('موظف')
 //                    ->options(User::where('level',LevelUserEnum::STAFF->value)
