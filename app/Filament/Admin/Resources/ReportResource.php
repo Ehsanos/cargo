@@ -50,7 +50,8 @@ class ReportResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')->label('الاسم')
+                    ,
                 Tables\Columns\TextColumn::make('numbers')
                     ->label('عدد الطلبات المرسلة')
                     ->sortable() // يسمح بالترتيب
