@@ -76,7 +76,7 @@ class ReportResource extends Resource
                         ->count())
 
 
-            ])
+            ])->defaultPaginationPageOption(100)
             ->filters([
                 Tables\Filters\SelectFilter::make('name')->label('زبون')
                     ->options(User::where('level', LevelUserEnum::USER->value)->pluck('name', 'id')),
