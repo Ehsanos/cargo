@@ -118,7 +118,7 @@ class OrderResource extends Resource
                                     ->options([
                                         true => 'المرسل',
                                         false => 'المستلم'
-                                    ])->required()->default(true)->inline()
+                                    ])->required()->default(false)->inline()
                                     ->label('أجور الشحن')->default(1),
                                 Forms\Components\TextInput::make('price')->numeric()->label('التحصيل'),
                                 Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة')
@@ -153,7 +153,9 @@ class OrderResource extends Resource
 //                                    Forms\Components\TextInput::make('height')->numeric()->label('الارتفاع'),
 
 
-                                ]),
+                                ])
+                                    ->collapsible()
+                                    ->collapsed() ,
                             ])
                     ])->columnSpanFull()
             ]);
@@ -175,10 +177,10 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('status')->label('حالة الطلب'),
                 Tables\Columns\TextColumn::make('type')->label('نوع الطلب'),
                 Tables\Columns\TextColumn::make('bay_type')->label('حالة الدفع'),
-                Tables\Columns\TextColumn::make('citySource.name')->label('من مدينة'),
+                Tables\Columns\TextColumn::make('citySource.name')->label('من بلدة'),
                 Tables\Columns\TextColumn::make('receive.name')
                     ->label('اسم المستلم '),
-                Tables\Columns\TextColumn::make('cityTarget.name')->label('الى مدينة '),
+                Tables\Columns\TextColumn::make('cityTarget.name')->label('الى بلدة '),
 
             ])->defaultSort('created_at', 'desc')
             ->filters([

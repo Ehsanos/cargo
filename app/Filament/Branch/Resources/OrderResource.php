@@ -52,7 +52,7 @@ class OrderResource extends Resource
                                  ])->label('نوع الطلب')
                                      ->required()
                                      ->searchable(),
-                                 Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')->required()
+                                 Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('معرف المرسل')->required()
                                      ->afterStateUpdated(function ($state, $set) {
                                          $user = User::with('city')->find($state);
                                          if ($user) {
@@ -63,14 +63,16 @@ class OrderResource extends Resource
 
                                          }
                                      })->live()->searchable()->preload(),
+                                 Forms\Components\TextInput::make('general_sender_name')->label('اسم المرسل'),
 
-                               /*  Forms\Components\Select::make('city_source_id')
-                                     ->relationship('citySource', 'name')
-                                     ->label('من مدينة')->reactive()->required()->searchable()->preload(),
 
-                                 Forms\Components\Select::make('branch_source_id')
-                                     ->relationship('branchSource', 'name',fn($query,$get)=>$query->where('city_id',$get('city_source_id')))
-                                     ->label('اسم الفرع المرسل')->reactive()->required(),*/
+                                 /*  Forms\Components\Select::make('city_source_id')
+                                       ->relationship('citySource', 'name')
+                                       ->label('من بلدة')->reactive()->required()->searchable()->preload(),
+
+                                   Forms\Components\Select::make('branch_source_id')
+                                       ->relationship('branchSource', 'name',fn($query,$get)=>$query->where('city_id',$get('city_source_id')))
+                                       ->label('اسم الفرع المرسل')->reactive()->required(),*/
 
 
 
@@ -155,7 +157,7 @@ class OrderResource extends Resource
                                      ->options([
                                          true => 'المرسل',
                                          false => 'المستلم'
-                                     ])->required()->default(true)->inline()
+                                     ])->required()->default(false)->inline()
                                      ->label('أجور الشحن'),
 
                                  Forms\Components\TextInput::make('canceled_info')
@@ -173,6 +175,8 @@ class OrderResource extends Resource
                                  ])
                                      ->label('محتويات الطلب')
                                      ->addable(false)
+                                     ->collapsible()
+                                     ->collapsed()
                                      ->deletable(false)->columnSpan(2)
 
                              ])->columnSpan(2),
@@ -230,7 +234,7 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('sender.phone')->label('هاتف المرسل')
                     ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive->phone, '+')))->openUrlInNewTab()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('citySource.name')->label('من مدينة'),
+                Tables\Columns\TextColumn::make('citySource.name')->label('من بلدة'),
                 Tables\Columns\TextColumn::make('receive.name')->label('معرف المستلم '),
                 Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم'),
 

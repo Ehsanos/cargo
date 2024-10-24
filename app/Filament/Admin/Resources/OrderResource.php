@@ -63,8 +63,9 @@ class OrderResource extends Resource
                                 OrderTypeEnum::BRANCH->value => OrderTypeEnum::BRANCH->getLabel(),
                             ])->label('نوع الطلب')
                                 ->required()
+                                ->default(OrderTypeEnum::BRANCH->getLabel())
                                 ->searchable(),
-                            Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')->required()
+                            Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('معرف المرسل')->required()
                                 ->afterStateUpdated(function ($state, $set) {
                                     $user = User::with('city')->find($state);
                                     if ($user) {
@@ -75,16 +76,14 @@ class OrderResource extends Resource
 
                                     }
                                 })->live()->searchable()->preload(),
-
+                            Forms\Components\TextInput::make('general_sender_name')->label('اسم المرسل'),
                             Forms\Components\Select::make('city_source_id')
                                 ->relationship('citySource', 'name')
-                                ->label('من مدينة')->reactive()->required()->searchable()->preload(),
+                                ->label('من بلدة')->reactive()->required()->searchable()->preload(),
 
                             Forms\Components\Select::make('branch_source_id')
                                 ->relationship('branchSource', 'name'/*,fn($query,$get)=>$query->where('city_id',$get('city_source_id'))*/)
                                 ->label('اسم الفرع المرسل')->reactive()->required(),
-
-
 
 
                             Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل')->required(),
@@ -126,14 +125,10 @@ class OrderResource extends Resource
                             Forms\Components\TextInput::make('global_name')->label('اسم المستلم'),
 
 
-
-
-
-
                             Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم')->required(),
                             Forms\Components\Select::make('city_target_id')
                                 ->relationship('cityTarget', 'name')
-                                ->label('الى مدينة')->required()->searchable()->preload(),
+                                ->label('الى بلدة')->required()->searchable()->preload(),
 
                             Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')
                                 ->searchable()->preload()
@@ -167,7 +162,7 @@ class OrderResource extends Resource
                                 ->options([
                                     true => 'المرسل',
                                     false => 'المستلم'
-                                ])->required()->default(true)->inline()
+                                ])->required()->default(false)->inline()
                                 ->label('أجور الشحن'),
 
                             Forms\Components\TextInput::make('canceled_info')
@@ -186,6 +181,8 @@ class OrderResource extends Resource
                                 ->label('محتويات الطلب')
                                 ->addable(false)
                                 ->deletable(false)->columnSpan(2)
+                                ->collapsible()
+                                ->collapsed()
 
                         ])->columnSpan(2),
                     Forms\Components\Fieldset::make('سلسلة التوكيل')
@@ -247,7 +244,7 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('sender.phone')->label('هاتف المرسل')
                     ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive?->phone, '+')))->openUrlInNewTab()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('citySource.name')->label('من مدينة')->searchable(),
+                Tables\Columns\TextColumn::make('citySource.name')->label('من بلدة')->searchable(),
                 Tables\Columns\TextColumn::make('receive.name')->label('معرف المستلم ')->searchable(),
                 Tables\Columns\TextColumn::make('receive.address')->label('عنوان المستلم ')->searchable(),
                 Tables\Columns\TextColumn::make('receive.phone')->label('هاتف المستلم ')
@@ -286,7 +283,7 @@ class OrderResource extends Resource
 
                 Tables\Filters\SelectFilter::make('city_source_id')
                     ->relationship('citySource', 'name')
-                    ->label('من مدينة')
+                    ->label('من بلدة')
                 ,
 
                 Tables\Filters\Filter::make('created_at')
@@ -369,10 +366,10 @@ class OrderResource extends Resource
                     Forms\Components\Select::make('pick_id')->options(User::where('users.level', LevelUserEnum::STAFF->value)->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط'),
                 ])
                     ->action(function ($record, $data) {
-                    $record->update(['pick_id' => $data['pick_id']]);
-                    Notification::make('success')->title('نجاح العملية')->body("تم تحديد موظف الإلتقاط بنجاح ")->danger()->send();
+                        $record->update(['pick_id' => $data['pick_id']]);
+                        Notification::make('success')->title('نجاح العملية')->body("تم تحديد موظف الإلتقاط بنجاح ")->danger()->send();
 
-                })
+                    })
                     ->visible(fn($record) => $record->pick_id == null)
                     ->label('تحديد موظف الإلتقاط')->button()->color('info'),
 
@@ -380,31 +377,31 @@ class OrderResource extends Resource
                     Forms\Components\Select::make('given_id')->options(User::where('users.level', LevelUserEnum::STAFF->value)->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط'),
                 ])
                     ->action(function ($record, $data) {
-                    $record->update(['given_id' => $data['given_id']]);
-                    Notification::make('success')->title('نجاح العملية')->body("تم تحديد موظف التسليم بنجاح ")->danger()->send();
+                        $record->update(['given_id' => $data['given_id']]);
+                        Notification::make('success')->title('نجاح العملية')->body("تم تحديد موظف التسليم بنجاح ")->danger()->send();
 
-                })
+                    })
                     ->visible(fn($record) => $record->given_id == null && $record->status != OrderStatusEnum::PENDING)
                     ->label('تحديد موظف التسليم')->button()->color('info'),
                 Tables\Actions\Action::make('cancel_order')
-                    ->form( [
+                    ->form([
                         Forms\Components\Radio::make('status')->options([
-                            OrderStatusEnum::CANCELED->value=>OrderStatusEnum::CANCELED->getLabel(),
-                            OrderStatusEnum::RETURNED->value=>OrderStatusEnum::RETURNED->getLabel(),
+                            OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
+                            OrderStatusEnum::RETURNED->value => OrderStatusEnum::RETURNED->getLabel(),
                         ])->label('الحالة')->required()->default(OrderStatusEnum::CANCELED->value),
                         Forms\Components\Textarea::make('msg_cancel')->label('سبب الإلغاء / الإعادة')
                     ])
                     ->action(function ($record, $data) {
                         DB::beginTransaction();
                         try {
-                            $record->update(['status' => $data['status'],'canceled_info'=>$data['msg_cancel']]);
+                            $record->update(['status' => $data['status'], 'canceled_info' => $data['msg_cancel']]);
                             DB::commit();
                             Notification::make('success')->title('نجاح العملية')->body('تم تغيير حالة الطلب')->success()->send();
                         } catch (\Exception | Error $e) {
                             Notification::make('error')->title('فشل العملية')->body($e->getLine())->danger()->send();
                         }
                     })->label('الإلغاء / الإعادة')->button()->color('danger')
-                    ->visible(fn($record)=>$record->status === OrderStatusEnum::PENDING || $record->status === OrderStatusEnum::AGREE || $record->status === OrderStatusEnum::PICK || $record->status === OrderStatusEnum::TRANSFER)
+                    ->visible(fn($record) => $record->status === OrderStatusEnum::PENDING || $record->status === OrderStatusEnum::AGREE || $record->status === OrderStatusEnum::PICK || $record->status === OrderStatusEnum::TRANSFER)
 
 
 //                Tables\Actions\DeleteAction::make(),

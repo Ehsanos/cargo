@@ -92,7 +92,7 @@ public static function canEdit(Model $record): bool
 
                                 )->live(),
 
-                                Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')
+                                Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('معرف المرسل')
                                     ->afterStateUpdated(function ($state, $set) {
                                         $user = User::find($state);
                                         if ($user) {
@@ -102,6 +102,8 @@ public static function canEdit(Model $record): bool
                                             $set('branch_source_id', $user?->branch_id);
                                         }
                                     })->live()->searchable()->preload(),
+                                Forms\Components\TextInput::make('general_sender_name')->label('اسم المرسل'),
+
 
 
                                 Forms\Components\Select::make('branch_source_id')->relationship('branchSource', 'name')->label('اسم الفرع المرسل')
@@ -114,7 +116,7 @@ public static function canEdit(Model $record): bool
                                 Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل'),
                                 Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل'),
                                 Forms\Components\Select::make('city_source_id')->relationship('citySource', 'name')
-                                    ->label('من مدينة')->searchable()->preload(),
+                                    ->label('من بلدة')->searchable()->preload(),
                                 Forms\Components\Select::make('receive_id')->relationship('receive', 'name')->label('معرف المستلم')->searchable()->preload()
                                     ->afterStateUpdated(function ($state, $set) {
                                         $user = User::find($state);
@@ -142,7 +144,7 @@ public static function canEdit(Model $record): bool
 
 
                                 Forms\Components\Select::make('city_target_id')->relationship('cityTarget', 'name')
-                                    ->label('الى مدينة')->searchable()->preload(),
+                                    ->label('الى بلدة')->searchable()->preload(),
 
                                 Forms\Components\Select::make('size_id')
                                     ->relationship('size', 'name')
@@ -170,7 +172,7 @@ public static function canEdit(Model $record): bool
                                     ->options([
                                         true => 'المرسل',
                                         false => 'المستلم'
-                                    ])->required()->default(true)->inline()
+                                    ])->required()->default(false)->inline()
                                     ->label('أجور الشحن')->default(1),
 //                                Forms\Components\TextInput::make('total_weight')->numeric()->label('الوزن الكلي'),
                                 Forms\Components\TextInput::make('canceled_info')
@@ -194,7 +196,9 @@ public static function canEdit(Model $record): bool
 //                                    Forms\Components\TextInput::make('length')->numeric()->label('الطول'),
 //                                    Forms\Components\TextInput::make('width')->numeric()->label('العرض'),
 //                                    Forms\Components\TextInput::make('height')->numeric()->label('الارتفاع'),
-                                ]),
+                                ])
+                                    ->collapsible()
+                                    ->collapsed(),
                             ]),
                         Tabs\Tab::make('تأكيد الالتقاط ')->schema([
 
@@ -263,7 +267,7 @@ public static function canEdit(Model $record): bool
                     ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive?->phone, '+')))
                     ->openUrlInNewTab()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('citySource.name')->label('من مدينة'),
+                Tables\Columns\TextColumn::make('citySource.name')->label('من بلدة'),
                 Tables\Columns\TextColumn::make('receive.name')->label('معرف المستلم '),
                 Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم '),
                 Tables\Columns\TextColumn::make('receive.address')->label('عنوان المستلم ')->searchable(),
@@ -275,7 +279,7 @@ public static function canEdit(Model $record): bool
                     ->formatStateUsing(fn($state) => Carbon::parse($state)->diffForHumans()), // عرض الزمن بشكل نسبي
 
 
-                Tables\Columns\TextColumn::make('cityTarget.name')->label('الى مدينة '),
+                Tables\Columns\TextColumn::make('cityTarget.name')->label('الى بلدة '),
                 Tables\Columns\TextColumn::make('agencies.task')
                     ->formatStateUsing(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->task)
                     ->label('المهمة الموكلة'),
