@@ -8,6 +8,7 @@ use App\Filament\Admin\Resources\ReportResource\Pages;
 use App\Filament\Admin\Resources\ReportResource\RelationManagers;
 use App\Models\Report;
 use App\Models\User;
+use Filament\Actions\ViewAction;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -35,14 +36,15 @@ class ReportResource extends Resource
 
     public static function canCreate(): bool
     {
-    return    false;
+        return false;
     }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('name')->label('الاسم'),
+//                Forms\Components\TextInput::make('receivedOrders')
             ]);
     }
 
@@ -50,17 +52,16 @@ class ReportResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->label('الاسم')
-                    ,
+                Tables\Columns\TextColumn::make('name')->label('الاسم')->searchable() //
+                ,
                 Tables\Columns\TextColumn::make('$numbers')
                     ->label('عدد الطلبات المرسلة')
                     ->sortable()
-                    ->searchable() //
+
                     ->getStateUsing(fn($record) => $record->sentOrders->count()),
                 Tables\Columns\TextColumn::make('numbers2')
                     ->label('عدد الطلبات المستلمة')
                     ->sortable() // يسمح بالترتيب
-                    ->searchable() // يسمح بالبحث
                     ->getStateUsing(fn($record) => $record->receivedOrders->count()),
 
                 Tables\Columns\TextColumn::make('total_balance')
@@ -70,7 +71,6 @@ class ReportResource extends Resource
                 Tables\Columns\TextColumn::make('numbers3')
                     ->label('عدد الطلبات المرتجعة ')
                     ->sortable() //
-                    ->searchable() //
                     ->getStateUsing(fn($record) => DB::table('orders')
                         ->where('sender_id', $record->id)
                         ->where('status', '=', OrderStatusEnum::CANCELED->value)
@@ -105,14 +105,12 @@ class ReportResource extends Resource
 
             ])
             ->actions([
-
+                Tables\Actions\ViewAction::make()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                 ]),
-            ])
-
-            ;
+            ]);
     }
 
     public static function getRelations(): array
