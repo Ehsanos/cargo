@@ -29,6 +29,8 @@ class ListOrders extends ListRecords
             Tab::make('success')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::SUCCESS->value))/*->badge(Order::where('status','success')->count())*/->label('منتهي'),
             Tab::make('canceled')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::CANCELED->value))/*->badge(Order::where('status','success')->count())*/->label('ملغي'),
             Tab::make('returned')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::RETURNED->value))/*->badge(Order::where('status','success')->count())*/->label('مرتجع'),
+            Tab::make('all')->modifyQueryUsing(fn($query)=>$query->where('status','!=' ,""))->badge(Order::all()->count())
+                /*->badge(Order::where('status','success')->count())*/->label('الكل'),
         ];
     }
 }
