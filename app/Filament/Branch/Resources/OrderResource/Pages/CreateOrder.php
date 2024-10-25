@@ -13,7 +13,7 @@ class CreateOrder extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['code'] = "FC" . now()->format('dHis');
+        $data['code'] = "AWB" . now()->format('YmdHis'); // الطابع الزمني بتنسيق قصير
         $data['branch_source_id'] = auth()->user()->branch_id;
 
         $data['shipping_date'] = now()->format('Y-h-d');
