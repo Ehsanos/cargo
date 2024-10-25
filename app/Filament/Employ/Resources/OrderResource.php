@@ -12,6 +12,7 @@ use App\Enums\OrderTypeEnum;
 use App\Enums\TaskAgencyEnum;
 use App\Filament\Employ\Resources\OrderResource\Pages;
 use App\Filament\Employ\Resources\OrderResource\RelationManagers;
+use App\Helper\HelperBalance;
 use App\Models\Agency;
 use App\Models\Balance;
 use App\Models\Branch;
@@ -314,31 +315,7 @@ public static function canEdit(Model $record): bool
                     ->action(function ($record, $data) {
                         DB::beginTransaction();
                         try {
-                            $sender = $record->sender;
-                            $staff = $record->pick;
-                            if ($record->far_sender == true && $record->far && $record->far > 0) {
-
-                                Balance::create([
-                                    'user_id' => $sender->id,
-                                    'credit' => $record->far,
-                                    'debit' => 0,
-                                    'info' => 'دفع أجور الشحن الطلب #' . $record->qr_code,
-                                    'is_complete' => true,
-                                    'order_id' => $record->id,
-                                    'total' => $sender->total_balance + $record->far,
-                                ]);
-
-                                Balance::create([
-                                    'user_id' => $staff->id,
-                                    'credit' => 0,
-                                    'debit' => $record->far,
-                                    'info' => 'دفع أجور الشحن الطلب #' . $record->qr_code,
-                                    'is_complete' => true,
-                                    'order_id' => $record->id,
-                                    'total' => $staff->total_balance - $record->far,
-                                ]);
-
-                            }
+                            HelperBalance::completePicker($record);
                             $record->update(['status' => OrderStatusEnum::PICK->value]);
                             DB::commit();
                             Notification::make('success')->title('نجاح العملية')->body('تم تأكيد إلتقاط الطلب')->success()->send();
@@ -368,37 +345,7 @@ public static function canEdit(Model $record): bool
                     ->action(function ($record, $data) {
                         DB::beginTransaction();
                         try {
-                            $price=$record->price;
-                            $far=$record->far;
-                            $totalPrice=$price;
-                            if ($record->far_sender == false&& $record->far>0) {
-                                $totalPrice = $price + $far;
-                            }
-
-                            if ($totalPrice>0) {
-                                $sender = $record->receive;
-                                $staff = $record->given;
-                                Balance::create([
-                                    'user_id' => $sender->id,
-                                    'credit' => $totalPrice,
-                                    'debit' => 0,
-                                    'info' => 'دفع أجور الشحن الطلب #' . $record->qr_code,
-                                    'is_complete' => true,
-                                    'order_id' => $record->id,
-                                    'total' => $sender->total_balance + $record->far,
-                                ]);
-
-                                Balance::create([
-                                    'user_id' => $staff->id,
-                                    'credit' => 0,
-                                    'debit' => $totalPrice,
-                                    'info' => 'دفع أجور الشحن الطلب #' . $record->qr_code,
-                                    'is_complete' => true,
-                                    'order_id' => $record->id,
-                                    'total' => $staff->total_balance - $record->far,
-                                ]);
-
-                            }
+                            HelperBalance::completeOrder($record);
                             $record->update(['status' => OrderStatusEnum::SUCCESS->value]);
                             DB::commit();
                             Notification::make('success')->title('نجاح العملية')->body('تم تأكيد تسليم الطلب')->success()->send();

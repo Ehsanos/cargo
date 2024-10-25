@@ -7,6 +7,7 @@ use App\Enums\LevelUserEnum;
 use App\Enums\TaskAgencyEnum;
 use App\Filament\Admin\Resources\OrderResource\Pages;
 use App\Filament\Admin\Resources\OrderResource\RelationManagers;
+use App\Helper\HelperBalance;
 use App\Models\Branch;
 use App\Models\City;
 use App\Models\Order;
@@ -79,7 +80,6 @@ class OrderResource extends Resource
                                     }
                                 })->live()->searchable()->preload()
                                 ->noSearchResultsMessage('الاسم غير موجود')
-
 
 
                             ,
@@ -379,8 +379,16 @@ class OrderResource extends Resource
                     Forms\Components\Select::make('pick_id')->options(User::where('users.level', LevelUserEnum::STAFF->value)->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط'),
                 ])
                     ->action(function ($record, $data) {
-                        $record->update(['pick_id' => $data['pick_id']]);
-                        Notification::make('success')->title('نجاح العملية')->body("تم تحديد موظف الإلتقاط بنجاح ")->danger()->send();
+                        DB::beginTransaction();
+                        try {
+                            $record->update(['pick_id' => $data['pick_id'],'status'=>OrderStatusEnum::AGREE->value]);
+                            HelperBalance::setPickOrder($record);
+                            Notification::make('success')->title('نجاح العملية')->body("تم تحديد موظف الإلتقاط بنجاح ")->success()->send();
+                            DB::commit();
+                        } catch (\Exception $e) {
+                            DB::rollBack();
+                            Notification::make('error')->title('فشل العملية')->body("{$e->getMessage()}")->danger()->send();
+                        }
 
                     })
                     ->visible(fn($record) => $record->pick_id == null)

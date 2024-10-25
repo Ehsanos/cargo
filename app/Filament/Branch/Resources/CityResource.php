@@ -27,6 +27,8 @@ class CityResource extends Resource
     protected static ?string $label='مدينة رئيسية';
     protected static ?string $navigationLabel='المدن الرئيسية';
 
+
+
     public static function form(Form $form): Form
     {
         return $form

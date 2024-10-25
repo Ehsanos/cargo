@@ -9,11 +9,14 @@ use App\Enums\OrderTypeEnum;
 use App\Enums\TaskAgencyEnum;
 use App\Filament\Branch\Resources\OrderResource\Pages;
 use App\Filament\Branch\Resources\OrderResource\RelationManagers;
+use App\Helper\HelperBalance;
 use App\Models\Balance;
 use App\Models\Branch;
+use App\Models\City;
 use App\Models\Order;
 use App\Models\User;
 use Carbon\Carbon;
+use Error;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Tabs;
@@ -99,6 +102,15 @@ class OrderResource extends Resource
                                                  $set('city_target_id', $user?->city_id);
                                                  $set('branch_target_id', $user?->branch_id);
                                              }
+                                             else{
+                                                 $set('receive_phone', null);
+                                                 $set('receive_address', null);
+
+                                                 $set('sender_name', null);
+                                                 $set('city_target_id', null);
+                                                 $set('branch_target_id',null);
+
+                                             }
                                          })->live()->label('ايبان المستلم'),
 
                                      Forms\Components\Select::make('sender_name')->label('معرف المستلم')
@@ -106,28 +118,51 @@ class OrderResource extends Resource
                                          ->afterStateUpdated(function ($state, $set) {
                                              $user = User::with('city')->find($state);
                                              if ($user) {
+                                                 $set('branch_target_id',$user?->city?->branch_id);
                                                  $set('receive_phone', $user?->phone);
                                                  $set('receive_address', $user?->address);
 
                                                  $set('sender_name', $user?->name);
                                                  $set('city_target_id', $user?->city_id);
-                                                 $set('branch_target_id', $user?->branch_id);
+
                                                  $set('receive_id', $user?->id);
+
+                                             }else{
+                                                 $set('receive_phone', null);
+                                                 $set('receive_address', null);
+
+                                                 $set('sender_name', null);
+                                                 $set('city_target_id', null);
+                                                 $set('branch_target_id',null);
+                                                 $set('receive_id', null);
+                                                 $set('branch_target_id',null);
+
                                              }
+
                                          })->live()->dehydrated(false),
                                  ]),
 
                                  Forms\Components\TextInput::make('global_name')->label('اسم المستلم'),
 
-
-
-
-
-
                                  Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم')->required(),
                                  Forms\Components\Select::make('city_target_id')
                                      ->relationship('cityTarget', 'name')
-                                     ->label('الى مدينة')->required()->searchable()->preload(),
+                                     ->label('الى مدينة')->required()->searchable()->preload()
+                                     ->afterStateUpdated(function($state,$set){
+
+                                       if($state!=null){
+
+                                           $city=City::find($state);
+                                           $set('branch_target_id',$city?->branch_id);
+
+                                       }else{
+
+                                           $set('branch_target_id',null);
+
+                                       }
+                                     })
+
+                                     ->live(),
 
                                  Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')
                                      ->searchable()->preload()
@@ -260,17 +295,24 @@ class OrderResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('select_pick_id')
-                    ->form([
-                    Forms\Components\Select::make('pick_id')
-                        ->options(User::where('users.branch_id',auth()->user()->branch_id)->where(fn($query)=>$query->where('level',LevelUserEnum::STAFF->value)->orWhere('level',LevelUserEnum::BRANCH->value))->pluck('name','id'))->searchable()->label('موظف الإلتقاط')
+                Tables\Actions\Action::make('set_picker')->form([
+                    Forms\Components\Select::make('pick_id')->options(User::where('users.level', LevelUserEnum::STAFF->value)->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط'),
                 ])
                     ->action(function ($record, $data) {
-                        $record->update(['pick_id' => $data['pick_id'],'status'=>OrderStatusEnum::AGREE->value]);
-                        Notification::make('success')->title('نجاح العملية')->body('تم تحديد موظف الإلتقاط بنجاح')->success()->send();
+                        DB::beginTransaction();
+                        try {
+                            $record->update(['pick_id' => $data['pick_id'],'status'=>OrderStatusEnum::AGREE->value]);
+                            HelperBalance::setPickOrder($record);
+                            Notification::make('success')->title('نجاح العملية')->body("تم تحديد موظف الإلتقاط بنجاح ")->success()->send();
+                            DB::commit();
+                        } catch (\Exception $e) {
+                            DB::rollBack();
+                            Notification::make('error')->title('فشل العملية')->body("{$e->getMessage()}")->danger()->send();
+                        }
+
                     })
                     ->visible(fn($record) => $record->pick_id == null)
-                    ->label('تحديد موظف الإلتقاط')->color('info')->button(),
+                    ->label('تحديد موظف الإلتقاط')->button()->color('info'),
 
                 Tables\Actions\Action::make('select_given_id')->form([
                     Forms\Components\Select::make('given_id')->options(User::where('users.branch_id',auth()->user()->branch_id)->where(fn($query)=>$query->where('level',LevelUserEnum::STAFF->value)->orWhere('level',LevelUserEnum::BRANCH->value))->pluck('name','id'))->searchable()->label('موظف الإلتقاط')
@@ -281,6 +323,8 @@ class OrderResource extends Resource
                     })
                     ->visible(fn($record) => $record->given_id == null)
                     ->label('تحديد موظف التسليم')->color('info')->button(),
+
+
                 Tables\Actions\Action::make('cancel_order')
                     ->form( [
                         Forms\Components\Radio::make('status')->options([
@@ -300,6 +344,8 @@ class OrderResource extends Resource
                         }
                     })->label('الإلغاء / الإعادة')->button()->color('danger')
                     ->visible(fn($record)=>$record->status === OrderStatusEnum::PENDING || $record->status === OrderStatusEnum::AGREE || $record->status === OrderStatusEnum::PICK || $record->status === OrderStatusEnum::TRANSFER),
+
+
                 Tables\Actions\Action::make('success_pick')
                     ->form(function ($record) {
                         if ($record->far_sender == true && $record->far) {
@@ -314,31 +360,7 @@ class OrderResource extends Resource
                     ->action(function ($record, $data) {
                         DB::beginTransaction();
                         try {
-                            $sender = $record->sender;
-                            $staff = $record->pick;
-                            if ($record->far_sender == true && $record->far && $record->far > 0) {
-
-                                Balance::create([
-                                    'user_id' => $sender->id,
-                                    'credit' => $record->far,
-                                    'debit' => 0,
-                                    'info' => 'دفع أجور الشحن الطلب #' . $record->qr_code,
-                                    'is_complete' => true,
-                                    'order_id' => $record->id,
-                                    'total' => $sender->total_balance + $record->far,
-                                ]);
-
-                                Balance::create([
-                                    'user_id' => $staff->id,
-                                    'credit' => 0,
-                                    'debit' => $record->far,
-                                    'info' => 'دفع أجور الشحن الطلب #' . $record->qr_code,
-                                    'is_complete' => true,
-                                    'order_id' => $record->id,
-                                    'total' => $staff->total_balance - $record->far,
-                                ]);
-
-                            }
+                             HelperBalance::completePicker($record);
                             $record->update(['status' => OrderStatusEnum::PICK->value]);
                             DB::commit();
                             Notification::make('success')->title('نجاح العملية')->body('تم تأكيد إلتقاط الطلب')->success()->send();
@@ -368,37 +390,7 @@ class OrderResource extends Resource
                     ->action(function ($record, $data) {
                         DB::beginTransaction();
                         try {
-                            $price=$record->price;
-                            $far=$record->far;
-                            $totalPrice=$price;
-                            if ($record->far_sender == false&& $record->far>0) {
-                                $totalPrice = $price + $far;
-                            }
-
-                            if ($totalPrice>0) {
-                                $sender = $record->receive;
-                                $staff = $record->given;
-                                Balance::create([
-                                    'user_id' => $sender->id,
-                                    'credit' => $totalPrice,
-                                    'debit' => 0,
-                                    'info' => 'دفع أجور الشحن الطلب #' . $record->qr_code,
-                                    'is_complete' => true,
-                                    'order_id' => $record->id,
-                                    'total' => $sender->total_balance + $record->far,
-                                ]);
-
-                                Balance::create([
-                                    'user_id' => $staff->id,
-                                    'credit' => 0,
-                                    'debit' => $totalPrice,
-                                    'info' => 'دفع أجور الشحن الطلب #' . $record->qr_code,
-                                    'is_complete' => true,
-                                    'order_id' => $record->id,
-                                    'total' => $staff->total_balance - $record->far,
-                                ]);
-
-                            }
+                            HelperBalance::completeOrder($record);
                             $record->update(['status' => OrderStatusEnum::SUCCESS->value]);
                             DB::commit();
                             Notification::make('success')->title('نجاح العملية')->body('تم تأكيد تسليم الطلب')->success()->send();

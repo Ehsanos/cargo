@@ -50,6 +50,8 @@ public static function canCreate(): bool
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('complete')->action(fn($record)=>$record->update(['is_complete'=>true]))->visible(fn($record)=>!$record->is_complete)
+                    ->label('تأكيد إستلام الدفعة')->requiresConfirmation(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

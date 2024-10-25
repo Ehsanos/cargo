@@ -29,7 +29,7 @@ class CityResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')->label('المدينة')->unique(),
+                Forms\Components\TextInput::make('name')->label('المدينة')->unique(ignoreRecord: true),
 
                 Forms\Components\Select::make('status')->options(
                     [

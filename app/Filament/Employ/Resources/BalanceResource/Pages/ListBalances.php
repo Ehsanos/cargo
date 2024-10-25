@@ -22,20 +22,6 @@ class ListBalances extends ListRecords
     {
         return [
             Actions\Action::make('add')->form([
-             /*   Select::make('type')->options([
-//                    BalanceTypeEnum::CATCH->value => BalanceTypeEnum::CATCH->getLabel(),
-                    BalanceTypeEnum::PUSH->value => BalanceTypeEnum::PUSH->getLabel(),
-                ])->default(BalanceTypeEnum::PUSH->value)->live()->rules([
-                    fn(): Closure => function (string $attribute, $value, Closure $fail) {
-                        $validateArray = [
-                            BalanceTypeEnum::CATCH->value,
-                            BalanceTypeEnum::PUSH->value,
-                        ];
-                        if (empty($value) || !in_array($value, $validateArray)) {
-                            $fail('يجب إختيار نوع سند صحيح');
-                        }
-                    },
-                ])->required()->label('نوع السند'),*/
                 Placeholder::make('type')->dehydrated(false)->content('سند دفع'),
 
                 TextInput::make('value')->label('القيمة')->numeric()->required()
@@ -66,8 +52,8 @@ class ListBalances extends ListRecords
                     \DB::beginTransaction();
                     try {
                         Balance::create([
-                            'credit' => $data['value'],
-                            'debit' => 0,
+                            'credit' => 0,
+                            'debit' =>$data['value'],
                             'type' => BalanceTypeEnum::PUSH->value,
                             'is_complete' => true,
                             'user_id' => auth()->id(),
@@ -78,10 +64,10 @@ class ListBalances extends ListRecords
                         ]);
 
                         Balance::create([
-                            'credit' => 0,
-                            'debit' => $data['value'],
+                            'credit' => $data['value'],
+                            'debit' => 0,
                             'type' => BalanceTypeEnum::CATCH->value,
-                            'is_complete' => true,
+                            'is_complete' => false,
                             'user_id' => $data['user_id'],
                             'total' => $user->total_balance - $data['value'],
                             'info' => $data['info'],

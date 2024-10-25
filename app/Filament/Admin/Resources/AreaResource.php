@@ -34,7 +34,7 @@ class AreaResource extends Resource
         return $form
             ->schema([
 
-                Forms\Components\TextInput::make('name')->label('البلدة / القرية')->required()->unique(),
+                Forms\Components\TextInput::make('name')->label('البلدة / القرية')->required()->unique(ignoreRecord: true),
                 Forms\Components\Select::make('city_id')->options(City::where('is_main',true)->pluck('name','id'))
                 ->label('تتبع الى مدينة')->required(),
                 Forms\Components\Select::make('branch_id')->options(Branch::all()->pluck('name','id'))

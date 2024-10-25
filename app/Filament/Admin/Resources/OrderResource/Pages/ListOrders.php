@@ -26,6 +26,7 @@ class ListOrders extends ListRecords
         return [
             Tab::make('pending')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::PENDING->value))->badge(Order::where('status',OrderStatusEnum::PENDING->value)->count())->label('بإنتظار الموافقة'),
             Tab::make('agree')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::AGREE->value))->badge(Order::where('status',OrderStatusEnum::AGREE->value)->count())->label('بإنتظار الإنهاء'),
+            Tab::make('pick')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::PICK->value))->badge(Order::where('status',OrderStatusEnum::PICK->value)->count())->label('تم الإلتقاط'),
             Tab::make('success')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::SUCCESS->value))/*->badge(Order::where('status','success')->count())*/->label('منتهي'),
             Tab::make('canceled')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::CANCELED->value))/*->badge(Order::where('status','success')->count())*/->label('ملغي'),
             Tab::make('returned')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::RETURNED->value))/*->badge(Order::where('status','success')->count())*/->label('مرتجع'),
