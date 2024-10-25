@@ -83,7 +83,7 @@ class UserResource extends Resource
                                 Forms\Components\RichEditor::make('address')->label('العنوان التفصيلي'),
                                 Forms\Components\Select::make('city_id')->options(City::where('is_main', false)->pluck
                                 ('name', 'id'))->required()
-                                    ->label('المدينة/البلدة')
+                                    ->label('البلدة/البلدة')
                                     ->live()->searchable()->preload()
                                     ->reactive()->afterStateUpdated(function ($state, callable $set) {
                                         $set('branch_id', null);
@@ -189,7 +189,7 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('job')->badge()->label('نوع الموظف'),
 
                 Tables\Columns\TextColumn::make('branch.name')->label('فرع')->sortable(),
-                Tables\Columns\TextColumn::make('city.name')->label('المدينة')->sortable(),
+                Tables\Columns\TextColumn::make('city.name')->label('البلدة')->sortable(),
 
 
             ])->defaultSort('created_at', 'desc')

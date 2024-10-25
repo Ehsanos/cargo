@@ -264,7 +264,7 @@ class OrderResource extends Resource
                     ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive?->phone, '+')))->openUrlInNewTab()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم'),
-                Tables\Columns\TextColumn::make('cityTarget.name')->label('الى مدينة ')->searchable(),
+                Tables\Columns\TextColumn::make('cityTarget.name')->label('الى بلدة ')->searchable(),
                 Tables\Columns\TextColumn::make('created_at')->label('تاريخ الشحنة')
                     ->formatStateUsing(fn($state) => Carbon::parse($state)->diffForHumans()) // عرض الزمن بشكل نسبي
 
@@ -292,7 +292,7 @@ class OrderResource extends Resource
                 ])->label('حالة الطلب'),
                 Tables\Filters\SelectFilter::make('city_target_id')
                     ->relationship('cityTarget', 'name')
-                    ->label('الى مدينة'),
+                    ->label('الى بلدة'),
 
                 Tables\Filters\SelectFilter::make('city_source_id')
                     ->relationship('citySource', 'name')

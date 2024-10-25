@@ -147,7 +147,7 @@ class OrderResource extends Resource
                                  Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
                                  Forms\Components\Select::make('city_target_id')
                                      ->relationship('cityTarget', 'name')
-                                     ->label('الى مدينة')->required()->searchable()->preload()
+                                     ->label('الى بلدة')->required()->searchable()->preload()
                                      ->afterStateUpdated(function($state,$set){
 
                                        if($state!=null){
@@ -285,7 +285,7 @@ class OrderResource extends Resource
                     ->openUrlInNewTab()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('cityTarget.name')->label('الى مدينة '),
+                Tables\Columns\TextColumn::make('cityTarget.name')->label('الى بلدة '),
                 Tables\Columns\TextColumn::make('created_at')->label('تاريخ الشحنة')
                     ->formatStateUsing(fn($state) => Carbon::parse($state)->diffForHumans()) // عرض الزمن بشكل نسبي
 
