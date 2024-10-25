@@ -141,10 +141,9 @@ class OrderResource extends Resource
 
                                          })->live()->dehydrated(false),
                                  ]),
-
+                                 Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم')->required(),
                                  Forms\Components\TextInput::make('global_name')->label('اسم المستلم'),
 
-                                 Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم')->required(),
                                  Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
                                  Forms\Components\Select::make('city_target_id')
                                      ->relationship('cityTarget', 'name')
