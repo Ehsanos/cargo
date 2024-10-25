@@ -61,11 +61,11 @@ class OrderResource extends Resource
 
                             Forms\Components\Select::make('type')->options([
                                 OrderTypeEnum::HOME->value => OrderTypeEnum::HOME->getLabel(),
-//                                OrderTypeEnum::BRANCH->value => OrderTypeEnum::BRANCH->getLabel(),
+                                OrderTypeEnum::BRANCH->value => OrderTypeEnum::BRANCH->getLabel(),
 
                             ])->label('نوع الطلب')
                                 ->required()
-                                ->default(OrderTypeEnum::BRANCH->getLabel())
+//                                ->default(OrderTypeEnum::BRANCH->getLabel())
                                 ->reactive()
                                 ->searchable(),
                             Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('معرف المرسل')->required()
