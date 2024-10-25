@@ -30,7 +30,7 @@ class User extends Authenticatable implements HasMedia, FilamentUser, HasAvatar
     use HasApiTokens, HasFactory, Notifiable, HasRoles, InteractsWithMedia;
     use HasPanelShield;
 
-
+/*
    public function canAccessPanel(Panel $panel): bool
     {
         if ($panel->getId() === 'admin' && $this->level == LevelUserEnum::ADMIN) {
@@ -45,7 +45,7 @@ class User extends Authenticatable implements HasMedia, FilamentUser, HasAvatar
         }
         return false;
 
-    }
+    }*/
 
     public function getFilamentAvatarUrl(): ?string
     {
