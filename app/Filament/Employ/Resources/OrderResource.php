@@ -278,7 +278,7 @@ public static function canEdit(Model $record): bool
                 Tables\Columns\TextColumn::make('receive.address')->label('عنوان المستلم ')->searchable(),
                 Tables\Columns\TextColumn::make('receive.phone')->label('هاتف المستلم ')
                     ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive?->phone
-                            ? url('https://wa.me/' . ltrim($record->order->receive->phone, '+'))
+                            ? url('https://wa.me/' . ltrim($record->order->receive?->phone, '+'))
                             : '#')))
                     ->openUrlInNewTab()
                     ->searchable(),
