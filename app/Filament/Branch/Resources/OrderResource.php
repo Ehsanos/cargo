@@ -50,10 +50,10 @@ class OrderResource extends Resource
                                      OrderTypeEnum::BRANCH->value => OrderTypeEnum::BRANCH->getLabel(),
                                  ])->label('نوع الطلب')
                                      ->required()
-                                     ->searchable()->default([
-                                          OrderTypeEnum::HOME->getLabel()=>OrderTypeEnum::HOME
+                                     ->searchable()->default(
+                                          OrderTypeEnum::HOME->value
 
-                                         ]
+
 
                                      ),
                                  Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('معرف المرسل')->required()
