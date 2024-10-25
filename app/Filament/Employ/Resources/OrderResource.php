@@ -267,7 +267,7 @@ public static function canEdit(Model $record): bool
                 Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل'),
                 Tables\Columns\TextColumn::make('sender.phone')->label('هاتف المرسل')
                     ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive?->phone
-                            ? url('https://wa.me/' . ltrim($record->order->receive->phone, '+'))
+                            ? url('https://wa.me/' . ltrim($record->order->receive?->phone, '+'))
                             : '#'
                             )))
                     ->openUrlInNewTab()
