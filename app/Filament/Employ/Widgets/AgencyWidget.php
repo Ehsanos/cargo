@@ -60,11 +60,11 @@ class AgencyWidget extends BaseWidget
 
                 Tables\Columns\TextColumn::make('order.receive.name')->label('معرف المستلم ')->searchable(),
                 Tables\Columns\TextColumn::make('order.receive.address')->label('عنوان المستلم ')->searchable(),
-//                Tables\Columns\TextColumn::make('order.receive.phone')->label('هاتف المستلم ')
-//                    ->url(fn($record) => url('https://wa.me/' . ltrim($record->order->receive?->phone
-//                            ? url('https://wa.me/' . ltrim($record->order->receive->phone, '+'))
-//                            : '#')))->openUrlInNewTab()
-//                    ->searchable(),
+                Tables\Columns\TextColumn::make('receive_phone')->label('هاتف المستلم ')
+                    ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive_phone
+                            ? url('https://wa.me/' . ltrim($record->receive_phone, '+'))
+                            : '#')))->openUrlInNewTab()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('order.global_name')->label('اسم المستلم'),
                 Tables\Columns\TextColumn::make('order.code')->label('كود الطلب')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('order.far_sender')->label('الاجور على المرسل ')->formatStateUsing(fn
