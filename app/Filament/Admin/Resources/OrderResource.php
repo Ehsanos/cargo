@@ -81,15 +81,14 @@ class OrderResource extends Resource
                                 ->noSearchResultsMessage('الاسم غير موجود')
 
 
-
                             ,
-                            Forms\Components\TextInput::make('general_sender_name')->label('اسم المرسل')
 
-                            ,
+
                             Forms\Components\Select::make('city_source_id')
                                 ->relationship('citySource', 'name')
                                 ->label('من بلدة')->reactive()->required()->searchable()->preload(),
-
+                            Forms\Components\TextInput::make('general_sender_name')->label('اسم المرسل')
+                            ,
                             Forms\Components\Select::make('branch_source_id')
                                 ->relationship('branchSource', 'name'/*,fn($query,$get)=>$query->where('city_id',$get('city_source_id'))*/)
                                 ->label('اسم الفرع المرسل')->reactive()->required(),
@@ -210,6 +209,7 @@ class OrderResource extends Resource
 
                                 ])->defaultItems(2)
                                 ->collapsible()
+                                ->collapsed()
                                 ->grid(2)
                                 ->deletable(true)
                                 ->addActionLabel('إضافة مهمة')

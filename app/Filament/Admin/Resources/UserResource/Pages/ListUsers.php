@@ -28,7 +28,7 @@ class ListUsers extends ListRecords
             Tab::make('branch')->modifyQueryUsing(fn($query)=>$query->where('level',LevelUserEnum::BRANCH->value))->label('مدراء الأفرع'),
             Tab::make('admin')->modifyQueryUsing(fn($query)=>$query->where('level',LevelUserEnum::ADMIN->value))->label('المدراء'),
             Tab::make('user')->modifyQueryUsing(fn($query)=>$query->where('level',LevelUserEnum::USER->value))->label('المستخدمين'),
-            Tab::make('user')->modifyQueryUsing(fn($query)=>$query->where('level','!=',''))->label('الكل'),
+            Tab::make('user')->modifyQueryUsing(fn($query)=>$query->where('id','!=',''))->label('الكل'),
         ];
     }
 }

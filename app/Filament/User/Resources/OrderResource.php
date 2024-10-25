@@ -112,7 +112,9 @@ class OrderResource extends Resource
                                     BayTypeEnum::AFTER->value => BayTypeEnum::AFTER->getLabel(),
                                     BayTypeEnum::BEFORE->value => BayTypeEnum::BEFORE->getLabel()
 
-                                ])->label('نوع الدفع')->required(),
+                                ])->label('نوع الدفع')
+                                    ->hidden()
+                                    ->required(),
 
                                 Forms\Components\Radio::make('far_sender')
                                     ->options([

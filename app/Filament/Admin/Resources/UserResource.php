@@ -115,12 +115,7 @@ class UserResource extends Resource
 
                                 Forms\Components\TextInput::make('full_name')->label('الاسم الكامل'),
                                 Forms\Components\DatePicker::make('birth_date')->label('تاريخ الميلاد')
-                                    ->format('Y-m-d')->default(now())
-
-                            ]),
-
-                        Tabs\Tab::make('التوصيف الوظيفي')
-                            ->schema([
+                                    ->format('Y-m-d')->default(now()),
                                 Forms\Components\Select::make('status')->options(
                                     [
                                         ActivateStatusEnum::ACTIVE->value => ActivateStatusEnum::ACTIVE->getLabel(),
@@ -137,7 +132,11 @@ class UserResource extends Resource
                                         JobUserEnum::MANGER->value => JobUserEnum::MANGER->getLabel(),
                                     ]
                                 )->label('وظيفة المستخدم'),
+
+
                             ]),
+
+
 
                         Tabs\Tab::make('الخارطة')
                             ->schema([

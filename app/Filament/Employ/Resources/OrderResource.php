@@ -67,8 +67,9 @@ public static function canEdit(Model $record): bool
 
                                 Forms\Components\Select::make('type')->options([
                                     OrderTypeEnum::HOME->value => OrderTypeEnum::HOME->getLabel(),
-                                    OrderTypeEnum::BRANCH->value => OrderTypeEnum::BRANCH->getLabel(),
-                                ])->label('نوع الطلب')->searchable(),
+                                ])->label('نوع الطلب')->searchable()
+                                    ->default(OrderTypeEnum::BRANCH->getLabel())
+                                ,
                                 Forms\Components\Select::make('status')->options(
                                     [
 
@@ -90,7 +91,7 @@ public static function canEdit(Model $record): bool
 
                                     }
 
-                                )->live(),
+                                )->live()->hidden(),
 
                                 Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('معرف المرسل')
                                     ->afterStateUpdated(function ($state, $set) {
