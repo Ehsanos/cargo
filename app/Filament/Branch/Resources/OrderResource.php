@@ -9,6 +9,7 @@ use App\Enums\OrderTypeEnum;
 use App\Enums\TaskAgencyEnum;
 use App\Filament\Branch\Resources\OrderResource\Pages;
 use App\Filament\Branch\Resources\OrderResource\RelationManagers;
+use App\Models\Balance;
 use App\Models\Branch;
 use App\Models\Order;
 use App\Models\User;
@@ -298,7 +299,114 @@ class OrderResource extends Resource
                             Notification::make('error')->title('فشل العملية')->body($e->getLine())->danger()->send();
                         }
                     })->label('الإلغاء / الإعادة')->button()->color('danger')
-                    ->visible(fn($record)=>$record->status === OrderStatusEnum::PENDING || $record->status === OrderStatusEnum::AGREE || $record->status === OrderStatusEnum::PICK || $record->status === OrderStatusEnum::TRANSFER)
+                    ->visible(fn($record)=>$record->status === OrderStatusEnum::PENDING || $record->status === OrderStatusEnum::AGREE || $record->status === OrderStatusEnum::PICK || $record->status === OrderStatusEnum::TRANSFER),
+                Tables\Actions\Action::make('success_pick')
+                    ->form(function ($record) {
+                        if ($record->far_sender == true && $record->far) {
+                            return [
+                                Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد إلتقاط الطلب وإستلام أجور الشحن {$record->far}")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
+                            ];
+                        }
+                        return [
+                            Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد إلتقاط الطلب ")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
+                        ];
+                    })
+                    ->action(function ($record, $data) {
+                        DB::beginTransaction();
+                        try {
+                            $sender = $record->sender;
+                            $staff = $record->pick;
+                            if ($record->far_sender == true && $record->far && $record->far > 0) {
+
+                                Balance::create([
+                                    'user_id' => $sender->id,
+                                    'credit' => $record->far,
+                                    'debit' => 0,
+                                    'info' => 'دفع أجور الشحن الطلب #' . $record->qr_code,
+                                    'is_complete' => true,
+                                    'order_id' => $record->id,
+                                    'total' => $sender->total_balance + $record->far,
+                                ]);
+
+                                Balance::create([
+                                    'user_id' => $staff->id,
+                                    'credit' => 0,
+                                    'debit' => $record->far,
+                                    'info' => 'دفع أجور الشحن الطلب #' . $record->qr_code,
+                                    'is_complete' => true,
+                                    'order_id' => $record->id,
+                                    'total' => $staff->total_balance - $record->far,
+                                ]);
+
+                            }
+                            $record->update(['status' => OrderStatusEnum::PICK->value]);
+                            DB::commit();
+                            Notification::make('success')->title('نجاح العملية')->body('تم تأكيد إلتقاط الطلب')->success()->send();
+                        } catch (\Exception | Error $e) {
+                            Notification::make('error')->title('فشل العملية')->body($e->getLine())->danger()->send();
+                        }
+                    })
+                    ->label('تأكيد إلتقاط الشحنة')->button()->color('info')
+                    ->visible(fn($record)=>$record->pick_id==auth()->id() && $record->status==OrderStatusEnum::AGREE),
+                Tables\Actions\Action::make('success_given')
+                    ->form(function ($record) {
+                        $price=$record->price;
+                        $far=$record->far;
+                        $totalPrice=$price;
+                        if ($record->far_sender == false&& $record->far>0) {
+                            $totalPrice = $price + $far;
+                        }
+                        if($totalPrice>0){
+                            return [
+                                Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد تسليم الطلب وإستلام أجور الشحن {$totalPrice}")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
+                            ];
+                        }
+                        return [
+                            Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد تسليم الطلب ")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
+                        ];
+                    })
+                    ->action(function ($record, $data) {
+                        DB::beginTransaction();
+                        try {
+                            $price=$record->price;
+                            $far=$record->far;
+                            $totalPrice=$price;
+                            if ($record->far_sender == false&& $record->far>0) {
+                                $totalPrice = $price + $far;
+                            }
+
+                            if ($totalPrice>0) {
+                                $sender = $record->receive;
+                                $staff = $record->given;
+                                Balance::create([
+                                    'user_id' => $sender->id,
+                                    'credit' => $totalPrice,
+                                    'debit' => 0,
+                                    'info' => 'دفع أجور الشحن الطلب #' . $record->qr_code,
+                                    'is_complete' => true,
+                                    'order_id' => $record->id,
+                                    'total' => $sender->total_balance + $record->far,
+                                ]);
+
+                                Balance::create([
+                                    'user_id' => $staff->id,
+                                    'credit' => 0,
+                                    'debit' => $totalPrice,
+                                    'info' => 'دفع أجور الشحن الطلب #' . $record->qr_code,
+                                    'is_complete' => true,
+                                    'order_id' => $record->id,
+                                    'total' => $staff->total_balance - $record->far,
+                                ]);
+
+                            }
+                            $record->update(['status' => OrderStatusEnum::SUCCESS->value]);
+                            DB::commit();
+                            Notification::make('success')->title('نجاح العملية')->body('تم تأكيد تسليم الطلب')->success()->send();
+                        } catch (\Exception | Error $e) {
+                            Notification::make('error')->title('فشل العملية')->body($e->getLine())->danger()->send();
+                        }
+                    })->label('تأكيد تسليم الشحنة')->button()->color('info')
+                    ->visible(fn($record)=>$record->given_id==auth()->id() && ($record->status==OrderStatusEnum::TRANSFER || $record->status==OrderStatusEnum::PICK)),
 
             ])
             ->bulkActions([
