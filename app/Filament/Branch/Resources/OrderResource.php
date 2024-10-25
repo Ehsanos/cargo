@@ -63,6 +63,9 @@ class OrderResource extends Resource
 
                                          }
                                      })->live()->searchable()->preload(),
+
+                                 Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل')->required(),
+
                                  Forms\Components\TextInput::make('general_sender_name')->label('اسم المرسل'),
 
 
@@ -77,7 +80,6 @@ class OrderResource extends Resource
 
 
 
-                                 Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل')->required(),
 
 
                                  Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل')->required(),
