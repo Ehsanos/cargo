@@ -280,7 +280,7 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم'),
 
                 Tables\Columns\TextColumn::make('receive_address')->label('عنوان المستلم ')->searchable(),
-                Tables\Columns\TextColumn::make('receive.phone')->label('هاتف المستلم ')
+                Tables\Columns\TextColumn::make('receive_phone')->label('هاتف المستلم ')
                     ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive?->phone, '+')))
                     ->openUrlInNewTab()
                     ->searchable(),
