@@ -47,11 +47,13 @@ class OrderResource extends Resource
                              ->schema([
 
                                  Forms\Components\Select::make('type')->options([
-                                     OrderTypeEnum::HOME->value => OrderTypeEnum::HOME->getLabel(),
                                      OrderTypeEnum::BRANCH->value => OrderTypeEnum::BRANCH->getLabel(),
                                  ])->label('نوع الطلب')
                                      ->required()
-                                     ->searchable(),
+                                     ->searchable()->default(
+                                          OrderTypeEnum::HOME->getLabel()
+
+                                     ),
                                  Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('معرف المرسل')->required()
                                      ->afterStateUpdated(function ($state, $set) {
                                          $user = User::with('city')->find($state);

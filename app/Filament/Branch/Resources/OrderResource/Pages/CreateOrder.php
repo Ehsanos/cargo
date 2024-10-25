@@ -14,7 +14,7 @@ class CreateOrder extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['code'] = "FC" . now()->format('dHis');
-        $data['branch_source_id'] = auth()->user->branch_id;
+        $data['branch_source_id'] = auth()->user()->branch_id;
         $data['city_id'] = auth()->user->city_id;
         $data['shipping_date'] = now()->format('Y-h-d');
         $data['status'] = OrderStatusEnum::PENDING->value;
