@@ -63,8 +63,13 @@ class OrderResource extends Resource
                                          if ($user) {
                                              $set('sender_phone', $user?->phone);
                                              $set('sender_address', $user?->address);
-                                            /* $set('city_source_id', $user?->city_id);
-                                             $set('branch_source_id', $user?->branch_id);*/
+                                             $set('city_source_id', $user?->city_id);
+
+
+
+                                             /*
+
+                                              $set('branch_source_id', $user?->branch_id);*/
 
                                          }
                                      })->live()->searchable()->preload(),
@@ -73,8 +78,13 @@ class OrderResource extends Resource
 
                                  Forms\Components\TextInput::make('general_sender_name')->label('اسم المرسل'),
 
+                                 Forms\Components\Select::make('city_source_id')
+                                     ->relationship('citySource', 'name')
+                                     ->label('من بلدة')->reactive()->required()->searchable()->preload(),
 
-                                 /*  Forms\Components\Select::make('city_source_id')
+                                 /*
+
+                                  Forms\Components\Select::make('city_source_id')
                                        ->relationship('citySource', 'name')
                                        ->label('من بلدة')->reactive()->required()->searchable()->preload(),
 
