@@ -266,7 +266,10 @@ public static function canEdit(Model $record): bool
                 Tables\Columns\TextColumn::make('packages.unit.name')->label('نوع الشحنة'),
                 Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل'),
                 Tables\Columns\TextColumn::make('sender.phone')->label('هاتف المرسل')
-                    ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive?->phone, '+')))
+                    ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive?->phone
+                            ? url('https://wa.me/' . ltrim($record->order->receive->phone, '+'))
+                            : '#'
+                            )))
                     ->openUrlInNewTab()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('citySource.name')->label('من بلدة'),
