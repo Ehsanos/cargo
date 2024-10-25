@@ -60,10 +60,12 @@ class OrderResource extends Resource
 
                             Forms\Components\Select::make('type')->options([
                                 OrderTypeEnum::HOME->value => OrderTypeEnum::HOME->getLabel(),
-                                OrderTypeEnum::BRANCH->value => OrderTypeEnum::BRANCH->getLabel(),
+//                                OrderTypeEnum::BRANCH->value => OrderTypeEnum::BRANCH->getLabel(),
+
                             ])->label('نوع الطلب')
                                 ->required()
                                 ->default(OrderTypeEnum::BRANCH->getLabel())
+                                ->reactive()
                                 ->searchable(),
                             Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('معرف المرسل')->required()
                                 ->afterStateUpdated(function ($state, $set) {
@@ -75,8 +77,15 @@ class OrderResource extends Resource
                                         $set('branch_source_id', $user?->branch_id);
 
                                     }
-                                })->live()->searchable()->preload(),
-                            Forms\Components\TextInput::make('general_sender_name')->label('اسم المرسل'),
+                                })->live()->searchable()->preload()
+                                ->noSearchResultsMessage('الاسم غير موجود')
+
+
+
+                            ,
+                            Forms\Components\TextInput::make('general_sender_name')->label('اسم المرسل')
+
+                            ,
                             Forms\Components\Select::make('city_source_id')
                                 ->relationship('citySource', 'name')
                                 ->label('من بلدة')->reactive()->required()->searchable()->preload(),
