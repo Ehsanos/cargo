@@ -235,6 +235,7 @@ class OrderResource extends Resource
 
                                      ])->defaultItems(1)
                                      ->collapsible()
+                                     ->collapsed()
                                      ->grid(2)
                                      ->deletable(true)
                                      ->addActionLabel('إضافة مهمة')
