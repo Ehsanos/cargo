@@ -81,14 +81,14 @@ class OrderResource extends Resource
                                 ->noSearchResultsMessage('الاسم غير موجود')
 
 
+
                             ,
 
 
                             Forms\Components\Select::make('city_source_id')
                                 ->relationship('citySource', 'name')
                                 ->label('من بلدة')->reactive()->required()->searchable()->preload(),
-                            Forms\Components\TextInput::make('general_sender_name')->label('اسم المرسل')
-                            ,
+
                             Forms\Components\Select::make('branch_source_id')
                                 ->relationship('branchSource', 'name'/*,fn($query,$get)=>$query->where('city_id',$get('city_source_id'))*/)
                                 ->label('اسم الفرع المرسل')->reactive()->required(),
@@ -130,10 +130,11 @@ class OrderResource extends Resource
                                     })->live()->dehydrated(false),
                             ]),
 
+                            Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم')->required(),
+
                             Forms\Components\TextInput::make('global_name')->label('اسم المستلم'),
 
 
-                            Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم')->required(),
                             Forms\Components\Select::make('city_target_id')
                                 ->relationship('cityTarget', 'name')
                                 ->label('الى بلدة')->required()->searchable()->preload(),
