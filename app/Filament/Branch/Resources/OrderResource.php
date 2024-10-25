@@ -234,7 +234,7 @@ class OrderResource extends Resource
 
                 Tables\Columns\TextColumn::make('bay_type')->label('حالة الدفع'),
                 Tables\Columns\TextColumn::make('general_sender_name')->label('اسم المرسل'),
-                Tables\Columns\TextColumn::make('sender.phone')->label('هاتف المرسل')
+                Tables\Columns\TextColumn::make('sender_phone')->label('هاتف المرسل')
                     ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive?->phone, '+')))
                     ->openUrlInNewTab()
                     ->searchable(),
