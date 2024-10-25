@@ -50,13 +50,13 @@ class AgencyWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('order.price')->label('التحصيل'),
                 Tables\Columns\TextColumn::make('order.far')->label('أجور الشحن'),
                 Tables\Columns\TextColumn::make('order.sender.name')->label('اسم المرسل')->searchable(),
-//                Tables\Columns\TextColumn::make('order.sender.phone')->label('هاتف المرسل')
-//                    ->url(fn($record) => $record->order->receive?->phone
-//                        ? url('https://wa.me/' . ltrim($record->order->receive->phone, '+'))
-//                        : '#')
-//                    ->openUrlInNewTab()
-//
-//                    ->searchable(),
+                Tables\Columns\TextColumn::make('sender_phone')->label('هاتف المرسل')
+                    ->url(fn($record) => $record->sender_phone
+                        ? url('https://wa.me/' . ltrim($record->sender_phone, '+'))
+                        : '#')
+                    ->openUrlInNewTab()
+
+                    ->searchable(),
 
                 Tables\Columns\TextColumn::make('order.receive.name')->label('معرف المستلم ')->searchable(),
                 Tables\Columns\TextColumn::make('order.receive.address')->label('عنوان المستلم ')->searchable(),
