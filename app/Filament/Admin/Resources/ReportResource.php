@@ -56,12 +56,10 @@ class ReportResource extends Resource
                 ,
                 Tables\Columns\TextColumn::make('$numbers')
                     ->label('عدد الطلبات المرسلة')
-                    ->sortable()
 
                     ->getStateUsing(fn($record) => $record->sentOrders->count()),
                 Tables\Columns\TextColumn::make('numbers2')
                     ->label('عدد الطلبات المستلمة')
-                    ->sortable() // يسمح بالترتيب
                     ->getStateUsing(fn($record) => $record->receivedOrders->count()),
 
                 Tables\Columns\TextColumn::make('total_balance')
@@ -70,7 +68,7 @@ class ReportResource extends Resource
 
                 Tables\Columns\TextColumn::make('numbers3')
                     ->label('عدد الطلبات المرتجعة ')
-                    ->sortable() //
+
                     ->getStateUsing(fn($record) => DB::table('orders')
                         ->where('sender_id', $record->id)
                         ->where('status', '=', OrderStatusEnum::CANCELED->value)
