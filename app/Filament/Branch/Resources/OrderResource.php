@@ -63,8 +63,13 @@ class OrderResource extends Resource
                                          if ($user) {
                                              $set('sender_phone', $user?->phone);
                                              $set('sender_address', $user?->address);
-                                            /* $set('city_source_id', $user?->city_id);
-                                             $set('branch_source_id', $user?->branch_id);*/
+                                             $set('city_source_id', $user?->city_id);
+
+
+
+                                             /*
+
+                                              $set('branch_source_id', $user?->branch_id);*/
 
                                          }
                                      })->live()->searchable()->preload(),
@@ -73,8 +78,13 @@ class OrderResource extends Resource
 
                                  Forms\Components\TextInput::make('general_sender_name')->label('اسم المرسل'),
 
+                                 Forms\Components\Select::make('city_source_id')
+                                     ->relationship('citySource', 'name')
+                                     ->label('من بلدة')->reactive()->required()->searchable()->preload(),
 
-                                 /*  Forms\Components\Select::make('city_source_id')
+                                 /*
+
+                                  Forms\Components\Select::make('city_source_id')
                                        ->relationship('citySource', 'name')
                                        ->label('من بلدة')->reactive()->required()->searchable()->preload(),
 
@@ -141,13 +151,13 @@ class OrderResource extends Resource
 
                                          })->live()->dehydrated(false),
                                  ]),
-
+                                 Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم')->required(),
                                  Forms\Components\TextInput::make('global_name')->label('اسم المستلم'),
 
-                                 Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم')->required(),
+                                 Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
                                  Forms\Components\Select::make('city_target_id')
                                      ->relationship('cityTarget', 'name')
-                                     ->label('الى مدينة')->required()->searchable()->preload()
+                                     ->label('الى بلدة')->required()->searchable()->preload()
                                      ->afterStateUpdated(function($state,$set){
 
                                        if($state!=null){
@@ -235,6 +245,7 @@ class OrderResource extends Resource
 
                                      ])->defaultItems(1)
                                      ->collapsible()
+                                     ->collapsed()
                                      ->grid(2)
                                      ->deletable(true)
                                      ->addActionLabel('إضافة مهمة')
@@ -279,12 +290,12 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم'),
 
                 Tables\Columns\TextColumn::make('receive_address')->label('عنوان المستلم ')->searchable(),
-                Tables\Columns\TextColumn::make('receive.phone')->label('هاتف المستلم ')
+                Tables\Columns\TextColumn::make('receive_phone')->label('هاتف المستلم ')
                     ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive?->phone, '+')))
                     ->openUrlInNewTab()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('cityTarget.name')->label('الى مدينة '),
+                Tables\Columns\TextColumn::make('cityTarget.name')->label('الى بلدة '),
                 Tables\Columns\TextColumn::make('created_at')->label('تاريخ الشحنة')
                     ->formatStateUsing(fn($state) => Carbon::parse($state)->diffForHumans()) // عرض الزمن بشكل نسبي
 
