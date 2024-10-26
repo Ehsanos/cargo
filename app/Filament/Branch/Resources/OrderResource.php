@@ -307,7 +307,7 @@ class OrderResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('set_picker')->form([
-                    Forms\Components\Select::make('pick_id')->options(User::where('users.level', LevelUserEnum::STAFF->value)->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط'),
+                    Forms\Components\Select::make('pick_id')->options(User::where('users.branch_id',auth()->user()->branch_id)->where(fn($query)=>$query->where('level',LevelUserEnum::STAFF->value)->orWhere('level',LevelUserEnum::BRANCH->value))->pluck('name','id'))->searchable()->label('موظف الإلتقاط'),
                 ])
                     ->action(function ($record, $data) {
                         DB::beginTransaction();
