@@ -259,9 +259,9 @@ class OrderResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('citySource.name')->label('من بلدة')->searchable(),
                 Tables\Columns\TextColumn::make('receive.name')->label('معرف المستلم ')->searchable(),
-                Tables\Columns\TextColumn::make('receive.address')->label('عنوان المستلم ')->searchable(),
-                Tables\Columns\TextColumn::make('receive.phone')->label('هاتف المستلم ')
-                    ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive?->phone, '+')))->openUrlInNewTab()
+                Tables\Columns\TextColumn::make('receive_address')->label('عنوان المستلم ')->searchable(),
+                Tables\Columns\TextColumn::make('receive_phone')->label('هاتف المستلم ')
+                    ->url(fn($record) => url('https://wa.me/' . ltrim($record?->receive_phone, '+')))->openUrlInNewTab()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم'),
                 Tables\Columns\TextColumn::make('cityTarget.name')->label('الى بلدة ')->searchable(),
