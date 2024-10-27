@@ -80,20 +80,7 @@ class OrderResource extends Resource
                             Forms\Components\Select::make('city_source_id')
                                 ->relationship('citySource', 'name')
                                 ->label('من بلدة')->reactive()->required()->searchable()->preload()
-                                ->afterStateUpdated(function ($state, $set) {
-
-                                    if ($state != null) {
-
-                                        $city = City::find($state);
-                                        $set('branch_source_id', $city?->branch_id);
-
-                                    } else {
-
-                                        $set('branch_source_id', null);
-
-                                    }
-                                })
-                                ->live(),
+                            ,
 
                             /*
 
