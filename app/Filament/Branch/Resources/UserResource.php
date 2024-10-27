@@ -22,6 +22,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use PHPUnit\Exception;
 
@@ -33,6 +34,15 @@ class UserResource extends Resource
     protected static ?string $label = 'مستخدم';
     protected static ?string $navigationLabel = 'المستخدمون';
     protected static ?string $navigationIcon = 'heroicon-o-users';
+
+
+    public static function canEdit(Model $record): bool
+    {
+        $user = auth()->user();
+
+        // التحقق من أن المستخدم المسجل في نفس الفرع
+        return $user->branch_id === $record->branch_id;
+    }
 
     public static function form(Form $form): Form
     {
