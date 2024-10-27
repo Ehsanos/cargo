@@ -302,8 +302,52 @@ class OrderResource extends Resource
 
             ])->defaultSort('created_at', 'desc')
             ->filters([
-                //
-            ])
+                Tables\Filters\SelectFilter::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل'),
+                Tables\Filters\SelectFilter::make('receive_id')->relationship('receive', 'name')->label('اسم المستلم'),
+                Tables\Filters\SelectFilter::make('branch_source_id')->relationship('branchSource', 'name')
+                    ->label('اسم الفرع المرسل'),
+                Tables\Filters\SelectFilter::make('branch_source_id')->relationship('branchSource', 'name')
+                    ->label('اسم الفرع المرسل'),
+                Tables\Filters\SelectFilter::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')
+                ,
+                Tables\Filters\SelectFilter::make('status')->options([
+                    OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel(),
+                    OrderStatusEnum::AGREE->value => OrderStatusEnum::AGREE->getLabel(),
+                    OrderStatusEnum::PICK->value => OrderStatusEnum::PICK->getLabel(),
+                    OrderStatusEnum::TRANSFER->value => OrderStatusEnum::TRANSFER->getLabel(),
+                    OrderStatusEnum::SUCCESS->value => OrderStatusEnum::SUCCESS->getLabel(),
+                    OrderStatusEnum::RETURNED->value => OrderStatusEnum::RETURNED->getLabel(),
+                    OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
+
+
+                ])->label('حالة الطلب'),
+                Tables\Filters\SelectFilter::make('city_target_id')
+                    ->relationship('cityTarget', 'name')
+                    ->label('الى بلدة'),
+
+                Tables\Filters\SelectFilter::make('city_source_id')
+                    ->relationship('citySource', 'name')
+                    ->label('من بلدة')
+                ,
+
+                Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        Forms\Components\DatePicker::make('created_from')->label('من تاريخ'),
+                        Forms\Components\DatePicker::make('created_until')->label('الى تاريخ'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    })
+
+            ])->filtersFormMaxHeight('300px')
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('set_picker')->form([
