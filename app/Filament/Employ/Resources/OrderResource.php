@@ -16,6 +16,7 @@ use App\Helper\HelperBalance;
 use App\Models\Agency;
 use App\Models\Balance;
 use App\Models\Branch;
+use App\Models\City;
 use App\Models\Order;
 use App\Models\User;
 use Carbon\Carbon;
@@ -146,7 +147,21 @@ public static function canEdit(Model $record): bool
 
 
                                 Forms\Components\Select::make('city_target_id')->relationship('cityTarget', 'name')
-                                    ->label('الى بلدة')->searchable()->preload(),
+                                    ->label('الى بلدة')->searchable()->preload()
+                                    ->afterStateUpdated(function ($state, $set) {
+
+                                        if ($state != null) {
+
+                                            $city = City::find($state);
+                                            $set('branch_target_id', $city?->branch_id);
+
+                                        } else {
+
+                                            $set('branch_target_id', null);
+
+                                        }
+                                    })
+                                    ->live(),
 
                                 Forms\Components\Select::make('size_id')
                                     ->relationship('size', 'name')

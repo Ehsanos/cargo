@@ -140,7 +140,21 @@ class OrderResource extends Resource
 
                             Forms\Components\Select::make('city_target_id')
                                 ->relationship('cityTarget', 'name')
-                                ->label('الى بلدة')->required()->searchable()->preload(),
+                                ->label('الى بلدة')->required()->searchable()->preload()
+                                ->afterStateUpdated(function ($state, $set) {
+
+                                    if ($state != null) {
+
+                                        $city = City::find($state);
+                                        $set('branch_target_id', $city?->branch_id);
+
+                                    } else {
+
+                                        $set('branch_target_id', null);
+
+                                    }
+                                })
+                                ->live(),
 
                             Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')
                                 ->searchable()->preload()
