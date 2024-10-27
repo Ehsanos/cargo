@@ -43,221 +43,214 @@ class OrderResource extends Resource
 
     public static function form(Form $form): Form
     {
-             return $form
-                 ->schema([
+        return $form
+            ->schema([
 
-                     Forms\Components\Section::make('الطلب')->schema([
-                         Forms\Components\Fieldset::make('معلومات الطلب')
-                             ->schema([
+                Forms\Components\Section::make('الطلب')->schema([
+                    Forms\Components\Fieldset::make('معلومات الطلب')
+                        ->schema([
 
-                                 Forms\Components\Select::make('type')->options([
-                                     OrderTypeEnum::BRANCH->value => OrderTypeEnum::BRANCH->getLabel(),
-                                     OrderTypeEnum::HOME->value => OrderTypeEnum::HOME->getLabel(),
+                            Forms\Components\Select::make('type')->options([
+                                OrderTypeEnum::BRANCH->value => OrderTypeEnum::BRANCH->getLabel(),
+                                OrderTypeEnum::HOME->value => OrderTypeEnum::HOME->getLabel(),
 
-                                 ])->label('نوع الطلب')
-                                     ->required()
-                                     ->searchable(),
-                                 Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('معرف المرسل')->required()
-                                     ->afterStateUpdated(function ($state, $set) {
-                                         $user = User::with('city')->find($state);
-                                         if ($user) {
-                                             $set('sender_phone', $user?->phone);
-                                             $set('sender_address', $user?->address);
-                                             $set('city_source_id', $user?->city_id);
-
-
-
-                                             /*
-
-                                              $set('branch_source_id', $user?->branch_id);*/
-
-                                         }
-                                     })->live()->searchable()->preload(),
-
-                                 Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل')->required(),
-
-                                 Forms\Components\TextInput::make('general_sender_name')->label('اسم المرسل'),
-
-                                 Forms\Components\Select::make('city_source_id')
-                                     ->relationship('citySource', 'name')
-                                     ->label('من بلدة')->reactive()->required()->searchable()->preload(),
-
-                                 /*
-
-                                  Forms\Components\Select::make('city_source_id')
-                                       ->relationship('citySource', 'name')
-                                       ->label('من بلدة')->reactive()->required()->searchable()->preload(),
-
-                                   Forms\Components\Select::make('branch_source_id')
-                                       ->relationship('branchSource', 'name',fn($query,$get)=>$query->where('city_id',$get('city_source_id')))
-                                       ->label('اسم الفرع المرسل')->reactive()->required(),*/
+                            ])->label('نوع الطلب')
+                                ->required()
+                                ->searchable(),
+                            Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('معرف المرسل')->required()
+                                ->afterStateUpdated(function ($state, $set) {
+                                    $user = User::with('city')->find($state);
+                                    if ($user) {
+                                        $set('sender_phone', $user?->phone);
+                                        $set('sender_address', $user?->address);
+                                        $set('city_source_id', $user?->city_id);
 
 
+                                        /*
+
+                                         $set('branch_source_id', $user?->branch_id);*/
+
+                                    }
+                                })->live()->searchable()->preload(),
+
+                            Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل')->required(),
+
+                            Forms\Components\TextInput::make('general_sender_name')->label('اسم المرسل'),
+
+                            Forms\Components\Select::make('city_source_id')
+                                ->relationship('citySource', 'name')
+                                ->label('من بلدة')->reactive()->required()->searchable()->preload(),
+
+                            /*
+
+                             Forms\Components\Select::make('city_source_id')
+                                  ->relationship('citySource', 'name')
+                                  ->label('من بلدة')->reactive()->required()->searchable()->preload(),
+
+                              Forms\Components\Select::make('branch_source_id')
+                                  ->relationship('branchSource', 'name',fn($query,$get)=>$query->where('city_id',$get('city_source_id')))
+                                  ->label('اسم الفرع المرسل')->reactive()->required(),*/
 
 
+                            Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل')->required(),
+
+                            Forms\Components\Grid::make()->schema([
+                                Forms\Components\Select::make('receive_id')->options(User::all()->pluck('iban', 'id')
+                                    ->toArray())->searchable()
+                                    ->afterStateUpdated(function ($state, $set) {
+                                        $user = User::with('city')->find($state);
+                                        if ($user) {
+                                            $set('receive_phone', $user?->phone);
+                                            $set('receive_address', $user?->address);
+
+                                            $set('sender_name', $user?->name);
+                                            $set('city_target_id', $user?->city_id);
+                                            $set('branch_target_id', $user?->branch_id);
+                                        } else {
+                                            $set('receive_phone', null);
+                                            $set('receive_address', null);
+
+                                            $set('sender_name', null);
+                                            $set('city_target_id', null);
+                                            $set('branch_target_id', null);
+
+                                        }
+                                    })->live()->label('ايبان المستلم'),
+
+                                Forms\Components\Select::make('sender_name')->label('معرف المستلم')
+                                    ->options(User::all()->pluck('name', 'id')->toArray())->searchable()
+                                    ->afterStateUpdated(function ($state, $set) {
+                                        $user = User::with('city')->find($state);
+                                        if ($user) {
+                                            $set('branch_target_id', $user?->city?->branch_id);
+                                            $set('receive_phone', $user?->phone);
+                                            $set('receive_address', $user?->address);
+
+                                            $set('sender_name', $user?->name);
+                                            $set('city_target_id', $user?->city_id);
+
+                                            $set('receive_id', $user?->id);
+
+                                        } else {
+                                            $set('receive_phone', null);
+                                            $set('receive_address', null);
+
+                                            $set('sender_name', null);
+                                            $set('city_target_id', null);
+                                            $set('branch_target_id', null);
+                                            $set('receive_id', null);
+                                            $set('branch_target_id', null);
+
+                                        }
+
+                                    })->live()->dehydrated(false),
+                            ]),
+                            Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم')->required(),
+                            Forms\Components\TextInput::make('global_name')->label('اسم المستلم'),
+
+                            Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
+                            Forms\Components\Select::make('city_target_id')
+                                ->relationship('cityTarget', 'name')
+                                ->label('الى بلدة')->required()->searchable()->preload()
+                                ->afterStateUpdated(function ($state, $set) {
+
+                                    if ($state != null) {
+
+                                        $city = City::find($state);
+                                        $set('branch_target_id', $city?->branch_id);
+
+                                    } else {
+
+                                        $set('branch_target_id', null);
+
+                                    }
+                                })
+                                ->live(),
+
+                            Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')
+                                ->searchable()->preload()
+                                ->live()->required(),
+
+                            Forms\Components\Select::make('weight_id')
+                                ->relationship('weight', 'name')
+                                ->label
+                                ('الوزن')->searchable()->preload(),
+
+                            Forms\Components\Select::make('size_id')
+                                ->relationship('size', 'name')
+                                ->label
+                                ('الحجم')->searchable()->preload(),
 
 
-                                 Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل')->required(),
+                            Forms\Components\Select::make('unit_id')
+                                ->relationship('unit', 'name')->label('الوحدة'),
 
-                                 Forms\Components\Grid::make()->schema([
-                                     Forms\Components\Select::make('receive_id')->options(User::all()->pluck('iban', 'id')
-                                         ->toArray())->searchable()
-                                         ->afterStateUpdated(function ($state, $set) {
-                                             $user = User::with('city')->find($state);
-                                             if ($user) {
-                                                 $set('receive_phone', $user?->phone);
-                                                 $set('receive_address', $user?->address);
+                            // ttrrtt
+                            Forms\Components\Select::make('bay_type')->options([
+                                BayTypeEnum::AFTER->value => BayTypeEnum::AFTER->getLabel(),
+                                BayTypeEnum::BEFORE->value => BayTypeEnum::BEFORE->getLabel()
 
-                                                 $set('sender_name', $user?->name);
-                                                 $set('city_target_id', $user?->city_id);
-                                                 $set('branch_target_id', $user?->branch_id);
-                                             }
-                                             else{
-                                                 $set('receive_phone', null);
-                                                 $set('receive_address', null);
-
-                                                 $set('sender_name', null);
-                                                 $set('city_target_id', null);
-                                                 $set('branch_target_id',null);
-
-                                             }
-                                         })->live()->label('ايبان المستلم'),
-
-                                     Forms\Components\Select::make('sender_name')->label('معرف المستلم')
-                                         ->options(User::all()->pluck('name', 'id')->toArray())->searchable()
-                                         ->afterStateUpdated(function ($state, $set) {
-                                             $user = User::with('city')->find($state);
-                                             if ($user) {
-                                                 $set('branch_target_id',$user?->city?->branch_id);
-                                                 $set('receive_phone', $user?->phone);
-                                                 $set('receive_address', $user?->address);
-
-                                                 $set('sender_name', $user?->name);
-                                                 $set('city_target_id', $user?->city_id);
-
-                                                 $set('receive_id', $user?->id);
-
-                                             }else{
-                                                 $set('receive_phone', null);
-                                                 $set('receive_address', null);
-
-                                                 $set('sender_name', null);
-                                                 $set('city_target_id', null);
-                                                 $set('branch_target_id',null);
-                                                 $set('receive_id', null);
-                                                 $set('branch_target_id',null);
-
-                                             }
-
-                                         })->live()->dehydrated(false),
-                                 ]),
-                                 Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم')->required(),
-                                 Forms\Components\TextInput::make('global_name')->label('اسم المستلم'),
-
-                                 Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
-                                 Forms\Components\Select::make('city_target_id')
-                                     ->relationship('cityTarget', 'name')
-                                     ->label('الى بلدة')->required()->searchable()->preload()
-                                     ->afterStateUpdated(function($state,$set){
-
-                                       if($state!=null){
-
-                                           $city=City::find($state);
-                                           $set('branch_target_id',$city?->branch_id);
-
-                                       }else{
-
-                                           $set('branch_target_id',null);
-
-                                       }
-                                     })
-
-                                     ->live(),
-
-                                 Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')
-                                     ->searchable()->preload()
-                                     ->live()->required(),
-
-                                 Forms\Components\Select::make('weight_id')
-                                     ->relationship('weight', 'name')
-                                     ->label
-                                     ('الوزن')->searchable()->preload(),
-
-                                 Forms\Components\Select::make('size_id')
-                                     ->relationship('size', 'name')
-                                     ->label
-                                     ('الحجم')->searchable()->preload(),
+                            ])->label('التحصيل على ')->required()->hidden(),
 
 
-                                 Forms\Components\Select::make('unit_id')
-                                     ->relationship('unit', 'name')->label('الوحدة'),
+                            Forms\Components\TextInput::make('price')->numeric()->label('التحصيل')->default(0)->columnSpan(2),
+                            Forms\Components\TextInput::make('far')->numeric()->label('أجور الشحن')->default(1),
+                            Forms\Components\Radio::make('far_sender')
+                                ->options([
+                                    true => 'المرسل',
+                                    false => 'المستلم'
+                                ])->required()->default(false)->inline()
+                                ->label('أجور الشحن'),
 
-                                 // ttrrtt
-                                 Forms\Components\Select::make('bay_type')->options([
-                                     BayTypeEnum::AFTER->value => BayTypeEnum::AFTER->getLabel(),
-                                     BayTypeEnum::BEFORE->value => BayTypeEnum::BEFORE->getLabel()
-
-                                 ])->label('التحصيل على ')->required()->hidden(),
-
-
-                                 Forms\Components\TextInput::make('price')->numeric()->label('التحصيل')->default(0)->columnSpan(2),
-                                 Forms\Components\TextInput::make('far')->numeric()->label('أجور الشحن')->default(1),
-                                 Forms\Components\Radio::make('far_sender')
-                                     ->options([
-                                         true => 'المرسل',
-                                         false => 'المستلم'
-                                     ])->required()->default(false)->inline()
-                                     ->label('أجور الشحن'),
-
-                                 Forms\Components\TextInput::make('canceled_info')
-                                     ->hidden(fn(Forms\Get $get): bool => !$get('active'))->live()
-                                     ->label('سبب الارجاع في حال ارجاع الطلب'),
+                            Forms\Components\TextInput::make('canceled_info')
+                                ->hidden(fn(Forms\Get $get): bool => !$get('active'))->live()
+                                ->label('سبب الارجاع في حال ارجاع الطلب'),
 
 
-                             ])->columns(2),
-                         Forms\Components\Fieldset::make('محتويات الطلب')
-                             ->schema([
-                                 Forms\Components\Repeater::make('packages')->relationship('packages')->schema([
-                                     SpatieMediaLibraryFileUpload::make('package')->label('صورة الشحنة')->collection('packages'),
-                                     Forms\Components\TextInput::make('info')->label('معلومات الشحنة'),
-                                     Forms\Components\TextInput::make('quantity')->numeric()->label('الكمية'),
-                                 ])
-                                     ->label('محتويات الطلب')
-                                     ->addable(false)
-                                     ->collapsible()
-                                     ->collapsed()
-                                     ->deletable(false)->columnSpan(2)
+                        ])->columns(2),
+                    Forms\Components\Fieldset::make('محتويات الطلب')
+                        ->schema([
+                            Forms\Components\Repeater::make('packages')->relationship('packages')->schema([
+                                SpatieMediaLibraryFileUpload::make('package')->label('صورة الشحنة')->collection('packages'),
+                                Forms\Components\TextInput::make('info')->label('معلومات الشحنة'),
+                                Forms\Components\TextInput::make('quantity')->numeric()->label('الكمية'),
+                            ])
+                                ->label('محتويات الطلب')
+                                ->addable(false)
+                                ->collapsible()
+                                ->collapsed()
+                                ->deletable(false)->columnSpan(2)
 
-                             ])->columnSpan(2),
-                         Forms\Components\Fieldset::make('سلسلة التوكيل')
-                             ->schema([
-                                 Forms\Components\Repeater::make('agencies')->relationship('agencies')
-                                     ->schema([
+                        ])->columnSpan(2),
+                    Forms\Components\Fieldset::make('سلسلة التوكيل')
+                        ->schema([
+                            Forms\Components\Repeater::make('agencies')->relationship('agencies')
+                                ->schema([
 
-                                         Forms\Components\Select::make('user_id')->options(User::where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)
-                                         )->pluck('name', 'id'))->label('الموظف')->searchable(),
-                                         Forms\Components\Radio::make('status')->options([
-                                             TaskAgencyEnum::TASK->value => TaskAgencyEnum::TASK->getLabel(),
-                                             TaskAgencyEnum::TRANSPORT->value => TaskAgencyEnum::TRANSPORT->getLabel(),
+                                    Forms\Components\Select::make('user_id')->options(User::where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)
+                                    )->pluck('name', 'id'))->label('الموظف')->searchable(),
+                                    Forms\Components\Radio::make('status')->options([
+                                        TaskAgencyEnum::TASK->value => TaskAgencyEnum::TASK->getLabel(),
+                                        TaskAgencyEnum::TRANSPORT->value => TaskAgencyEnum::TRANSPORT->getLabel(),
 
-                                         ])->label('المهمة'),
-                                         Forms\Components\TextInput::make('task')->label('المهمة المطلوب تنفيذها'),
+                                    ])->label('المهمة'),
+                                    Forms\Components\TextInput::make('task')->label('المهمة المطلوب تنفيذها'),
 
-                                     ])->defaultItems(1)
-                                     ->collapsible()
-                                     ->collapsed()
-                                     ->grid(2)
-                                     ->deletable(true)
-                                     ->addActionLabel('إضافة مهمة')
-                                     ->label('المهام')
-                                     ->itemLabel(fn(array $state): ?string => $state['package_name'] ?? ' مهمة...')->columnSpan(2), //
-                                 // استخدام اسم الشحنة كتسمية
+                                ])->defaultItems(1)
+                                ->collapsible()
+                                ->collapsed()
+                                ->grid(2)
+                                ->deletable(true)
+                                ->addActionLabel('إضافة مهمة')
+                                ->label('المهام')
+                                ->itemLabel(fn(array $state): ?string => $state['package_name'] ?? ' مهمة...')->columnSpan(2), //
+                            // استخدام اسم الشحنة كتسمية
 
 
-                             ])
-                     ]),
+                        ])
+                ]),
 
-                 ]);
+            ]);
 
     }
 
@@ -280,6 +273,7 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('far')->label('أجور الشحن'),
 
                 Tables\Columns\TextColumn::make('bay_type')->label('حالة الدفع'),
+                Tables\Columns\TextColumn::make('sender.name')->label(' معرف المرسل'),
                 Tables\Columns\TextColumn::make('general_sender_name')->label('اسم المرسل'),
                 Tables\Columns\TextColumn::make('sender_phone')->label('هاتف المرسل')
                     ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive?->phone, '+')))
@@ -307,12 +301,12 @@ class OrderResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('set_picker')->form([
-                    Forms\Components\Select::make('pick_id')->options(User::where('users.branch_id',auth()->user()->branch_id)->where(fn($query)=>$query->where('level',LevelUserEnum::STAFF->value)->orWhere('level',LevelUserEnum::BRANCH->value))->pluck('name','id'))->searchable()->label('موظف الإلتقاط'),
+                    Forms\Components\Select::make('pick_id')->options(User::where('users.branch_id', auth()->user()->branch_id)->where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value))->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط'),
                 ])
                     ->action(function ($record, $data) {
                         DB::beginTransaction();
                         try {
-                            $record->update(['pick_id' => $data['pick_id'],'status'=>OrderStatusEnum::AGREE->value]);
+                            $record->update(['pick_id' => $data['pick_id'], 'status' => OrderStatusEnum::AGREE->value]);
                             HelperBalance::setPickOrder($record);
                             Notification::make('success')->title('نجاح العملية')->body("تم تحديد موظف الإلتقاط بنجاح ")->success()->send();
                             DB::commit();
@@ -326,7 +320,7 @@ class OrderResource extends Resource
                     ->label('تحديد موظف الإلتقاط')->button()->color('info'),
 
                 Tables\Actions\Action::make('select_given_id')->form([
-                    Forms\Components\Select::make('given_id')->options(User::where('users.branch_id',auth()->user()->branch_id)->where(fn($query)=>$query->where('level',LevelUserEnum::STAFF->value)->orWhere('level',LevelUserEnum::BRANCH->value))->pluck('name','id'))->searchable()->label('موظف الإلتقاط')
+                    Forms\Components\Select::make('given_id')->options(User::where('users.branch_id', auth()->user()->branch_id)->where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value))->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط')
                 ])
                     ->action(function ($record, $data) {
                         $record->update(['given_id' => $data['given_id']]);
@@ -337,24 +331,24 @@ class OrderResource extends Resource
 
 
                 Tables\Actions\Action::make('cancel_order')
-                    ->form( [
+                    ->form([
                         Forms\Components\Radio::make('status')->options([
-                            OrderStatusEnum::CANCELED->value=>OrderStatusEnum::CANCELED->getLabel(),
-                            OrderStatusEnum::RETURNED->value=>OrderStatusEnum::RETURNED->getLabel(),
+                            OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
+                            OrderStatusEnum::RETURNED->value => OrderStatusEnum::RETURNED->getLabel(),
                         ])->label('الحالة')->required()->default(OrderStatusEnum::CANCELED->value),
                         Forms\Components\Textarea::make('msg_cancel')->label('سبب الإلغاء / الإعادة')
                     ])
                     ->action(function ($record, $data) {
                         DB::beginTransaction();
                         try {
-                            $record->update(['status' => $data['status'],'canceled_info'=>$data['msg_cancel']]);
+                            $record->update(['status' => $data['status'], 'canceled_info' => $data['msg_cancel']]);
                             DB::commit();
                             Notification::make('success')->title('نجاح العملية')->body('تم تغيير حالة الطلب')->success()->send();
                         } catch (\Exception | Error $e) {
                             Notification::make('error')->title('فشل العملية')->body($e->getLine())->danger()->send();
                         }
                     })->label('الإلغاء / الإعادة')->button()->color('danger')
-                    ->visible(fn($record)=>$record->status === OrderStatusEnum::PENDING || $record->status === OrderStatusEnum::AGREE || $record->status === OrderStatusEnum::PICK || $record->status === OrderStatusEnum::TRANSFER),
+                    ->visible(fn($record) => $record->status === OrderStatusEnum::PENDING || $record->status === OrderStatusEnum::AGREE || $record->status === OrderStatusEnum::PICK || $record->status === OrderStatusEnum::TRANSFER),
 
 
                 Tables\Actions\Action::make('success_pick')
@@ -371,7 +365,7 @@ class OrderResource extends Resource
                     ->action(function ($record, $data) {
                         DB::beginTransaction();
                         try {
-                             HelperBalance::completePicker($record);
+                            HelperBalance::completePicker($record);
                             $record->update(['status' => OrderStatusEnum::PICK->value]);
                             DB::commit();
                             Notification::make('success')->title('نجاح العملية')->body('تم تأكيد إلتقاط الطلب')->success()->send();
@@ -380,16 +374,16 @@ class OrderResource extends Resource
                         }
                     })
                     ->label('تأكيد إلتقاط الشحنة')->button()->color('info')
-                    ->visible(fn($record)=>$record->pick_id==auth()->id() && $record->status==OrderStatusEnum::AGREE),
+                    ->visible(fn($record) => $record->pick_id == auth()->id() && $record->status == OrderStatusEnum::AGREE),
                 Tables\Actions\Action::make('success_given')
                     ->form(function ($record) {
-                        $price=$record->price;
-                        $far=$record->far;
-                        $totalPrice=$price;
-                        if ($record->far_sender == false&& $record->far>0) {
+                        $price = $record->price;
+                        $far = $record->far;
+                        $totalPrice = $price;
+                        if ($record->far_sender == false && $record->far > 0) {
                             $totalPrice = $price + $far;
                         }
-                        if($totalPrice>0){
+                        if ($totalPrice > 0) {
                             return [
                                 Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد تسليم الطلب وإستلام أجور الشحن {$totalPrice}")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
                             ];
@@ -409,31 +403,29 @@ class OrderResource extends Resource
                             Notification::make('error')->title('فشل العملية')->body($e->getLine())->danger()->send();
                         }
                     })->label('تأكيد تسليم الشحنة')->button()->color('info')
-                    ->visible(fn($record)=>$record->given_id==auth()->id() && ($record->status==OrderStatusEnum::TRANSFER || $record->status==OrderStatusEnum::PICK)),
+                    ->visible(fn($record) => $record->given_id == auth()->id() && ($record->status == OrderStatusEnum::TRANSFER || $record->status == OrderStatusEnum::PICK)),
 
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\BulkAction::make('pick_id_check') ->form([
+                    Tables\Actions\BulkAction::make('pick_id_check')->form([
                         Forms\Components\Select::make('pick_id')
-                            ->options(User::where('users.branch_id',auth()->user()->branch_id)->where(fn($query)=>$query->where('level',LevelUserEnum::STAFF->value)->orWhere('level',LevelUserEnum::BRANCH->value))->pluck('name','id'))->searchable()->label('موظف الإلتقاط')
+                            ->options(User::where('users.branch_id', auth()->user()->branch_id)->where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value))->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط')
                     ])
                         ->action(function ($records, $data) {
 
-                            $records->update(['pick_id' => $data['pick_id'],'status'=>OrderStatusEnum::AGREE->value]);
+                            $records->update(['pick_id' => $data['pick_id'], 'status' => OrderStatusEnum::AGREE->value]);
                             Notification::make('success')->title('نجاح العملية')->body('تم تحديد موظف الإلتقاط بنجاح')->success()->send();
                         })
-
                         ->label('تحديد موظف الإلتقاط'),
                     Tables\Actions\BulkAction::make('given_id_check')->form([
-                        Forms\Components\Select::make('given_id')->options(User::where('users.branch_id',auth()->user()->branch_id)->where(fn($query)=>$query->where('level',LevelUserEnum::STAFF->value)->orWhere('level',LevelUserEnum::BRANCH->value))->pluck('name','id'))->searchable()->label('موظف الإلتقاط')
+                        Forms\Components\Select::make('given_id')->options(User::where('users.branch_id', auth()->user()->branch_id)->where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value))->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط')
                     ])
                         ->action(function ($records, $data) {
                             $records->update(['given_id' => $data['given_id']]);
                             Notification::make('success')->title('نجاح العملية')->body('تم تحديد موظف التسليم بنجاح')->success()->send();
                         })
-
                         ->label('تحديد موظف التسليم')->color('info')
                 ]),
             ]);
@@ -445,8 +437,6 @@ class OrderResource extends Resource
             //
         ];
     }
-
-
 
 
     public static function getPages(): array
