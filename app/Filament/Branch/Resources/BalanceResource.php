@@ -17,7 +17,7 @@ class BalanceResource extends Resource
 {
     protected static ?string $model = Balance::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
     protected static ?string $pluralModelLabel = 'الرصيد';
 
     protected static ?string $label = 'الرصيد';
