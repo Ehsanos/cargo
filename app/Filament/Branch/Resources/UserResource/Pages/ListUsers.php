@@ -29,8 +29,8 @@ class ListUsers extends ListRecords
     {
         return [
             Tab::make('staff')->modifyQueryUsing(fn($query)=>$query->where('level',LevelUserEnum::STAFF->value))->label('الموظفين'),
-            /*Tab::make('branch')->modifyQueryUsing(fn($query)=>$query->where('level',LevelUserEnum::BRANCH->value))->label('مدراء الأفرع'),*/
-          /*  Tab::make('admin')->modifyQueryUsing(fn($query)=>$query->where('level',LevelUserEnum::ADMIN->value))->label('المدراء'),*/
+            Tab::make('branch')->modifyQueryUsing(fn($query)=>$query->where('level',LevelUserEnum::BRANCH->value))->label('مدراء الأفرع'),
+           Tab::make('admin')->modifyQueryUsing(fn($query)=>$query->where('level',LevelUserEnum::ADMIN->value))->label('المدراء'),
             Tab::make('user')->modifyQueryUsing(fn($query)=>$query->where('level',LevelUserEnum::USER->value))->label('المستخدمين'),
             Tab::make('user')->modifyQueryUsing(fn($query)=>$query->where('id','!=',''))->label('الكل'),
         ];
