@@ -120,23 +120,25 @@ class User extends Authenticatable implements HasMedia, FilamentUser, HasAvatar
 
     public function balances(): HasMany
     {
-        return $this->hasMany(Balance::class)->where('balances.is_complete', 1);
+        return $this->hasMany(Balance::class)->where('balances.is_complete', 1)->where('pending','!=',true);
     }
 
     public function pendingBalances(): HasMany
     {
-        return $this->hasMany(Balance::class)->where('balances.is_complete', 0);
+        return $this->hasMany(Balance::class)->where('balances.pending', 1);
     }
 
     public function getTotalBalanceAttribute(): float
     {
-        $total = DB::table('balances')->where('user_id', $this->id)->where('is_complete', true)->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0;
+        $total = DB::table('balances')->where('user_id', $this->id)->where('is_complete', true)
+                ->where('pending','!=',true)
+                ->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0;
         return sprintf('%.2f', $total);
     }
 
     public function getPendingBalanceAttribute(): float
     {
-        $total = DB::table('balances')->where('user_id', $this->id)->where('is_complete', false)->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0;
+        $total = DB::table('balances')->where('user_id', $this->id)->where('pending', true)->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0;
         return sprintf('%.2f', $total);
     }
 
