@@ -31,7 +31,7 @@ class User extends Authenticatable implements HasMedia, FilamentUser, HasAvatar
     use HasPanelShield;
 
 
-   public function canAccessPanel(Panel $panel): bool
+    public function canAccessPanel(Panel $panel): bool
     {
         if ($panel->getId() === 'admin' && $this->level == LevelUserEnum::ADMIN) {
 
@@ -120,7 +120,7 @@ class User extends Authenticatable implements HasMedia, FilamentUser, HasAvatar
 
     public function balances(): HasMany
     {
-        return $this->hasMany(Balance::class)->where('balances.is_complete', 1)->where('pending','!=',true);
+        return $this->hasMany(Balance::class)->where('balances.is_complete', 1)->where('pending', '!=', true);
     }
 
     public function pendingBalances(): HasMany
@@ -131,7 +131,7 @@ class User extends Authenticatable implements HasMedia, FilamentUser, HasAvatar
     public function getTotalBalanceAttribute(): float
     {
         $total = DB::table('balances')->where('user_id', $this->id)->where('is_complete', true)
-                ->where('pending','!=',true)
+                ->where('pending', '!=', true)
                 ->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0;
         return sprintf('%.2f', $total);
     }
@@ -140,6 +140,11 @@ class User extends Authenticatable implements HasMedia, FilamentUser, HasAvatar
     {
         $total = DB::table('balances')->where('user_id', $this->id)->where('pending', true)->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0;
         return sprintf('%.2f', $total);
+    }
+
+    public function getIbanNameAttribute(): string
+    {
+        return $this->iban . ' - ' . $this->name;
     }
 
 

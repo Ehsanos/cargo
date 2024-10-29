@@ -54,9 +54,8 @@ class OrderResource extends Resource
                                     OrderTypeEnum::BRANCH->value => OrderTypeEnum::BRANCH->getLabel(),
                                     OrderTypeEnum::HOME->value => OrderTypeEnum::HOME->getLabel(),
 
-                                ])->label('نوع الطلب')
-                                    ->required()
-                                    ->searchable(),
+                                ])->label('نوع الطلب')->default( OrderTypeEnum::HOME->value)
+                                    ->required(),
                                 Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('معرف المرسل')->required()
                                     ->afterStateUpdated(function ($state, $set) {
                                         $user = User::with('city')->find($state);
@@ -79,69 +78,69 @@ class OrderResource extends Resource
                                 Forms\Components\TextInput::make('general_sender_name')->label('اسم المرسل'),
 
                             ]),
-                           Forms\Components\Grid::make()->schema([
-                               Forms\Components\Select::make('city_source_id')
-                                   ->relationship('citySource', 'name')
-                                   ->label('من بلدة')->reactive()->required()->searchable()->preload(),
+                            Forms\Components\Grid::make()->schema([
+                                Forms\Components\Select::make('city_source_id')
+                                    ->relationship('citySource', 'name')
+                                    ->label('من بلدة')->reactive()->required()->searchable()->preload(),
 
-                               Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل')->required(),
-                           ]),
+                                Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل')->required(),
+                            ]),
 
-]),
-                            Forms\Components\Fieldset::make('معلومات المستلم')
-                                ->schema([
+                        ]),
+                    Forms\Components\Fieldset::make('معلومات المستلم')
+                        ->schema([
 
-                                    Forms\Components\Grid::make()->schema([
-                                        Forms\Components\Select::make('receive_id')->options(User::all()->pluck('iban', 'id')
-                                            ->toArray())->searchable()
-                                            ->afterStateUpdated(function ($state, $set) {
-                                                $user = User::with('city')->find($state);
-                                                if ($user) {
-                                                    $set('receive_phone', $user?->phone);
-                                                    $set('receive_address', $user?->address);
+                            Forms\Components\Grid::make()->schema([
+                                Forms\Components\Select::make('receive_id')->options(User::all()->pluck('iban', 'id')
+                                    ->toArray())->searchable()
+                                    ->afterStateUpdated(function ($state, $set) {
+                                        $user = User::with('city')->find($state);
+                                        if ($user) {
+                                            $set('receive_phone', $user?->phone);
+                                            $set('receive_address', $user?->address);
 
-                                                    $set('sender_name', $user?->name);
-                                                    $set('city_target_id', $user?->city_id);
-                                                    $set('branch_target_id', $user?->branch_id);
-                                                } else {
-                                                    $set('receive_phone', null);
-                                                    $set('receive_address', null);
+                                            $set('sender_name', $user?->name);
+                                            $set('city_target_id', $user?->city_id);
+                                            $set('branch_target_id', $user?->branch_id);
+                                        } else {
+                                            $set('receive_phone', null);
+                                            $set('receive_address', null);
 
-                                                    $set('sender_name', null);
-                                                    $set('city_target_id', null);
-                                                    $set('branch_target_id', null);
+                                            $set('sender_name', null);
+                                            $set('city_target_id', null);
+                                            $set('branch_target_id', null);
 
-                                                }
-                                            })->live()->label('ايبان المستلم'),
+                                        }
+                                    })->live()->label('ايبان المستلم'),
 
-                                        Forms\Components\Select::make('sender_name')->label('معرف المستلم')
-                                            ->options(User::all()->pluck('name', 'id')->toArray())->searchable()
-                                            ->afterStateUpdated(function ($state, $set) {
-                                                $user = User::with('city')->find($state);
-                                                if ($user) {
-                                                    $set('branch_target_id', $user?->city?->branch_id);
-                                                    $set('receive_phone', $user?->phone);
-                                                    $set('receive_address', $user?->address);
+                                Forms\Components\Select::make('sender_name')->label('معرف المستلم')
+                                    ->options(User::all()->pluck('name', 'id')->toArray())->searchable()
+                                    ->afterStateUpdated(function ($state, $set) {
+                                        $user = User::with('city')->find($state);
+                                        if ($user) {
+                                            $set('branch_target_id', $user?->city?->branch_id);
+                                            $set('receive_phone', $user?->phone);
+                                            $set('receive_address', $user?->address);
 
-                                                    $set('sender_name', $user?->name);
-                                                    $set('city_target_id', $user?->city_id);
+                                            $set('sender_name', $user?->name);
+                                            $set('city_target_id', $user?->city_id);
 
-                                                    $set('receive_id', $user?->id);
+                                            $set('receive_id', $user?->id);
 
-                                                } else {
-                                                    $set('receive_phone', null);
-                                                    $set('receive_address', null);
+                                        } else {
+                                            $set('receive_phone', null);
+                                            $set('receive_address', null);
 
-                                                    $set('sender_name', null);
-                                                    $set('city_target_id', null);
-                                                    $set('branch_target_id', null);
-                                                    $set('receive_id', null);
-                                                    $set('branch_target_id', null);
+                                            $set('sender_name', null);
+                                            $set('city_target_id', null);
+                                            $set('branch_target_id', null);
+                                            $set('receive_id', null);
+                                            $set('branch_target_id', null);
 
-                                                }
+                                        }
 
-                                            })->live()->dehydrated(false),
-                                    ]),
+                                    })->live()->dehydrated(false),
+                            ]),
 
                             Forms\Components\Grid::make()->schema([
                                 Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم')->required(),
@@ -169,32 +168,32 @@ class OrderResource extends Resource
                                     ->live(),
                             ]),
 
-Forms\Components\Grid::make()->schema([
-    Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')
-        ->searchable()->preload()
-        ->live()->required(),
-]),
+                            Forms\Components\Grid::make()->schema([
+                                Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')
+                                    ->searchable()->preload()
+                                    ->live()->required(),
+                            ]),
 
-]),
-                                    Forms\Components\Fieldset::make('معلومات الطلب')
-                                        ->schema([
-Forms\Components\Grid::make()->schema([
-    Forms\Components\Select::make('weight_id')
-        ->relationship('weight', 'name')
-        ->label
-        ('الوزن')->searchable()->preload(),
+                        ]),
+                    Forms\Components\Fieldset::make('معلومات الطلب')
+                        ->schema([
+                            Forms\Components\Grid::make()->schema([
+                                Forms\Components\Select::make('weight_id')
+                                    ->relationship('weight', 'name')
+                                    ->label
+                                    ('الوزن')->searchable()->preload(),
 
-    Forms\Components\Select::make('size_id')
-        ->relationship('size', 'name')
-        ->label
-        ('الحجم')->searchable()->preload(),
-]),
-Forms\Components\Grid::make()->schema([
-    Forms\Components\Select::make('unit_id')
-        ->relationship('unit', 'name')->label('الوحدة'),
-]),
+                                Forms\Components\Select::make('size_id')
+                                    ->relationship('size', 'name')
+                                    ->label
+                                    ('الحجم')->searchable()->preload(),
+                            ]),
+                            Forms\Components\Grid::make()->schema([
+                                Forms\Components\Select::make('unit_id')
+                                    ->relationship('unit', 'name')->label('الوحدة'),
+                            ]),
 
-]),
+                        ]),
                     Forms\Components\Fieldset::make('أجور الطلب')->schema([
                         Forms\Components\Grid::make()->schema([
                             Forms\Components\TextInput::make('price')->numeric()->label('التحصيل')->default(0)->columnSpan(2),
@@ -210,54 +209,49 @@ Forms\Components\Grid::make()->schema([
                     ]),
 
 
-                            // ttrrtt
+                    // ttrrtt
 
 
+                ]),
+
+                Forms\Components\Section::make('محتويات الطلب')
+                    ->schema([
+                        Forms\Components\Repeater::make('packages')->relationship('packages')->schema([
+                            SpatieMediaLibraryFileUpload::make('package')->label('صورة الشحنة')->collection('packages'),
+                            Forms\Components\TextInput::make('info')->label('معلومات الشحنة'),
+                            Forms\Components\TextInput::make('quantity')->numeric()->label('الكمية'),
+                        ])
+                            ->label('محتويات الطلب')
+                            ->addable(false)
+                            ->collapsible()
+                            ->collapsed()
+                            ->deletable(false)->columnSpan(2)
+
+                    ])->collapsible()->collapsed(true),
+                Forms\Components\Section::make('سلسلة التوكيل')
+                    ->schema([
+                        Forms\Components\Repeater::make('agencies')->relationship('agencies')
+                            ->schema([
+
+                                Forms\Components\Select::make('user_id')->options(User::where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)
+                                )->pluck('name', 'id'))->label('الموظف')->searchable(),
+                                Forms\Components\Radio::make('status')->options([
+                                    TaskAgencyEnum::TASK->value => TaskAgencyEnum::TASK->getLabel(),
+                                    TaskAgencyEnum::TRANSPORT->value => TaskAgencyEnum::TRANSPORT->getLabel(),
+
+                                ])->label('المهمة'),
+                                Forms\Components\TextInput::make('task')->label('المهمة المطلوب تنفيذها'),
+
+                            ])->defaultItems(1)
+                            ->grid(2)
+                            ->deletable(true)
+                            ->addActionLabel('إضافة مهمة')
+                            ->label('المهام')
+                            ->itemLabel(fn(array $state): ?string => $state['package_name'] ?? ' مهمة...')->columnSpan(2), //
+                        // استخدام اسم الشحنة كتسمية
 
 
-
-
-
-                        ]),
-
-                    Forms\Components\Section::make('محتويات الطلب')
-                        ->schema([
-                            Forms\Components\Repeater::make('packages')->relationship('packages')->schema([
-                                SpatieMediaLibraryFileUpload::make('package')->label('صورة الشحنة')->collection('packages'),
-                                Forms\Components\TextInput::make('info')->label('معلومات الشحنة'),
-                                Forms\Components\TextInput::make('quantity')->numeric()->label('الكمية'),
-                            ])
-                                ->label('محتويات الطلب')
-                                ->addable(false)
-                                ->collapsible()
-                                ->collapsed()
-                                ->deletable(false)->columnSpan(2)
-
-                        ])->collapsible()->collapsed(true),
-                    Forms\Components\Section::make('سلسلة التوكيل')
-                        ->schema([
-                            Forms\Components\Repeater::make('agencies')->relationship('agencies')
-                                ->schema([
-
-                                    Forms\Components\Select::make('user_id')->options(User::where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)
-                                    )->pluck('name', 'id'))->label('الموظف')->searchable(),
-                                    Forms\Components\Radio::make('status')->options([
-                                        TaskAgencyEnum::TASK->value => TaskAgencyEnum::TASK->getLabel(),
-                                        TaskAgencyEnum::TRANSPORT->value => TaskAgencyEnum::TRANSPORT->getLabel(),
-
-                                    ])->label('المهمة'),
-                                    Forms\Components\TextInput::make('task')->label('المهمة المطلوب تنفيذها'),
-
-                                ])->defaultItems(1)
-                                ->grid(2)
-                                ->deletable(true)
-                                ->addActionLabel('إضافة مهمة')
-                                ->label('المهام')
-                                ->itemLabel(fn(array $state): ?string => $state['package_name'] ?? ' مهمة...')->columnSpan(2), //
-                            // استخدام اسم الشحنة كتسمية
-
-
-                        ])->collapsible()->collapsed(true),
+                    ])->collapsible()->collapsed(true),
 
 
             ]);
@@ -306,7 +300,71 @@ Forms\Components\Grid::make()->schema([
 
             ])->defaultSort('created_at', 'desc')
             ->filters([
-                //
+                Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')
+                            ->label('اسم الفرع المرسل'),
+                        Forms\Components\Select::make('branch_source_id')->relationship('branchSource', 'name')
+                            ->label('اسم الفرع المرسل'),
+                        Forms\Components\Select::make('receive_id')->relationship('receive', 'name')->label('اسم المستلم'),
+                        Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل'),
+                        Forms\Components\Select::make('status')->options([
+                            OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel(),
+                            OrderStatusEnum::AGREE->value => OrderStatusEnum::AGREE->getLabel(),
+                            OrderStatusEnum::PICK->value => OrderStatusEnum::PICK->getLabel(),
+                            OrderStatusEnum::TRANSFER->value => OrderStatusEnum::TRANSFER->getLabel(),
+                            OrderStatusEnum::SUCCESS->value => OrderStatusEnum::SUCCESS->getLabel(),
+                            OrderStatusEnum::RETURNED->value => OrderStatusEnum::RETURNED->getLabel(),
+                            OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
+
+
+                        ])->label('حالة الطلب'),
+                        Forms\Components\Select::make('city_target_id')->relationship('cityTarget', 'name')
+                            ->label('الى بلدة'),
+                        Forms\Components\Select::make('city_source_id')->relationship('citySource', 'name')
+                            ->label('من بلدة'),
+                        Forms\Components\DatePicker::make('created_from')->label('من تاريخ'),
+                        Forms\Components\DatePicker::make('created_until')->label('الى تاريخ'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['branch_target_id'],
+                                fn(Builder $query, $date): Builder => $query->where('branch_target_id', $date),
+                            )
+                            ->when(
+                                $data['branch_source_id'],
+                                fn(Builder $query, $date): Builder => $query->where('branch_source_id', $date),
+                            )
+                            ->when(
+                                $data['receive_id'],
+                                fn(Builder $query, $date): Builder => $query->where('receive_id', $date),
+                            )
+                            ->when(
+                                $data['sender_id'],
+                                fn(Builder $query, $date): Builder => $query->where('sender_id', $date),
+                            )
+                            ->when(
+                                $data['status'],
+                                fn(Builder $query, $date): Builder => $query->where('status', $date),
+                            )
+                            ->when(
+                                $data['city_target_id'],
+                                fn(Builder $query, $date): Builder => $query->where('city_target_id', $date),
+                            )
+                            ->when(
+                                $data['city_source_id'],
+                                fn(Builder $query, $date): Builder => $query->where('city_source_id', $date),
+                            )
+                            ->when(
+                                $data['created_from'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    })
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

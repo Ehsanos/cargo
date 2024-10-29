@@ -32,6 +32,7 @@ use App\Enums\OrderStatusEnum;
 use Filament\Forms\Components\Tabs;
 use App\Enums\BayTypeEnum;
 use Filament\Infolists\Infolist;
+use PhpOffice\PhpSpreadsheet\Calculation\LookupRef\Selection;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 
@@ -67,9 +68,8 @@ class OrderResource extends Resource
 
                                   ])->label('نوع الطلب')
                                       ->required()
-//                                ->default(OrderTypeEnum::BRANCH->getLabel())
-                                      ->reactive()
-                                      ->searchable()->columnSpan(1),
+                              ->default( OrderTypeEnum::HOME->value)
+                                      ->reactive(),
 
                                   Forms\Components\Select::make('sender_id')
                                       ->relationship('sender', 'name')
@@ -342,41 +342,64 @@ class OrderResource extends Resource
 
             ])->defaultSort('created_at', 'desc')
             ->filters([
-                Tables\Filters\SelectFilter::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل'),
-                Tables\Filters\SelectFilter::make('receive_id')->relationship('receive', 'name')->label('اسم المستلم'),
-                Tables\Filters\SelectFilter::make('branch_source_id')->relationship('branchSource', 'name')
-                    ->label('اسم الفرع المرسل'),
-                Tables\Filters\SelectFilter::make('branch_source_id')->relationship('branchSource', 'name')
-                    ->label('اسم الفرع المرسل'),
-                Tables\Filters\SelectFilter::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')
-                ,
-                Tables\Filters\SelectFilter::make('status')->options([
-                    OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel(),
-                    OrderStatusEnum::AGREE->value => OrderStatusEnum::AGREE->getLabel(),
-                    OrderStatusEnum::PICK->value => OrderStatusEnum::PICK->getLabel(),
-                    OrderStatusEnum::TRANSFER->value => OrderStatusEnum::TRANSFER->getLabel(),
-                    OrderStatusEnum::SUCCESS->value => OrderStatusEnum::SUCCESS->getLabel(),
-                    OrderStatusEnum::RETURNED->value => OrderStatusEnum::RETURNED->getLabel(),
-                    OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
-
-
-                ])->label('حالة الطلب'),
-                Tables\Filters\SelectFilter::make('city_target_id')
-                    ->relationship('cityTarget', 'name')
-                    ->label('الى بلدة'),
-
-                Tables\Filters\SelectFilter::make('city_source_id')
-                    ->relationship('citySource', 'name')
-                    ->label('من بلدة')
-                ,
+//
 
                 Tables\Filters\Filter::make('created_at')
                     ->form([
+                        Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')
+                            ->label('اسم الفرع المرسل'),
+                        Forms\Components\Select::make('branch_source_id')->relationship('branchSource', 'name')
+                            ->label('اسم الفرع المرسل'),
+                        Forms\Components\Select::make('receive_id')->relationship('receive', 'name')->label('اسم المستلم'),
+                        Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل'),
+                        Forms\Components\Select::make('status')->options([
+                            OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel(),
+                            OrderStatusEnum::AGREE->value => OrderStatusEnum::AGREE->getLabel(),
+                            OrderStatusEnum::PICK->value => OrderStatusEnum::PICK->getLabel(),
+                            OrderStatusEnum::TRANSFER->value => OrderStatusEnum::TRANSFER->getLabel(),
+                            OrderStatusEnum::SUCCESS->value => OrderStatusEnum::SUCCESS->getLabel(),
+                            OrderStatusEnum::RETURNED->value => OrderStatusEnum::RETURNED->getLabel(),
+                            OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
+
+
+                        ])->label('حالة الطلب'),
+                        Forms\Components\Select::make('city_target_id') ->relationship('cityTarget', 'name')
+                            ->label('الى بلدة'),
+                        Forms\Components\Select::make('city_source_id') ->relationship('citySource', 'name')
+                            ->label('من بلدة'),
                         Forms\Components\DatePicker::make('created_from')->label('من تاريخ'),
                         Forms\Components\DatePicker::make('created_until')->label('الى تاريخ'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
+                            ->when(
+                                $data['branch_target_id'],
+                                fn(Builder $query, $date): Builder => $query->where('branch_target_id',  $date),
+                            )
+                            ->when(
+                                $data['branch_source_id'],
+                                fn(Builder $query, $date): Builder => $query->where('branch_source_id',  $date),
+                            )
+                            ->when(
+                                $data['receive_id'],
+                                fn(Builder $query, $date): Builder => $query->where('receive_id',  $date),
+                            )
+                            ->when(
+                                $data['sender_id'],
+                                fn(Builder $query, $date): Builder => $query->where('sender_id',  $date),
+                            )
+                            ->when(
+                                $data['status'],
+                                fn(Builder $query, $date): Builder => $query->where('status',  $date),
+                            )
+                            ->when(
+                                $data['city_target_id'],
+                                fn(Builder $query, $date): Builder => $query->where('city_target_id',  $date),
+                            )
+                            ->when(
+                                $data['city_source_id'],
+                                fn(Builder $query, $date): Builder => $query->where('city_source_id',  $date),
+                            )
                             ->when(
                                 $data['created_from'],
                                 fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
