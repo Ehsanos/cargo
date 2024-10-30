@@ -127,7 +127,7 @@ class OrderResource extends Resource
                                     })->live()->label('ايبان المستلم')->default(fn()=>User::where('email','zab@gmail.com')->first()?->iban),
                                 Forms\Components\Select::make('sender_name')->label('معرف المستلم')
                                     ->options(User::all()->pluck('name', 'id')->toArray())->searchable()
-                                    ->default(fn()=>User::where('email','zab@gmail.com')->first()?->name)
+                                    ->default(fn()=>User::where('email','zab@gmail.com')->first()?->id)
                                     ->afterStateUpdated(function ($state, $set) {
                                         $user = User::with('city')->find($state);
                                         if ($user) {
@@ -136,8 +136,6 @@ class OrderResource extends Resource
 
                                             $set('sender_name', $user?->name);
                                             $set('city_target_id', $user?->city_id);
-
-                                            $set('receive_id', $user?->id);
                                         }
                                     })->live()->dehydrated(false),
 

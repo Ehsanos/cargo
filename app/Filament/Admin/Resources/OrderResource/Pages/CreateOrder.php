@@ -24,7 +24,7 @@ class CreateOrder extends CreateRecord
         $data['branch_target_id'] =$city_target->branch_id;
         $data['code'] = "AWB" . now()->format('YmdHis'); // الطابع الزمني بتنسيق قصير
         $data['shipping_date'] = now()->format('Y-m-d');
-dd($data);
+
         return $data;
 
 
