@@ -39,7 +39,9 @@ protected function handleRecordCreation(array $data): Model
 {
     try{
         $record = new ($this->getModel())($data);
-
+    }catch (Exception|\Error $e){
+        dd($e->getMessage());
+    }
         if (
             static::getResource()::isScopedToTenant() &&
             ($tenant = Filament::getTenant())
@@ -51,9 +53,7 @@ protected function handleRecordCreation(array $data): Model
 
         return $record;
 
-    }catch (Exception|\Error $e){
-        dd($e->getMessage());
-    }
+
 }
 
 }
