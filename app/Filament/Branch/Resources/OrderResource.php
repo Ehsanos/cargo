@@ -118,7 +118,7 @@ class OrderResource extends Resource
                                     ->afterStateUpdated(function ($state, $set) {
                                         $user = User::with('city')->find($state);
                                         if ($user) {
-                                            $set('branch_target_id', $user?->city?->branch_id);
+
                                             $set('receive_phone', $user?->phone);
                                             $set('receive_address', $user?->address);
 
@@ -133,9 +133,8 @@ class OrderResource extends Resource
 
                                             $set('sender_name', null);
                                             $set('city_target_id', null);
-                                            $set('branch_target_id', null);
                                             $set('receive_id', null);
-                                            $set('branch_target_id', null);
+
 
                                         }
 
@@ -151,28 +150,10 @@ class OrderResource extends Resource
                                 Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
                                 Forms\Components\Select::make('city_target_id')
                                     ->relationship('cityTarget', 'name')
-                                    ->label('الى بلدة')->required()->searchable()->preload()
-                                    ->afterStateUpdated(function ($state, $set) {
-
-                                        if ($state != null) {
-
-                                            $city = City::find($state);
-                                            $set('branch_target_id', $city?->branch_id);
-
-                                        } else {
-
-                                            $set('branch_target_id', null);
-
-                                        }
-                                    })
-                                    ->live(),
+                                    ->label('الى بلدة')->required()->searchable()->preload(),
                             ]),
 
-                            Forms\Components\Grid::make()->schema([
-                                Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')
-                                    ->searchable()->preload()
-                                    ->live()->required(),
-                            ]),
+
 
                         ]),
                     Forms\Components\Fieldset::make('معلومات الطلب')

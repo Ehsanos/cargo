@@ -5,6 +5,7 @@ namespace App\Filament\Branch\Resources\OrderResource\Pages;
 use App\Enums\BayTypeEnum;
 use App\Enums\OrderStatusEnum;
 use App\Filament\Branch\Resources\OrderResource;
+use App\Models\City;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
@@ -14,8 +15,12 @@ class CreateOrder extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+
+        $city_source=City::find($data['city_source_id']);
+        $city_target=City::find($data['city_target_id']);
         $data['code'] = "AWB" . now()->format('YmdHis'); // الطابع الزمني بتنسيق قصير
-        $data['branch_source_id'] = auth()->user()->branch_id;
+        $data['branch_source_id'] =$city_source->branch_id;
+        $data['branch_target_id'] =$city_target->branch_id;
 
         $data['shipping_date'] = now()->format('Y-h-d');
         $data['status'] = OrderStatusEnum::PENDING->value;

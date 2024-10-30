@@ -5,6 +5,7 @@ namespace App\Filament\Branch\Resources;
 use App\Enums\ActivateStatusEnum;
 use App\Filament\Branch\Resources\CityResource\Pages;
 use App\Filament\Branch\Resources\CityResource\RelationManagers;
+use App\Models\Branch;
 use App\Models\City;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -33,22 +34,25 @@ class CityResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')->label('المدينة')->unique(),
+                Forms\Components\Section::make('المدن الرئيسية')->schema([
+                    Forms\Components\TextInput::make('name')->label('المدينة')->unique(ignoreRecord: true),
+                    Forms\Components\Select::make('branch_id')->options(Branch::pluck('name', 'id'))->label('الفرع')->default(auth()->user()->branch_id)->required()->searchable(),
+                    Forms\Components\Select::make('status')->options(
+                        [
+                            ActivateStatusEnum::ACTIVE->value => ActivateStatusEnum::ACTIVE->getLabel(),
+                            ActivateStatusEnum::INACTIVE->value => ActivateStatusEnum::INACTIVE->getLabel(),
+                        ]
 
-                Forms\Components\Select::make('status')->options(
-                    [
-                        ActivateStatusEnum::ACTIVE->value=>   ActivateStatusEnum::ACTIVE->getLabel(),
-                        ActivateStatusEnum::INACTIVE->value=>   ActivateStatusEnum::INACTIVE->getLabel(),
-                    ]
 
-
-                )->label('حالة المدينة')->default('active'),
+                    )->label('حالة المدينة')->default('active'),
+                ])
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn($query)=>$query->where('is_main',true))
             ->columns([
                 Tables\Columns\TextColumn::make('name')->label('المدينة'),
 
