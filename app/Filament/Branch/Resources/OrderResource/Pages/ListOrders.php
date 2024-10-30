@@ -33,6 +33,8 @@ class ListOrders extends ListRecords
     public function getTabs(): array
     {
         return [
+            Tab::make('all')->modifyQueryUsing(fn($query)=>$query->where('status','!=' ,"")->where(fn($query)=>$query->where('branch_source_id',auth()->user()->branch_id)->orWhere('branch_target_id',auth()->user()->branch_id)))->badge(Order::where('branch_source_id',auth()->user()->branch_id)->orWhere('branch_target_id',auth()->user()->branch_id)->count())
+                /*->badge(Order::where('status','success')->count())*/->label('الكل'),
             Tab::make('pending')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::PENDING->value))->badge(Order::where('status',OrderStatusEnum::PENDING->value)->where(function($query){
                 $query->where('branch_source_id',auth()->user()->branch_id)->orWhere('branch_target_id',auth()->user()->branch_id);
             })->count())->label('بإنتظار الموافقة'),

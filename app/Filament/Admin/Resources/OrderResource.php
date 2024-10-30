@@ -305,39 +305,44 @@ class OrderResource extends Resource
 
         return $table
             ->columns([
+//                Tables\Columns\TextColumn::make('id')->label('#'),
                 PopoverColumn::make('qr_url')
                     ->trigger('click')
                     ->placement('right')
                     ->content(fn($record) => \LaraZeus\Qr\Facades\Qr::render($record->code))
                     ->icon('heroicon-o-qr-code'),
 
-                Tables\Columns\TextColumn::make('code')->copyable(),
+                Tables\Columns\TextColumn::make('id')->description(fn($record)=>$record->code)->copyable(),
 
 
-                Tables\Columns\TextColumn::make('status')->label('حالة الطلب')
-                ,
+//                Tables\Columns\TextColumn::make('status')->label('حالة الطلب')
 
-                Tables\Columns\TextColumn::make('type')->label('نوع الطلب')->searchable(),
-                Tables\Columns\TextColumn::make('bay_type')->label('حالة الدفع')->searchable(),
+
+                Tables\Columns\TextColumn::make('type')->label('نوع الطلب')
+                    ->description(fn($record)=>$record->status?->getLabel())
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('bay_type')->label('حالة الدفع')
+                    ->description(fn($record)=>$record->created_at->diffForHumans())
+                    ->searchable(),
 
                 Tables\Columns\TextColumn::make('unit.name')->label('نوع الشحنة'),
 
-                Tables\Columns\TextColumn::make('price')->label('التحصيل'),
-                Tables\Columns\TextColumn::make('far')->label('أجور الشحن'),
-                Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل')->searchable(),
-                Tables\Columns\TextColumn::make('sender.phone')->label('هاتف المرسل')
+                Tables\Columns\TextColumn::make('price')->label('التحصيل')->description(fn($record)=>'اجور الشحن : '.$record->far),
+//                Tables\Columns\TextColumn::make('far')->label('أجور الشحن'),
+                Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل')->description(fn($record)=>$record->general_sender_name)->searchable(),
+                /*Tables\Columns\TextColumn::make('sender.address')->label('هاتف المرسل')->description(fn($record)=>$record->phone)
                     ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive?->phone, '+')))->openUrlInNewTab()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('citySource.name')->label('من بلدة')->searchable(),
-                Tables\Columns\TextColumn::make('receive.name')->label('معرف المستلم ')->searchable(),
-                Tables\Columns\TextColumn::make('receive_address')->label('عنوان المستلم ')->searchable(),
-                Tables\Columns\TextColumn::make('receive_phone')->label('هاتف المستلم ')
+                    ->searchable(),*/
+                Tables\Columns\TextColumn::make('citySource.name')->label('من بلدة')->description(fn($record)=>"إلى {$record->cityTarget?->name}")->searchable(),
+                Tables\Columns\TextColumn::make('receive.name')->label('معرف المستلم ')->description(fn($record)=>$record->global_name)->searchable(),
+//                Tables\Columns\TextColumn::make('receive_address')->label('عنوان المستلم ')->searchable(),
+                Tables\Columns\TextColumn::make('receive_address')->label('هاتف المستلم ')->description(fn($record)=>$record->receive_phone)
                     ->url(fn($record) => url('https://wa.me/' . ltrim($record?->receive_phone, '+')))->openUrlInNewTab()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم'),
-                Tables\Columns\TextColumn::make('cityTarget.name')->label('الى بلدة ')->searchable(),
-                Tables\Columns\TextColumn::make('created_at')->label('تاريخ الشحنة')
-                    ->formatStateUsing(fn($state) => Carbon::parse($state)->diffForHumans()) // عرض الزمن بشكل نسبي
+//                Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم'),
+//                Tables\Columns\TextColumn::make('cityTarget.name')->label('الى بلدة ')->searchable(),
+//                Tables\Columns\TextColumn::make('created_at')->label('تاريخ الشحنة')
+//                    ->formatStateUsing(fn($state) => Carbon::parse($state)->diffForHumans()) // عرض الزمن بشكل نسبي
 
 
             ])->defaultSort('created_at', 'desc')
@@ -347,9 +352,9 @@ class OrderResource extends Resource
                 Tables\Filters\Filter::make('created_at')
                     ->form([
                         Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')
-                            ->label('اسم الفرع المرسل'),
+                            ->label('اسم الفرع المرسل')->multiple(),
                         Forms\Components\Select::make('branch_source_id')->relationship('branchSource', 'name')
-                            ->label('اسم الفرع المرسل'),
+                            ->label('اسم الفرع المرسل')->multiple(),
                         Forms\Components\Select::make('receive_id')->relationship('receive', 'name')->label('اسم المستلم'),
                         Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل'),
                         Forms\Components\Select::make('status')->options([
@@ -416,7 +421,7 @@ class OrderResource extends Resource
 
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('change_status')
+               /* Tables\Actions\Action::make('change_status')
                     ->form(function ($record) {
                         switch ($record->status->value) {
                             case OrderStatusEnum::PENDING:
@@ -469,55 +474,58 @@ class OrderResource extends Resource
                     })
                     ->label('تغيير حالة الطلب')
                     ->visible(fn($record) => $record->status != OrderStatusEnum::AGREE && $record->status != OrderStatusEnum::CANCELED && $record->status != OrderStatusEnum::SUCCESS && $record->status != OrderStatusEnum::RETURNED)->button(),
-                Tables\Actions\Action::make('set_picker')->form([
-                    Forms\Components\Select::make('pick_id')->options(User::where('users.level', LevelUserEnum::STAFF->value)->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط'),
-                ])
-                    ->action(function ($record, $data) {
-                        DB::beginTransaction();
-                        try {
-                            $record->update(['pick_id' => $data['pick_id'], 'status' => OrderStatusEnum::AGREE->value]);
-                            HelperBalance::setPickOrder($record);
-                            Notification::make('success')->title('نجاح العملية')->body("تم تحديد موظف الإلتقاط بنجاح ")->success()->send();
-                            DB::commit();
-                        } catch (\Exception $e) {
-                            DB::rollBack();
-                            Notification::make('error')->title('فشل العملية')->body("{$e->getMessage()}")->danger()->send();
-                        }
-
-                    })
-                    ->visible(fn($record) => $record->pick_id == null)
-                    ->label('تحديد موظف الإلتقاط')->button()->color('info'),
-
-                Tables\Actions\Action::make('set_given')->form([
-                    Forms\Components\Select::make('given_id')->options(User::where('users.level', LevelUserEnum::STAFF->value)->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط'),
-                ])
-                    ->action(function ($record, $data) {
-                        $record->update(['given_id' => $data['given_id']]);
-                        Notification::make('success')->title('نجاح العملية')->body("تم تحديد موظف التسليم بنجاح ")->danger()->send();
-
-                    })
-                    ->visible(fn($record) => $record->given_id == null && $record->status != OrderStatusEnum::PENDING)
-                    ->label('تحديد موظف التسليم')->button()->color('info'),
-                Tables\Actions\Action::make('cancel_order')
-                    ->form([
-                        Forms\Components\Radio::make('status')->options([
-                            OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
-                            OrderStatusEnum::RETURNED->value => OrderStatusEnum::RETURNED->getLabel(),
-                        ])->label('الحالة')->required()->default(OrderStatusEnum::CANCELED->value),
-                        Forms\Components\Textarea::make('msg_cancel')->label('سبب الإلغاء / الإعادة')
+              */
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('set_picker')->form([
+                        Forms\Components\Select::make('pick_id')->options(User::where('users.level', LevelUserEnum::STAFF->value)->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط'),
                     ])
-                    ->action(function ($record, $data) {
-                        DB::beginTransaction();
-                        try {
-                            $record->update(['status' => $data['status'], 'canceled_info' => $data['msg_cancel']]);
-                            DB::commit();
-                            Notification::make('success')->title('نجاح العملية')->body('تم تغيير حالة الطلب')->success()->send();
-                        } catch (\Exception | Error $e) {
-                            Notification::make('error')->title('فشل العملية')->body($e->getLine())->danger()->send();
-                        }
-                    })->label('الإلغاء / الإعادة')->button()->color('danger')
-                    ->visible(fn($record) => $record->status === OrderStatusEnum::PENDING || $record->status === OrderStatusEnum::AGREE || $record->status === OrderStatusEnum::PICK || $record->status === OrderStatusEnum::TRANSFER)
+                        ->action(function ($record, $data) {
+                            DB::beginTransaction();
+                            try {
+                                $record->update(['pick_id' => $data['pick_id'], 'status' => OrderStatusEnum::AGREE->value]);
+                                HelperBalance::setPickOrder($record);
+                                Notification::make('success')->title('نجاح العملية')->body("تم تحديد موظف الإلتقاط بنجاح ")->success()->send();
+                                DB::commit();
+                            } catch (\Exception $e) {
+                                DB::rollBack();
+                                Notification::make('error')->title('فشل العملية')->body("{$e->getMessage()}")->danger()->send();
+                            }
 
+                        })
+                        ->visible(fn($record) => $record->pick_id == null)
+                        ->label('تحديد موظف الإلتقاط')->color('info'),
+
+                    Tables\Actions\Action::make('set_given')->form([
+                        Forms\Components\Select::make('given_id')->options(User::where('users.level', LevelUserEnum::STAFF->value)->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط'),
+                    ])
+                        ->action(function ($record, $data) {
+                            $record->update(['given_id' => $data['given_id']]);
+                            Notification::make('success')->title('نجاح العملية')->body("تم تحديد موظف التسليم بنجاح ")->danger()->send();
+
+                        })
+                        ->visible(fn($record) => $record->given_id == null && $record->pick_id!=null && $record->status ===OrderStatusEnum::PICK)
+                        ->label('تحديد موظف التسليم')->color('info'),
+                    Tables\Actions\Action::make('cancel_order')
+                        ->form([
+                            Forms\Components\Radio::make('status')->options([
+                                OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
+                                OrderStatusEnum::RETURNED->value => OrderStatusEnum::RETURNED->getLabel(),
+                            ])->label('الحالة')->required()->default(OrderStatusEnum::CANCELED->value),
+                            Forms\Components\Textarea::make('msg_cancel')->label('سبب الإلغاء / الإعادة')
+                        ])
+                        ->action(function ($record, $data) {
+                            DB::beginTransaction();
+                            try {
+                                $record->update(['status' => $data['status'], 'canceled_info' => $data['msg_cancel']]);
+                                DB::commit();
+                                Notification::make('success')->title('نجاح العملية')->body('تم تغيير حالة الطلب')->success()->send();
+                            } catch (\Exception | Error $e) {
+                                Notification::make('error')->title('فشل العملية')->body($e->getLine())->danger()->send();
+                            }
+                        })->label('الإلغاء / الإعادة')->color('danger')
+                        ->visible(fn($record) => $record->status === OrderStatusEnum::PENDING || $record->status === OrderStatusEnum::AGREE || $record->status === OrderStatusEnum::PICK || $record->status === OrderStatusEnum::TRANSFER)
+
+                ])
 
 //                Tables\Actions\DeleteAction::make(),
 
