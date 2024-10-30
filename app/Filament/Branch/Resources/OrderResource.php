@@ -91,7 +91,7 @@ class OrderResource extends Resource
                         ->schema([
 
                             Forms\Components\Grid::make()->schema([
-                                Forms\Components\Select::make('receive_id')->options(User::all()->pluck('iban', 'id')
+                                Forms\Components\Select::make('receive_id')->options(User::selectRaw('id,name,iban')->pluck('iban', 'id')
                                     ->toArray())->searchable()
                                     ->afterStateUpdated(function ($state, $set) {
                                         $user = User::with('city')->find($state);
@@ -111,10 +111,10 @@ class OrderResource extends Resource
                                             $set('branch_target_id', null);
 
                                         }
-                                    })->live()->label('ايبان المستلم'),
+                                    })->live()->label('ايبان المستلم')->default(fn()=>User::where('email','zab@gmail.com')->first()?->iban),
 
                                 Forms\Components\Select::make('sender_name')->label('معرف المستلم')
-                                    ->options(User::all()->pluck('name', 'id')->toArray())->searchable()
+                                    ->options(User::all()->pluck('name', 'id')->toArray())->searchable()->default(fn()=>User::where('email','zab@gmail.com')->first()?->name)
                                     ->afterStateUpdated(function ($state, $set) {
                                         $user = User::with('city')->find($state);
                                         if ($user) {
