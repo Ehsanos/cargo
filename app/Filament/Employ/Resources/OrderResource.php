@@ -73,7 +73,7 @@ class OrderResource extends Resource
                                             $set('sender_phone', $user->phone);
                                             $set('sender_address', $user->address);
                                             $set('city_source_id', $user?->city_id);
-                                            $set('branch_source_id', $user?->branch_id);
+
                                         }
                                     })->live()->searchable()->preload(),
                             ]),
@@ -108,18 +108,12 @@ class OrderResource extends Resource
                                         $set('receive_phone', $user->phone);
                                         $set('receive_address', $user->address);
                                         $set('city_target_id', $user?->city_id);
-                                        $set('branch_target_id', $user?->branch_id);
+
 
                                     }
                                 })->live(),
 
-                            Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')->label('اسم الفرع المستلم')->searchable()->preload()
-                                ->afterStateUpdated(function ($state, $set) {
-                                    $branch = Branch::find($state);
-                                    if ($branch) {
-                                        $set('city_target_id', $branch->city_id);
-                                    }
-                                })->live()->searchable()->preload(),
+
                         ]),
                         Forms\Components\Grid::make()->schema([
                             Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
@@ -130,21 +124,7 @@ class OrderResource extends Resource
 
 
                             Forms\Components\Select::make('city_target_id')->relationship('cityTarget', 'name')
-                                ->label('الى بلدة')->searchable()->preload()
-                                ->afterStateUpdated(function ($state, $set) {
-
-                                    if ($state != null) {
-
-                                        $city = City::find($state);
-                                        $set('branch_target_id', $city?->branch_id);
-
-                                    } else {
-
-                                        $set('branch_target_id', null);
-
-                                    }
-                                })
-                                ->live(),
+                                ->label('الى بلدة')->searchable()->preload(),
                         ]),
 
                     ]),
@@ -337,12 +317,7 @@ class OrderResource extends Resource
     }
 
 
-    /*public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->whereHas('agencies', fn($query) => $query->where('agencies.user_id', auth()->id()))
-            ->orWhere(['orders.take_id' => auth()->user()->id, 'orders.delivery_id' => auth()->user()->id]);
-    }*/
+
 
     public static function getRelations(): array
     {
