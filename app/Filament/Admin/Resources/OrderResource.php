@@ -525,6 +525,24 @@ class OrderResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('pick_id_check')->form([
+                        Forms\Components\Select::make('pick_id')
+                            ->options(User::where('users.level',LevelUserEnum::STAFF->value)->selectRaw('id,name,iban')->get()->mapWithKeys(fn($user)=>[$user->id=>$user->iban_name]))->searchable()->label('موظف الإلتقاط')
+                    ])
+                        ->action(function ($records, $data) {
+
+                            Order::whereIn('id',$records->pluck('id')->toArray())->update(['pick_id' => $data['pick_id'], 'status' => OrderStatusEnum::AGREE->value]);
+                            Notification::make('success')->title('نجاح العملية')->body('تم تحديد موظف الإلتقاط بنجاح')->success()->send();
+                        })
+                        ->label('تحديد موظف الإلتقاط'),
+                    Tables\Actions\BulkAction::make('given_id_check')->form([
+                        Forms\Components\Select::make('given_id')->options(User::where('users.level',LevelUserEnum::STAFF->value)->selectRaw('id,name,iban')->get()->mapWithKeys(fn($user)=>[$user->id=>$user->iban_name]))->searchable()->label('موظف الإلتقاط')
+                    ])
+                        ->action(function ($records, $data) {
+                            Order::whereIn('id',$records->pluck('id')->toArray())->update(['given_id' => $data['given_id']]);
+                            Notification::make('success')->title('نجاح العملية')->body('تم تحديد موظف التسليم بنجاح')->success()->send();
+                        })
+                        ->label('تحديد موظف التسليم')->color('info')
 //                    ExportBulkAction::make()
 
                 ]),
