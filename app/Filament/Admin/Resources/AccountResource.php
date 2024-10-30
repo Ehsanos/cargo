@@ -22,6 +22,7 @@ class AccountResource extends Resource
     protected static ?string $slug = 'accounts';
     protected static ?string $navigationGroup = 'الحسابات المالية';
     protected static ?string $label = 'الحسابات المالية';
+    protected static ?string $pluralLabel = 'الحسابات المالية';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
