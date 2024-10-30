@@ -112,7 +112,7 @@ class OrderResource extends Resource
 
                         Forms\Components\Fieldset::make('المستلم')->schema([
                             Forms\Components\Grid::make()->schema([
-                                Forms\Components\Select::make('receive_id')->options(User::selectRaw('id,name,iban')->pluck('iban', 'id')
+                                Forms\Components\Select::make('receive_id')->options(User::pluck('iban', 'id')
                                     ->toArray())->searchable()
                                     ->afterStateUpdated(function ($state, $set) {
                                         $user = User::with('city')->find($state);
