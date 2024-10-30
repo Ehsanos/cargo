@@ -483,7 +483,7 @@ class OrderResource extends Resource
                     ])
                         ->action(function ($records, $data) {
 
-                            $records->update(['pick_id' => $data['pick_id'], 'status' => OrderStatusEnum::AGREE->value]);
+                            Order::whereIn('id',$records->pluck('id')->toArray())->update(['pick_id' => $data['pick_id'], 'status' => OrderStatusEnum::AGREE->value]);
                             Notification::make('success')->title('نجاح العملية')->body('تم تحديد موظف الإلتقاط بنجاح')->success()->send();
                         })
                         ->label('تحديد موظف الإلتقاط'),
