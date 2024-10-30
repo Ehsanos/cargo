@@ -124,7 +124,7 @@ class OrderResource extends Resource
                                             $set('city_target_id', $user?->city_id);
 
                                         }
-                                    })->live()->label('ايبان المستلم')->default(fn()=>User::where('email','zab@gmail.com')->first()?->iban),
+                                    })->live()->label('ايبان المستلم')->default(fn()=>User::where('email','zab@gmail.com')->first()?->id),
                                 Forms\Components\Select::make('sender_name')->label('معرف المستلم')
                                     ->options(User::all()->pluck('name', 'id')->toArray())->searchable()
                                     ->default(fn()=>User::where('email','zab@gmail.com')->first()?->id)
