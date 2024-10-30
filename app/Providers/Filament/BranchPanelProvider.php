@@ -54,7 +54,7 @@ class BranchPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-                RedirectToBranchMiddleware::class
+//                RedirectToBranchMiddleware::class
             ]);
     }
 }
