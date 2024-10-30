@@ -57,7 +57,7 @@ class ListBalances extends ListRecords
                             'type' => BalanceTypeEnum::PUSH->value,
                             'is_complete' => true,
                             'user_id' => auth()->id(),
-                            'total' => auth()->user()->total_balance + $data['value'],
+
                             'info' => $data['info'],
                             'customer_name'=>$data['customer_name'],
 
@@ -69,7 +69,7 @@ class ListBalances extends ListRecords
                             'type' => BalanceTypeEnum::CATCH->value,
                             'is_complete' => false,
                             'user_id' => $data['user_id'],
-                            'total' => $user->total_balance - $data['value'],
+
                             'info' => $data['info'],
                             'customer_name'=>$data['customer_name'],
 
