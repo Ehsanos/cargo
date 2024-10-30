@@ -12,7 +12,21 @@ class HelperBalance
 
     public static function setPickOrder(Order $order)
     {
+      /*  $sender = $order->sender;
+        try {
+            if ($order->far_sender == true) {
+                //
+            }
+        } catch (\Exception | \Error $e) {
+            throw new \Exception($e->getMessage());
+        }*/
+    }
+
+
+    public static function completePicker(Order $order)
+    {
         $sender = $order->sender;
+        $staff = $order->pick;
         try {
             if ($order->far_sender == true) {
                 Balance::create([
@@ -25,19 +39,6 @@ class HelperBalance
                     'type' => BalanceTypeEnum::CATCH->value,
                     'is_complete' => true,
                 ]);
-            }
-        } catch (\Exception | \Error $e) {
-            throw new \Exception($e->getMessage());
-        }
-    }
-
-
-    public static function completePicker(Order $order)
-    {
-        $sender = $order->sender;
-        $staff = $order->pick;
-        try {
-            if ($order->far_sender == true) {
                 Balance::create([
                     'credit' => 0,
                     'debit' => $order->far,
@@ -48,7 +49,6 @@ class HelperBalance
                     'type' => BalanceTypeEnum::CATCH->value,
                     'is_complete' => true,
                 ]);
-
                 Balance::create([
                     'credit' => $order->far,
                     'debit' => 0,
@@ -193,8 +193,8 @@ class HelperBalance
 
                 Balance::create([
                     'user_id'=>$sender->id,
-                    'debit' =>  $order->price,
-                    'credit' =>0,
+                    'debit' =>$order->price,
+                    'credit' => 0,
                     'info' => 'قيمة تحصيل الطلب #' . $order->id,
                     'pending' => true,
                     'order_id' => $order->id

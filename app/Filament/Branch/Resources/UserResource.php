@@ -51,7 +51,7 @@ class UserResource extends Resource
                 Forms\Components\CheckboxList::make('roles')->columnSpanFull()
                     ->relationship('roles', 'name')->label('الصلاحيات'),
                 Forms\Components\TextInput::make('name')->label('الاسم')->required(),
-                Forms\Components\TextInput::make('email')->label('البريد الالكتروني')->email()->required(),
+                Forms\Components\TextInput::make('email')->label('البريد الالكتروني')->email()->required()->unique(ignoreRecord: true),
                 Forms\Components\TextInput::make('username')->label('username')
                     ->unique(ignoreRecord: true)->required(),
                 Forms\Components\TextInput::make('password')->password()->dehydrateStateUsing(fn($state) => Hash::make($state))

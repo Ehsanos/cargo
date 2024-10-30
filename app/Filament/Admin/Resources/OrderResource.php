@@ -163,7 +163,7 @@ class OrderResource extends Resource
 
                             ]),
                             Forms\Components\Grid::make()->schema([
-                                Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم')->required(),
+                                Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم'),
                                 Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
 
                             ]),
