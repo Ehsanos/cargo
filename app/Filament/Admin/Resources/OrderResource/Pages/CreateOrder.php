@@ -35,26 +35,6 @@ class CreateOrder extends CreateRecord
     {
         return $this->getResource()::getUrl('index');
     }
-protected function handleRecordCreation(array $data): Model
-{
 
-    try{
-        $record = new ($this->getModel())($data);
-    }catch (Exception|\Error $e){
-        dd($e->getMessage());
-    }
-        if (
-            static::getResource()::isScopedToTenant() &&
-            ($tenant = Filament::getTenant())
-        ) {
-            return $this->associateRecordWithTenant($record, $tenant);
-        }
-
-        $record->save();
-
-        return $record;
-
-
-}
 
 }
