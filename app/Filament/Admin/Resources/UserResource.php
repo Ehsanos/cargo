@@ -205,55 +205,11 @@ class UserResource extends Resource
                 Tables\Actions\ViewAction::make(),
 
                 Tables\Actions\EditAction::make(),
-//                Tables\Actions\DeleteAction::make(),
-                Tables\Actions\Action::make('credit_balance')->label('اضافة رصيد')->form([
-                    Forms\Components\TextInput::make('credit')
-                        ->required()
-                        ->minValue(0.1)->label('القيمة'),
-                    Forms\Components\TextInput::make('info')->label('ملاحظات')->required(),
 
-                ])->action(function ($record, $data) {
-
-                    if ($data['credit'] > 0) {
-                        \DB::beginTransaction();
-                        try {
-                            Balance::create([
-                                'user_id' => $record->id,
-                                'credit' => $data['credit'],
-                                'debit' => 0,
-                                'is_complete' => true,
-                                'info' => $data['info'],
-                                'type' => BalanceTypeEnum::PUSH->value,
-                                'total' => $record->total_balance + $data['credit'],
-                            ]);
-                            Balance::create([
-                                'user_id' => auth()->id(),
-                                'credit' => 0,
-                                'debit' => $data['credit'],
-                                'is_complete' => true,
-                                'info' => "شحن رصيد للمستخدم {$record->full_name}",
-                                'type' => BalanceTypeEnum::CATCH->value,
-                                'total' => auth()->user()->total_balance - $data['credit'],
-                            ]);
-                            \DB::commit();
-                            Notification::make('success')->success()->title('نجاح العملية')->body("تم إضافة رصيد إلى المستخدم {$record->full_name}")->send();
-
-                        } catch (Exception | \Error $e) {
-                            \DB::rollBack();
-                            Notification::make('success')->danger()->title('فشل العملية')->body($e->getMessage())->send();
-
-                        }
-
-
-                    }
-
-
-                })->label('إضافة رصيد')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-//                    Tables\Actions\DeleteBulkAction::make(),
-//                    ExportBulkAction::make()
+
 
                 ]),
             ]);

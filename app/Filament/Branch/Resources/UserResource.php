@@ -48,10 +48,6 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-
-
-
-
                 Forms\Components\CheckboxList::make('roles')->columnSpanFull()
                     ->relationship('roles', 'name')->label('الصلاحيات'),
                 Forms\Components\TextInput::make('name')->label('الاسم')->required(),

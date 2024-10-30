@@ -12,14 +12,16 @@ class UserObserver
      */
     public function created(User $user): void
     {
-        $temp = City::where('id', $user['city_id'])->pluck('branch_id')->first();
+        if(empty($user->iban)){
+            $temp = City::where('id', $user['city_id'])->pluck('branch_id')->first();
 
-        $user->update([
-            'iban' => "FC" . str_pad(random_int(0, 9999999999999999), 10, '0', STR_PAD_LEFT) . $user->id
+            $user->update([
+                'iban' => "FC" . str_pad(random_int(0, 9999999999999999), 10, '0', STR_PAD_LEFT) . $user->id,
+                'branch_id' => $temp
+            ]);
+            $user->save();
+        }
 
-            , 'branch_id' => $temp
-        ]);
-        $user->save();
     }
 
     /**

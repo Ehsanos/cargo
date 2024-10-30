@@ -29,40 +29,36 @@ class ListBalances extends ListRecords
             Actions\Action::make('create_balance_credit')
                 ->form([
 
-                    Repeater::make('quid')->schema([
-
-                        Grid::make(3)->schema([
-                            Select::make('user_id')->options(User::get()->mapWithKeys(fn($user) => [$user->id => $user->iban_name]))->searchable()->required()
-                                ->label('المستخدم'),
-                            TextInput::make('value')->required()->numeric()->label('القيمة'),
-                       TextInput::make('info')->label('بيان'),
-                        ])
-                    ])->label('سند قبض')
+                    Grid::make(3)->schema([
+                        Select::make('user_id')->options(User::get()->mapWithKeys(fn($user) => [$user->id => $user->iban_name]))->searchable()->required()
+                            ->label('المستخدم'),
+                        TextInput::make('value')->required()->numeric()->label('القيمة'),
+                        TextInput::make('info')->label('البيان'),
+                    ])
                 ])
                 //
                 ->action(function ($data) {
 
                     \DB::beginTransaction();
-                    try {
-                        foreach ($data['quid'] as $user) {
-                            Balance::create([
-                                'type'=>BalanceTypeEnum::CATCH->value,
-                                'user_id'=>$user['user_id'],
-                                'debit'=>$user['value'],
-                                'credit'=>0,
-                                'info'=>$user['info'],
-                                'is_complete'=>true,
-                            ]);
 
-                            Balance::create([
-                                'type'=>BalanceTypeEnum::PUSH->value,
-                                'user_id'=>auth()->id(),
-                                'debit'=>0,
-                                'credit'=>$user['value'],
-                                'info'=>$user['info'],
-                                'is_complete'=>true,
-                            ]);
-                        }
+                    try {
+                        Balance::create([
+                            'type'=>BalanceTypeEnum::CATCH->value,
+                            'user_id'=>$data['user_id'],
+                            'debit'=>$data['value'],
+                            'credit'=>0,
+                            'info'=>$data['info'],
+                            'is_complete'=>true,
+                        ]);
+
+                        Balance::create([
+                            'type'=>BalanceTypeEnum::PUSH->value,
+                            'user_id'=>auth()->id(),
+                            'debit'=>0,
+                            'credit'=>$data['value'],
+                            'info'=>$data['info'],
+                            'is_complete'=>true,
+                        ]);
                         \DB::commit();
                         Notification::make('success')->title('نجاح العملية')->body('تم إضافة السندات بنجاح')->success()->send();
                     } catch (\Exception | \Error $e) {
@@ -91,25 +87,29 @@ class ListBalances extends ListRecords
                 //
                 ->action(function ($data) {
                     \DB::beginTransaction();
+                    if((auth()->user()->total_balance *-1) < $data['value'] ){
+                        Notification::make('error')->title('فشل العملية')->body('لا تملك رصيد كافي')->danger()->send();
+                        return ;
+                    }
                     try {
-                        foreach ($data['quid'] as $user) {
+
                             Balance::create([
                                 'type'=>BalanceTypeEnum::PUSH->value,
-                                'user_id'=>$user['user_id'],
+                                'user_id'=>$data['user_id'],
                                 'debit'=>0,
-                                'credit'=>$user['value'],
-                                'info'=>$user['info'],
+                                'credit'=>$data['value'],
+                                'info'=>$data['info'],
                                 'is_complete'=>true,
                             ]);
                             Balance::create([
                                 'type'=>BalanceTypeEnum::CATCH->value,
                                 'user_id'=>auth()->id(),
-                                'debit'=>$user['value'],
+                                'debit'=>$data['value'],
                                 'credit'=>0,
-                                'info'=>$user['info'],
+                                'info'=>$data['info'],
                                 'is_complete'=>true,
                             ]);
-                        }
+
                         \DB::commit();
                         Notification::make('success')->title('نجاح العملية')->body('تم إضافة السندات بنجاح')->success()->send();
                     } catch (\Exception | \Error $e) {
