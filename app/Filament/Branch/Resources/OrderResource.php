@@ -491,7 +491,7 @@ class OrderResource extends Resource
                         Forms\Components\Select::make('given_id')->options(User::where('users.branch_id', auth()->user()->branch_id)->where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value))->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط')
                     ])
                         ->action(function ($records, $data) {
-                            $records->update(['given_id' => $data['given_id']]);
+                            Order::whereIn('id',$records->pluck('id')->toArray())->update(['given_id' => $data['given_id']]);
                             Notification::make('success')->title('نجاح العملية')->body('تم تحديد موظف التسليم بنجاح')->success()->send();
                         })
                         ->label('تحديد موظف التسليم')->color('info')
