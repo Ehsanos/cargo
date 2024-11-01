@@ -13,6 +13,7 @@ class PendingBalanceWidget extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
+            ->poll(10)
             ->query(
                 fn()=> User::select('users.*')
                     ->selectSub(function ($query) {

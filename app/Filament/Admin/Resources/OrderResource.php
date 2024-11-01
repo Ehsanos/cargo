@@ -262,6 +262,7 @@ class OrderResource extends Resource
     {
 
         return $table
+            ->poll(10)
             ->columns([
                 PopoverColumn::make('qr_url')
                     ->trigger('click')

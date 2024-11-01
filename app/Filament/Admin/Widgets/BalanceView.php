@@ -7,6 +7,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class BalanceView extends BaseWidget
 {
+    protected static ?string $pollingInterval='10s';
     protected function getStats(): array
     {
         return [
