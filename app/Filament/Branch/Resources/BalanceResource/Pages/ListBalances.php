@@ -26,7 +26,7 @@ class ListBalances extends ListRecords
             /**
              * Add credit
              */
-            Actions\Action::make('create_balance_credit')
+           /* Actions\Action::make('create_balance_credit')
                 ->form([
                         Grid::make(3)->schema([
                             Select::make('user_id')->options(User::get()->mapWithKeys(fn($user) => [$user->id => $user->iban_name]))->searchable()->required()
@@ -68,11 +68,11 @@ class ListBalances extends ListRecords
                     }
 
                 })
-                ->label('إضافة سند قبض'),
+                ->label('إضافة سند قبض'),*/
             /**
              * Add credit
              */
-            Actions\Action::make('create_balance_debit')
+        /*    Actions\Action::make('create_balance_debit')
                 ->form([
                         Grid::make(3)->schema([
                             Select::make('user_id')->options(User::get()->mapWithKeys(fn($user) => [$user->id => $user->iban_name]))->searchable()->required()
@@ -115,13 +115,13 @@ class ListBalances extends ListRecords
                     }
 
                 })
-                ->label('إضافة سند دفع'),
+                ->label('إضافة سند دفع'),*/
 
-            Actions\ActionGroup::make([
+           // Actions\ActionGroup::make([
                 /**
                  * Add credit
                  */
-                Actions\Action::make('create_balance_start_credit')
+               /* Actions\Action::make('create_balance_start_credit')
                     ->form([
 
                         Repeater::make('quid')->schema([
@@ -156,11 +156,11 @@ class ListBalances extends ListRecords
                         }
 
                     })
-                    ->label('إضافة سند قبض بداية المدة'),
+                    ->label('إضافة سند قبض بداية المدة'),*/
                 /**
                  * Add credit
                  */
-                Actions\Action::make('create_balance_start_debit')
+              /*  Actions\Action::make('create_balance_start_debit')
                     ->form([
 
                         Repeater::make('quid')->schema([
@@ -195,8 +195,8 @@ class ListBalances extends ListRecords
                         }
 
                     })
-                    ->label('إضافة سند دفع بداية المدة'),
-            ])->button()->label('سندات بداية المدة'),
+                    ->label('إضافة سند دفع بداية المدة'),*/
+          //  ])->button()->label('سندات بداية المدة'),
         ];
     }
 }
