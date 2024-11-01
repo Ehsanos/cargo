@@ -55,12 +55,13 @@ class AccountBalanceResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn($query)=>$query->whereHas('user',fn($query)=>$query->where('is_account',true)))
+            ->modifyQueryUsing(fn($query)=>$query->whereHas('account')->latest())
             ->columns([
                 Tables\Columns\TextColumn::make('debit')->label('المدفوعات'),
                 Tables\Columns\TextColumn::make('credit')->label('المقبوضات'),
-                Tables\Columns\TextColumn::make('user.name')->label('الحساب'),
+                Tables\Columns\TextColumn::make('account.name')->label('الحساب'),
                 Tables\Columns\TextColumn::make('total')->label('الرصيد'),
+                Tables\Columns\TextColumn::make('info')->label('البيان'),
                 Tables\Columns\TextColumn::make('created_at')->date('Y-m-d')->label('التاريخ'),
 
             ])

@@ -50,7 +50,7 @@ class BalanceResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->modifyQueryUsing(fn($query) => $query->where('user_id', auth()->id()))
+        return $table->modifyQueryUsing(fn($query) => $query->where('user_id', auth()->id())->latest())
             ->columns([
                 Tables\Columns\TextColumn::make('credit')->label('إيداع'),
                 Tables\Columns\TextColumn::make('debit')->label('قبض'),

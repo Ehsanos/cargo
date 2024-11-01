@@ -73,21 +73,17 @@ class ListBalances extends ListRecords
              */
             Actions\Action::make('create_balance_debit')
                 ->form([
-
-                    Repeater::make('quid')->schema([
-
                         Grid::make(3)->schema([
                             Select::make('user_id')->options(User::get()->mapWithKeys(fn($user) => [$user->id => $user->iban_name]))->searchable()->required()
                                 ->label('المستخدم'),
                             TextInput::make('value')->required()->numeric()->label('القيمة'),
                             TextInput::make('info')->label('بيان'),
                         ])
-                    ])->label('سند دفع')
                 ])
                 //
                 ->action(function ($data) {
                     \DB::beginTransaction();
-                    if ((auth()->user()->total_balance * -1) < $data['value']) {
+                    if (auth()->user()->total_balance < $data['value']) {
                         Notification::make('error')->title('فشل العملية')->body('لا تملك رصيد كافي')->danger()->send();
                         return;
                     }
@@ -249,7 +245,7 @@ class ListBalances extends ListRecords
                         }
 
                     })
-                    ->label('إضافة سند قبض لحساب مالي'),
+                    ->label('إضافة سند قبض من حساب مالي'),
                 /**
                  * Add credit
                  */
