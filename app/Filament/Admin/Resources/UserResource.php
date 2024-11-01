@@ -94,6 +94,8 @@ class UserResource extends Resource
                                         $set('temp', Branch::where('city_id', $state)->pluck('name'));
                                     })->live(),
 
+
+
                                 Forms\Components\Radio::make('level')->options(
                                     [
                                         LevelUserEnum::ADMIN->value => LevelUserEnum::ADMIN->getLabel(),
@@ -102,9 +104,9 @@ class UserResource extends Resource
                                         LevelUserEnum::USER->value => LevelUserEnum::USER->getLabel(),
                                     ]
                                 )->default(LevelUserEnum::USER->value)->label('رتبة المستخدم')->required()->live(),
+
+
                                 Forms\Components\Select::make('branch_id')->label('الفرع')
-
-
                               ->options(fn($get,$context,$record)=> Branch::when($context=='create' && $get('level')===LevelUserEnum::BRANCH->value,
                                   fn($query)=>$query->whereDoesntHave('users',fn($query)=>$query->where('level',LevelUserEnum::BRANCH->value)))
                                   ->when($context=='edit' && $get('level')===LevelUserEnum::BRANCH->value,
@@ -116,6 +118,8 @@ class UserResource extends Resource
                                 Forms\Components\TextInput::make('full_name')->label('الاسم الكامل'),
                                 Forms\Components\DatePicker::make('birth_date')->label('تاريخ الميلاد')
                                     ->format('Y-m-d')->default(now()),
+
+
                                 Forms\Components\Select::make('status')->options(
                                     [
                                         ActivateStatusEnum::ACTIVE->value => ActivateStatusEnum::ACTIVE->getLabel(),
