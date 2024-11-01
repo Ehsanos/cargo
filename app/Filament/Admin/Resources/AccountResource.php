@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\AccountResource\Pages;
 use App\Filament\Admin\Resources\AccountResource\RelationManagers;
+use App\Helper\HelperBalance;
 use App\Models\Account;
 use App\Models\Branch;
 use App\Models\User;
@@ -32,7 +33,7 @@ class AccountResource extends Resource
                 Forms\Components\Section::make('الحسابات المالية')->schema([
                     Forms\Components\TextInput::make('name')->label('اسم الحساب')->required(),
 
-                    Forms\Components\TextInput::make('iban')->label('كود الحساب')->required()->unique(ignoreRecord: true)->dehydrated(fn($context) => $context === 'create'),
+                    Forms\Components\TextInput::make('iban')->label('كود الحساب')->required()->unique(ignoreRecord: true)->dehydrated(fn($context) => $context === 'create')->default(HelperBalance::getMaxCodeAccount()),
                     Forms\Components\Select::make('branch_id')->options(Branch::pluck('name', 'id'))->label('الفرع'),
                 ]),
             ]);

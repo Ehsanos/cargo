@@ -5,6 +5,7 @@ namespace App\Helper;
 use App\Enums\BalanceTypeEnum;
 use App\Models\Balance;
 use App\Models\Order;
+use App\Models\User;
 
 
 class HelperBalance
@@ -205,6 +206,11 @@ class HelperBalance
             throw new \Exception('Error Pick Pending');
         }
 
+    }
+
+    public static function getMaxCodeAccount(){
+        $user=User::withoutGlobalScope('userOnly')->where('is_account',true)->orderBy('iban','desc')->max('iban')??1;
+        return $user+1;
     }
 
 }
