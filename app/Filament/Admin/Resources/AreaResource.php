@@ -64,7 +64,8 @@ class AreaResource extends Resource
 
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('city_id')->relationship('city','name')
+                Tables\Filters\SelectFilter::make('city_id')->relationship('city','name')->label('المدينة'),
+                Tables\Filters\SelectFilter::make('branch_id')->relationship('branch','name')->label('الفرع')->multiple(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
