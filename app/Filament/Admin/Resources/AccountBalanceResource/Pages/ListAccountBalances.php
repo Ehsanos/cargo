@@ -23,7 +23,7 @@ class ListAccountBalances extends ListRecords
         return [
             Actions\CreateAction::make(),
             Actions\Action::make('created')->form([
-                Grid::make()->schema([
+                Grid::make(3)->schema([
                     Select::make('from_user')->options(User::accounts()->pluck('name', "id"))->required()->label('من حساب')->searchable(),
                     Select::make('to_user')->options(User::accounts()->pluck('name', "id"))->required()->label('إلى حساب')->searchable(),
                     TextInput::make('value')->numeric()->gt(0)->required()->label('المبلغ'),
