@@ -273,7 +273,7 @@ class OrderResource extends Resource
 
                         ]),
                         Forms\Components\Grid::make()->schema([
-                            Forms\Components\Select::make('pick_id')->label('الموظف الملتقط')->options(User::where('level',LevelUserEnum::BRANCH->value)->orWhere('level',LevelUserEnum::STAFF->value)->pluck('name','id'))->searchable(),
+                            Forms\Components\Select::make('pick_id')->label('الموظف الملتقط')->options(User::where('level',LevelUserEnum::BRANCH->value)->orWhere('level',LevelUserEnum::STAFF->value)->pluck('name','id'))->searchable()->required(),
 
                         ]),
 
