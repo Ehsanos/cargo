@@ -558,7 +558,7 @@ class OrderResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::where('status', OrderStatusEnum::PENDING)->count();
+        return static::getModel()::count();
     }
 
     public static function getPages(): array
