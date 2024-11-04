@@ -359,7 +359,7 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('type')->label('نوع الطلب')
                     ->description(fn($record) => $record->status?->getLabel())
                     ->searchable(),
-                Tables\Columns\TextColumn::make('bay_type')->label('حالة الدفع')
+                Tables\Columns\TextColumn::make('far_sender')->formatStateUsing(fn($state)=>$state?'على المرسل':'على المستلم')->label('حالة الدفع')
                     ->description(fn($record) => $record->created_at->diffForHumans())
                     ->searchable(),
 
@@ -455,7 +455,7 @@ class OrderResource extends Resource
 
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('set_picker')->form([
-                        Forms\Components\Select::make('pick_id')->options(User::where('users.level', LevelUserEnum::STAFF->value)->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط'),
+                        Forms\Components\Select::make('pick_id')->options(User::where('users.level', LevelUserEnum::STAFF->value)->orWhere('users.level', LevelUserEnum::BRANCH->value)->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط'),
                     ])
                         ->action(function ($record, $data) {
                             DB::beginTransaction();
@@ -474,7 +474,7 @@ class OrderResource extends Resource
                         ->label('تحديد موظف الإلتقاط')->color('info'),
 
                     Tables\Actions\Action::make('set_given')->form([
-                        Forms\Components\Select::make('given_id')->options(User::where('users.level', LevelUserEnum::STAFF->value)->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط'),
+                        Forms\Components\Select::make('given_id')->options(User::where('users.level', LevelUserEnum::STAFF->value)->orWhere('users.level', LevelUserEnum::BRANCH->value)->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط'),
                     ])
                         ->action(function ($record, $data) {
                             $record->update(['given_id' => $data['given_id']]);
@@ -513,7 +513,7 @@ class OrderResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\BulkAction::make('pick_id_check')->form([
                         Forms\Components\Select::make('pick_id')
-                            ->options(User::where('users.level', LevelUserEnum::STAFF->value)->selectRaw('id,name,iban')->get()->mapWithKeys(fn($user) => [$user->id => $user->iban_name]))->searchable()->label('موظف الإلتقاط')
+                            ->options(User::where('users.level', LevelUserEnum::STAFF->value)->orWhere('users.level', LevelUserEnum::BRANCH->value)->selectRaw('id,name,iban')->get()->mapWithKeys(fn($user) => [$user->id => $user->iban_name]))->searchable()->label('موظف الإلتقاط')
                     ])
                         ->action(function ($records, $data) {
 
@@ -522,7 +522,7 @@ class OrderResource extends Resource
                         })
                         ->label('تحديد موظف الإلتقاط'),
                     Tables\Actions\BulkAction::make('given_id_check')->form([
-                        Forms\Components\Select::make('given_id')->options(User::where('users.level', LevelUserEnum::STAFF->value)->selectRaw('id,name,iban')->get()->mapWithKeys(fn($user) => [$user->id => $user->iban_name]))->searchable()->label('موظف الإلتقاط')
+                        Forms\Components\Select::make('given_id')->options(User::where('users.level', LevelUserEnum::STAFF->value)->orWhere('users.level', LevelUserEnum::BRANCH->value)->selectRaw('id,name,iban')->get()->mapWithKeys(fn($user) => [$user->id => $user->iban_name]))->searchable()->label('موظف الإلتقاط')
                     ])
                         ->action(function ($records, $data) {
                             Order::whereIn('id', $records->pluck('id')->toArray())->update(['given_id' => $data['given_id']]);

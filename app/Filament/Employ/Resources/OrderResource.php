@@ -199,7 +199,7 @@ class OrderResource extends Resource
 
 
                 Tables\Columns\TextColumn::make('type')->label('نوع الطلب'),
-                Tables\Columns\TextColumn::make('bay_type')->label('حالة الدفع'),
+                Tables\Columns\TextColumn::make('far_sender')->formatStateUsing(fn($state)=>$state?'على المرسل':'على المستلم')->label('حالة الدفع'),
                 Tables\Columns\TextColumn::make('price')->label('التحصيل'),
                 Tables\Columns\TextColumn::make('far')->label('أجور الشحن'),
                 Tables\Columns\TextColumn::make('packages.unit.name')->label('نوع الشحنة'),

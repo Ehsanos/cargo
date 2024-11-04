@@ -260,7 +260,8 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('type')->label('نوع الطلب')
                     ->description(fn($record)=>$record->status?->getLabel())
                     ->searchable(),
-                Tables\Columns\TextColumn::make('bay_type')->label('حالة الدفع')
+                Tables\Columns\TextColumn::make('far_sender')->formatStateUsing(fn($state)=>$state?'على المرسل':'على المستلم')->label('حالة الدفع')
+
                     ->description(fn($record)=>$record->created_at->diffForHumans())
                     ->searchable(),
 

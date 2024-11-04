@@ -168,7 +168,7 @@ class UserResource extends Resource
 
             ])->defaultSort('created_at', 'desc')
             ->filters([
-                //
+
             ])
             ->actions([
 
