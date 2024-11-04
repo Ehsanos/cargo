@@ -377,23 +377,26 @@ class OrderResource extends Resource
 
                 Tables\Columns\TextColumn::make('citySource.name')->label('من بلدة')->description(fn($record) => "إلى {$record->cityTarget?->name}")->searchable(),
                 Tables\Columns\TextColumn::make('receive.name')->label('معرف المستلم ')->description(fn($record) => $record->global_name)->searchable(),
-                Tables\Columns\TextColumn::make('receive_address')->label('هاتف المستلم ')->description(fn($record) => $record->receive_phone)
+                Tables\Columns\TextColumn::make('receive_address')->label('هاتف المستلم ')->description(fn($record) =>  ltrim($record?->receive_phone, '+'))
                     ->url(function($record) {
                       $far=  $record->far_sender?'على المرسل':'على المستلم';
                         $message="السلام عليكم ورحمة الله وبركاته
-
-لكم طلب مرسل عبر شركة الفاتح للنقل الداخلي
-
-من  {$record->sender?->full_name}
-باسم  : {$record->receive?->full_name}
-
+\n
+  لكم طلب مرسل عبر شركة الفاتح للنقل الداخلي
+\n
+ من  {$record->sender?->full_name}
+ \n
+ باسم  : {$record->receive?->full_name}
+\n
 
 قيمة الطلب  : {$record->price}
+\n
 اجور الطلب  : {$record->far}
+\n
 الأجور على  : {$far}
-
+\n
 يرجى تأكيد حضوركم وإرسال عنوان دقيق ليتم تسليمكم الطلب فيه مع إرفاق رقم البناء والشقة وإرفاق موقع GPS لتسريع الوصول للعنوان
-
+\n
 ملاحظة : سيتم التوزيع خلال أقرب فرصة ممكنة إن شاء الله";
                         return url('https://wa.me/' . ltrim($record?->receive_phone, '+').'?text='.$message);
                     })->openUrlInNewTab()
