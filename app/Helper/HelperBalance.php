@@ -210,7 +210,7 @@ class HelperBalance
 
     public static function getMaxCodeAccount(){
         $user=User::withoutGlobalScope('userOnly')->where('is_account',true)->orderBy('iban','desc')->max('iban')??1;
-        return $user+1;
+        return (int)$user+1;
     }
 
 }
