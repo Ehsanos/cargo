@@ -281,26 +281,32 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('citySource.name')->label('من بلدة')->description(fn($record)=>"إلى {$record->cityTarget?->name}")->searchable(),
                 Tables\Columns\TextColumn::make('receive.name')->label('معرف المستلم ')->description(fn($record)=>$record->global_name)->searchable(),
 //                Tables\Columns\TextColumn::make('receive_address')->label('عنوان المستلم ')->searchable(),
-                Tables\Columns\TextColumn::make('receive_address')->label('هاتف المستلم ')->description(fn($record) => $record->receive_phone)
+                Tables\Columns\TextColumn::make('receive_address')
+                    ->formatStateUsing(fn($record,$state)=>trim($record->receive_address).' - '.$record->receive_phone)->label('هاتف المستلم ')
+                    /*->description(fn($record) =>  ltrim($record?->receive_phone, '+'))*/
                     ->url(function($record) {
                         $far=  $record->far_sender?'على المرسل':'على المستلم';
                         $message="السلام عليكم ورحمة الله وبركاته
-
-لكم طلب مرسل عبر شركة الفاتح للنقل الداخلي
-
-من {$record->sender?->full_name}
-باسم : {$record->receive?->full_name}
-
+%0a
+  لكم طلب مرسل عبر شركة الفاتح للنقل الداخلي
+%0a
+ من  {$record->sender?->full_name}
+%0a
+ باسم  : {$record->receive?->full_name}
+%0a
 
 قيمة الطلب  : {$record->price}
+%0a
 اجور الطلب  : {$record->far}
+%0a
 الأجور على  : {$far}
-
+%0a
 يرجى تأكيد حضوركم وإرسال عنوان دقيق ليتم تسليمكم الطلب فيه مع إرفاق رقم البناء والشقة وإرفاق موقع GPS لتسريع الوصول للعنوان
-
+%0a
 ملاحظة : سيتم التوزيع خلال أقرب فرصة ممكنة إن شاء الله";
                         return url('https://wa.me/' . ltrim($record?->receive_phone, '+').'?text='.$message);
                     })->openUrlInNewTab()
+                    ->searchable(),
 //                Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم'),
 //                Tables\Columns\TextColumn::make('cityTarget.name')->label('الى بلدة ')->searchable(),
 //                Tables\Columns\TextColumn::make('created_at')->label('تاريخ الشحنة')
@@ -492,7 +498,7 @@ class OrderResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\BulkAction::make('pick_id_check')->form([
+                    /*Tables\Actions\BulkAction::make('pick_id_check')->form([
                         Forms\Components\Select::make('pick_id')
                             ->relationship('receive','name',fn($query)=>$query->where('users.branch_id', auth()->user()->branch_id)->where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)))->searchable()->label('موظف الإلتقاط')
                     ])
@@ -501,7 +507,7 @@ class OrderResource extends Resource
                             Order::whereIn('id',$records->pluck('id')->toArray())->update(['pick_id' => $data['pick_id'], 'status' => OrderStatusEnum::AGREE->value]);
                             Notification::make('success')->title('نجاح العملية')->body('تم تحديد موظف الإلتقاط بنجاح')->success()->send();
                         })
-                        ->label('تحديد موظف الإلتقاط'),
+                        ->label('تحديد موظف الإلتقاط'),*/
 
 
                     Tables\Actions\BulkAction::make('given_id_check')->form([
