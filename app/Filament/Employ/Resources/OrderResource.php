@@ -162,6 +162,7 @@ class OrderResource extends Resource
                                     false => 'المستلم'
                                 ])->required()->default(false)->inline()
                                 ->label('أجور الشحن')->default(1),
+                            Forms\Components\Select::make('pick_id')->label('الموظف الملتقط')->options(User::where('level',LevelUserEnum::BRANCH->value)->orWhere('level',LevelUserEnum::STAFF->value)->pluck('name','id'))->searchable(),
                         ]),
                     ])
                 ]),

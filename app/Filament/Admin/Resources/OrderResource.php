@@ -272,6 +272,10 @@ class OrderResource extends Resource
                             Forms\Components\TextInput::make('far')->numeric()->label('أجور الشحن')->default(1),
 
                         ]),
+                        Forms\Components\Grid::make()->schema([
+                            Forms\Components\Select::make('pick_id')->label('الموظف الملتقط')->options(User::where('level',LevelUserEnum::BRANCH->value)->orWhere('level',LevelUserEnum::STAFF->value)->pluck('name','id'))->searchable(),
+
+                        ]),
 
                         Forms\Components\Grid::make()->schema([
                             Forms\Components\Radio::make('far_sender')

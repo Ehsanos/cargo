@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Enums\BalanceTypeEnum;
 use App\Enums\BayTypeEnum;
 use App\Enums\OrderStatusEnum;
+use App\Helper\HelperBalance;
 use App\Models\Balance;
 use App\Models\Order;
 use Filament\Notifications\Notification;
@@ -25,6 +26,17 @@ class OrderObserver
      */
     public function created(Order $order): void
     {
+        if($order->far_sender==true && $order->pick_id!=null){
+            \DB::beginTransaction();
+            try{
+                HelperBalance::completePicker($order);
+                $order->update(['status' => OrderStatusEnum::PICK->value]);
+                \DB::commit();
+            }catch (\Exception |\Error $e){
+                \DB::rollBack();
+            }
+
+        }
     }
 
     /**
