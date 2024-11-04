@@ -16,6 +16,7 @@ class TaskWidget extends BaseWidget
             ->query(
                 Task::where('user_id', auth()->id())->where('is_complete', false),
             )
+            ->poll(10)
             ->columns([
 //                Tables\Columns\TextColumn::make('user.name')->label('المستخدم')->searchable(),
                 Tables\Columns\TextColumn::make('from')->label('إستلام من'),

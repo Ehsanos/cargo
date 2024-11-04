@@ -23,6 +23,7 @@ class TaskResource extends Resource
 
     public static function form(Form $form): Form
     {
+
         return $form
             ->schema([
                 Forms\Components\Section::make('مهام')->schema([
@@ -37,6 +38,7 @@ class TaskResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->poll(10)
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')->label('المستخدم')->searchable(),
                 Tables\Columns\TextColumn::make('from')->label('إستلام من'),
