@@ -140,17 +140,7 @@ class OrderResource extends Resource
                                         $set('sender_name', $user?->name);
                                         $set('city_target_id', $user?->city_id);
                                     }
-                                })->live()->dehydrated(false),
-
-                        ]),
-                        Forms\Components\Grid::make()->schema([
-                            Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم'),
-                            Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
-
-                        ]),
-                        Forms\Components\Grid::make()->schema([
-                            Forms\Components\TextInput::make('global_name')->label('اسم المستلم')
-                                ->suffixAction(Action::make('copyCostToPrice')->label('إضافة مستخدم جديد')
+                                })->live()->dehydrated(false) ->suffixAction(Action::make('copyCostToPrice')->label('إضافة مستخدم جديد')
                                     ->icon('fas-user-plus')
                                     ->form([
                                         Forms\Components\Grid::make()->schema([
@@ -235,6 +225,15 @@ class OrderResource extends Resource
                                     })
                                 //
                                 ),
+
+                        ]),
+                        Forms\Components\Grid::make()->schema([
+                            Forms\Components\TextInput::make('receive_address')->label('عنوان المستلم'),
+                            Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
+
+                        ]),
+                        Forms\Components\Grid::make()->schema([
+                            Forms\Components\TextInput::make('global_name')->label('اسم المستلم'),
                             Forms\Components\Select::make('city_target_id')
                                 ->relationship('cityTarget', 'name')
                                 ->label('الى بلدة')->required()->searchable()->preload(),
