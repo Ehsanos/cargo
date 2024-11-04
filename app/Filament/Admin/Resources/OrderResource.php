@@ -489,7 +489,6 @@ class OrderResource extends Resource
                     Tables\Actions\Action::make('set_picker')->form([
                         Forms\Components\Select::make('pick_id')
                             ->relationship('receive','name',fn($query)=>$query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value))
-                            ->searchable()->label('موظف الإلتقاط')
                             ->searchable()->label('موظف الإلتقاط'),
                     ])
                         ->action(function ($record, $data) {
