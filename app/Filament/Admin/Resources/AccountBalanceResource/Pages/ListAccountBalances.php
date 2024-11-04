@@ -24,8 +24,8 @@ class ListAccountBalances extends ListRecords
             Actions\CreateAction::make(),
             Actions\Action::make('created')->form([
                 Grid::make()->schema([
-                    Select::make('from_user')->options(User::accounts()->pluck('name', "id"))->required()->label('من حساب'),
-                    Select::make('to_user')->options(User::accounts()->pluck('name', "id"))->required()->label('إلى حساب'),
+                    Select::make('from_user')->options(User::accounts()->pluck('name', "id"))->required()->label('من حساب')->searchable(),
+                    Select::make('to_user')->options(User::accounts()->pluck('name', "id"))->required()->label('إلى حساب')->searchable(),
                     TextInput::make('value')->numeric()->gt(0)->required()->label('المبلغ'),
 
                 ]),
@@ -34,8 +34,8 @@ class ListAccountBalances extends ListRecords
                 \DB::beginTransaction();
                 try {
                     $userFrom = User::accounts()->where('id', $data['from_user'])->first();
-                    if (!$userFrom || ($userFrom->total_balance < $data['value'])) {
-                        throw  new \Exception("الحساب : {$userFrom?->name} ليس لديه رصيد كافي");
+                    if (!$userFrom /*|| ($userFrom->total_balance < $data['value'])*/) {
+                        throw  new \Exception("الحساب : غير موجود");
                     }
                     Balance::create([
                         'credit' => 0,
