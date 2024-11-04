@@ -21,6 +21,7 @@ class TaskWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('from')->label('إستلام من'),
                 Tables\Columns\TextColumn::make('to')->label('التسليم لـ'),
                 Tables\Columns\TextColumn::make('task')->label('المهمة'),
+                Tables\Columns\TextColumn::make('created_at')->since()->label('منذ'),
             ])->actions([
                 Tables\Actions\Action::make('complete')->label('إتمام')->requiresConfirmation()->action(fn($record) => $record->update(['is_complete'=> true]))
             ]);
