@@ -387,7 +387,7 @@ class OrderResource extends Resource
                 Tables\Actions\EditAction::make(),
                Tables\Actions\ActionGroup::make([
                    Tables\Actions\Action::make('set_picker')->form([
-                       Forms\Components\Select::make('pick_id')->relationship('receive','name',fn($query)=>$query->where('users.branch_id', auth()->user()->branch_id)->where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)))->searchable()->label('موظف الإلتقاط'),
+                       Forms\Components\Select::make('pick_id')->relationship('receive','name',fn($query)=>$query->where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)))->searchable()->label('موظف الإلتقاط'),
                    ])
                        ->action(function ($record, $data) {
                            DB::beginTransaction();
@@ -407,7 +407,7 @@ class OrderResource extends Resource
 
                    Tables\Actions\Action::make('select_given_id')->form([
                        Forms\Components\Select::make('given_id')
-                           ->relationship('receive','name',fn($query)=>$query->where('users.branch_id', auth()->user()->branch_id)->where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)))                           ->searchable()->label('موظف الإلتقاط')
+                           ->relationship('receive','name',fn($query)=>$query->where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)))                           ->searchable()->label('موظف الإلتقاط')
                    ])
                        ->action(function ($record, $data) {
                            $record->update(['given_id' => $data['given_id']]);
@@ -511,7 +511,7 @@ class OrderResource extends Resource
 
 
                     Tables\Actions\BulkAction::make('given_id_check')->form([
-                        Forms\Components\Select::make('given_id')->options(User::where('users.branch_id', auth()->user()->branch_id)->where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value))->selectRaw('id,name,iban')->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط')
+                        Forms\Components\Select::make('given_id')->options(User::where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value))->selectRaw('id,name,iban')->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط')
                     ])
                         ->action(function ($records, $data) {
                             Order::whereIn('id',$records->pluck('id')->toArray())->update(['given_id' => $data['given_id']]);
