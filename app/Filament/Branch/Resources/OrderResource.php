@@ -71,7 +71,7 @@ class OrderResource extends Resource
                                              $set('branch_source_id', $user?->branch_id);*/
 
                                         }
-                                    })->live()->searchable()->preload(),
+                                    })->live()->searchable(),
                             ]),
                             Forms\Components\Grid::make()->schema([
                                 Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل')->required(),
@@ -82,7 +82,7 @@ class OrderResource extends Resource
                             Forms\Components\Grid::make()->schema([
                                 Forms\Components\Select::make('city_source_id')
                                     ->relationship('citySource', 'name')
-                                    ->label('من بلدة')->reactive()->required()->searchable()->preload(),
+                                    ->label('من بلدة')->reactive()->required()->searchable(),
 
                                 Forms\Components\TextInput::make('sender_address')->label('عنوان المرسل')->required(),
                             ]),
@@ -92,8 +92,7 @@ class OrderResource extends Resource
                         ->schema([
 
                             Forms\Components\Grid::make()->schema([
-                                Forms\Components\Select::make('receive_id')->options(User::selectRaw('id,name,iban')->pluck('iban', 'id')
-                                    ->toArray())->searchable()
+                                Forms\Components\Select::make('receive_id')->relationship('receive','iban')->searchable()
                                     ->afterStateUpdated(function ($state, $set) {
                                         $user = User::with('city')->find($state);
                                         if ($user) {
@@ -151,7 +150,7 @@ class OrderResource extends Resource
                                 Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
                                 Forms\Components\Select::make('city_target_id')
                                     ->relationship('cityTarget', 'name')
-                                    ->label('الى بلدة')->required()->searchable()->preload(),
+                                    ->label('الى بلدة')->required()->searchable(),
                             ]),
 
 
