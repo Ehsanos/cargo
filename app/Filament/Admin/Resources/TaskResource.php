@@ -51,7 +51,7 @@ class TaskResource extends Resource
 
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('user_id')->relationship('user', 'name')->label('المستخدم')
+                Tables\Filters\SelectFilter::make('user_id')->relationship('user', 'name')->label('المستخدم')->searchable()
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
