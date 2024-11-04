@@ -42,6 +42,10 @@ class TaskResource extends Resource
                 Tables\Columns\TextColumn::make('from')->label('إستلام من'),
                 Tables\Columns\TextColumn::make('to')->label('التسليم لـ'),
                 Tables\Columns\TextColumn::make('task')->label('المهمة'),
+                Tables\Columns\TextColumn::make('is_complete')->label('الحالة')->formatStateUsing(fn($state)=>$state?'تم':'بالإنتظار')
+                ->color(fn($state)=>$state?'success':'danger')
+                ,
+
                 Tables\Columns\TextColumn::make('created_at')->since()->label('منذ'),
 
 
