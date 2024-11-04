@@ -393,9 +393,8 @@ class OrderResource extends Resource
                         Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')
                             ->label('اسم الفرع المستلم')->multiple(),
 
-                        Forms\Components\Select::make('receive_id')->relationship('receive', 'name')->label('اسم المستلم')
-                        ,
-                        Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل'),
+                        Forms\Components\Select::make('receive_id')->relationship('receive', 'name')->label('اسم المستلم')->multiple(),
+                        Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')->multiple(),
                         Forms\Components\Select::make('status')->options([
                             OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel(),
                             OrderStatusEnum::AGREE->value => OrderStatusEnum::AGREE->getLabel(),
@@ -406,11 +405,12 @@ class OrderResource extends Resource
                             OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
 
 
-                        ])->label('حالة الطلب'),
-                        Forms\Components\Select::make('city_target_id')->relationship('cityTarget', 'name')
-                            ->label('الى بلدة'),
+                        ])->label('حالة الطلب')->multiple(),
                         Forms\Components\Select::make('city_source_id')->relationship('citySource', 'name')
-                            ->label('من بلدة'),
+                            ->label('من بلدة')->multiple(),
+                        Forms\Components\Select::make('city_target_id')->relationship('cityTarget', 'name')
+                            ->label('الى بلدة')->multiple(),
+
                         Forms\Components\DatePicker::make('created_from')->label('من تاريخ'),
                         Forms\Components\DatePicker::make('created_until')->label('الى تاريخ'),
                     ])
