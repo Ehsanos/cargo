@@ -50,7 +50,7 @@ class CityResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->label('المدينة'),
+                Tables\Columns\TextColumn::make('name')->label('المدينة')->searchable(),
 
                 Tables\Columns\TextColumn::make('status')->label('مفعلة/غير مفعلة')
             ])

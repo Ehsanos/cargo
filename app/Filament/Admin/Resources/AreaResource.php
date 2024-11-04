@@ -50,9 +50,9 @@ class AreaResource extends Resource
         return $table
             ->columns([
 
-                Tables\Columns\TextColumn::make('name')->label('البلدة / القرية'),
+                Tables\Columns\TextColumn::make('name')->label('البلدة / القرية')->searchable(),
 
-                Tables\Columns\TextColumn::make('city.name')->label('تتبع الى مدينة'),
+                Tables\Columns\TextColumn::make('city.name')->label('تتبع الى مدينة')->searchable(),
 
                 Tables\Columns\TextColumn::make('branch.name')->label('تتبع لفرع '),
 
@@ -64,7 +64,7 @@ class AreaResource extends Resource
 
             ])
             ->filters([
-                //
+                Forms\Components\Select::make('city_id')->relationship('city','name')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

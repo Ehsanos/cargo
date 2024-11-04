@@ -21,7 +21,7 @@ class City extends Model
 
     public function city(): BelongsTo
     {
-        return $this->belongsTo(__CLASS__);
+        return $this->belongsTo(__CLASS__)->where('is_main',true);
     }
 
     public function cities(): HasMany
