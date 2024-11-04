@@ -27,7 +27,9 @@ class TaskResource extends Resource
             ->schema([
                 Forms\Components\Section::make('مهام')->schema([
                     Forms\Components\Select::make('user_id')->relationship('user', 'name')->label('المستخدم')->searchable(),
-                    Forms\Components\Textarea::make('task')->label('المهمة')
+                    Forms\Components\TextInput::make('from')->label('إستلام من'),
+                    Forms\Components\Textarea::make('to')->label('التسليم لـ'),
+                    Forms\Components\Textarea::make('task')->label('ملاحظات')
                 ])
             ]);
     }
@@ -37,6 +39,8 @@ class TaskResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')->label('المستخدم')->searchable(),
+                Tables\Columns\TextColumn::make('from')->label('إستلام من'),
+                Tables\Columns\TextColumn::make('to')->label('التسليم لـ'),
                 Tables\Columns\TextColumn::make('task')->label('المهمة'),
 
             ])
