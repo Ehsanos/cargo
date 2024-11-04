@@ -9,6 +9,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class TaskWidget extends BaseWidget
 {
+    protected static ?string $heading="المهام الإدارية";
     public function table(Table $table): Table
     {
         return $table
@@ -19,7 +20,7 @@ class TaskWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('user.name')->label('المستخدم'),
                 Tables\Columns\TextColumn::make('task')->label('المهمة'),
             ])->actions([
-                Tables\Actions\Action::make('complete')->label('إتمام')->requiresConfirmation()->action(fn($record) => $record->update(['is_complete', true]))
+                Tables\Actions\Action::make('complete')->label('إتمام')->requiresConfirmation()->action(fn($record) => $record->update(['is_complete'=> true]))
             ]);
     }
 }
