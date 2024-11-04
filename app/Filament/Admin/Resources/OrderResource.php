@@ -388,10 +388,11 @@ class OrderResource extends Resource
 
                 Tables\Filters\Filter::make('created_at')
                     ->form([
-                        Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')
-                            ->label('اسم الفرع المرسل')->multiple(),
                         Forms\Components\Select::make('branch_source_id')->relationship('branchSource', 'name')
                             ->label('اسم الفرع المرسل')->multiple(),
+                        Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')
+                            ->label('اسم الفرع المستلم')->multiple(),
+
                         Forms\Components\Select::make('receive_id')->relationship('receive', 'name')->label('اسم المستلم')
                         ,
                         Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل'),
