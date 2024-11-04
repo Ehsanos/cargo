@@ -292,9 +292,9 @@ class OrderResource extends Resource
 باسم : {$record->receive?->full_name}
 
 
-قيمة الطلب : {$record->price}
-اجور الطلب : {$record->far}
-الأجور على : {$far}
+قيمة الطلب  : {$record->price}
+اجور الطلب  : {$record->far}
+الأجور على  : {$far}
 
 يرجى تأكيد حضوركم وإرسال عنوان دقيق ليتم تسليمكم الطلب فيه مع إرفاق رقم البناء والشقة وإرفاق موقع GPS لتسريع الوصول للعنوان
 
