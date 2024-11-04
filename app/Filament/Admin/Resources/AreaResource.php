@@ -64,7 +64,7 @@ class AreaResource extends Resource
 
             ])
             ->filters([
-                Forms\Components\Select::make('city_id')->relationship('city','name')
+                Tables\Filters\SelectFilter::make('city_id')->relationship('city','name')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
