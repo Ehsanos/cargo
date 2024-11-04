@@ -196,38 +196,32 @@ class OrderResource extends Resource
                     ->content(fn($record) => \LaraZeus\Qr\Facades\Qr::render($record->code))
                     ->icon('heroicon-o-qr-code'),
 
-                Tables\Columns\TextColumn::make('code'),
+                Tables\Columns\TextColumn::make('id')->description(fn($record) => $record->code)->copyable(),
 
 
-                Tables\Columns\TextColumn::make('type')->label('نوع الطلب'),
+//                Tables\Columns\TextColumn::make('status')->label('حالة الطلب')
+
+
+                Tables\Columns\TextColumn::make('type')->label('نوع الطلب')
+                    ->description(fn($record) => $record->status?->getLabel())
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('far_sender')->formatStateUsing(fn($state)=>FarType::tryFrom($state)?->getLabel())
                     ->color(fn($state)=>FarType::tryFrom($state)?->getColor())
                     ->icon(fn($state)=>FarType::tryFrom($state)?->getIcon())
-                    ->label('حالة الدفع'),
-                Tables\Columns\TextColumn::make('price')->label('التحصيل'),
-                Tables\Columns\TextColumn::make('far')->label('أجور الشحن'),
-                Tables\Columns\TextColumn::make('packages.unit.name')->label('نوع الشحنة'),
-                Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل'),
-                Tables\Columns\TextColumn::make('sender_phone')->label('هاتف المرسل')
-                    ->url(fn($record) => url('https://wa.me/' . ltrim($record->sender_phone, '+')))
-                    ->openUrlInNewTab()
+                    ->label('حالة الدفع')
+                    ->description(fn($record) => $record->created_at->diffForHumans())
                     ->searchable(),
-                Tables\Columns\TextColumn::make('citySource.name')->label('من بلدة'),
-                Tables\Columns\TextColumn::make('receive.name')->label('معرف المستلم '),
-                Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم '),
-                Tables\Columns\TextColumn::make('receive.address')->label('عنوان المستلم ')->searchable(),
-                Tables\Columns\TextColumn::make('receive_phone')->label('هاتف المستلم ')
-                    ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive_phone, '+')))
-                    ->openUrlInNewTab()
+
+                Tables\Columns\TextColumn::make('unit.name')->label('نوع الشحنة'),
+
+                Tables\Columns\TextColumn::make('price')->label('التحصيل')->description(fn($record) => 'اجور الشحن : ' . $record->far),
+                Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل')->description(fn($record) => $record->general_sender_name)->searchable(),
+
+                Tables\Columns\TextColumn::make('citySource.name')->label('من بلدة')->description(fn($record) => "إلى {$record->cityTarget?->name}")->searchable(),
+                Tables\Columns\TextColumn::make('receive.name')->label('معرف المستلم ')->description(fn($record) => $record->global_name)->searchable(),
+                Tables\Columns\TextColumn::make('receive_address')->label('هاتف المستلم ')->description(fn($record) => $record->receive_phone)
+                    ->url(fn($record) => url('https://wa.me/' . ltrim($record?->receive_phone, '+')))->openUrlInNewTab()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')->label('تاريخ الشحنة')
-                    ->formatStateUsing(fn($state) => Carbon::parse($state)->diffForHumans()), // عرض الزمن بشكل نسبي
-
-
-                Tables\Columns\TextColumn::make('cityTarget.name')->label('الى بلدة '),
-                Tables\Columns\TextColumn::make('agencies.task')
-                    ->formatStateUsing(fn($record) => $record->agencies()->where('user_id', auth()->id())->first()?->task)
-                    ->label('المهمة الموكلة'),
 
 
             ])->defaultSort('created_at', 'desc')
