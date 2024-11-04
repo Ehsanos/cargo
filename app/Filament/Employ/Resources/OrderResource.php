@@ -6,6 +6,7 @@ use App\Enums\ActivateAgencyEnum;
 use App\Enums\ActivateStatusEnum;
 use App\Enums\BalanceTypeEnum;
 use App\Enums\BayTypeEnum;
+use App\Enums\FarType;
 use App\Enums\LevelUserEnum;
 use App\Enums\OrderStatusEnum;
 use App\Enums\OrderTypeEnum;
@@ -199,7 +200,10 @@ class OrderResource extends Resource
 
 
                 Tables\Columns\TextColumn::make('type')->label('نوع الطلب'),
-                Tables\Columns\TextColumn::make('far_sender')->formatStateUsing(fn($state)=>$state?'على المرسل':'على المستلم')->label('حالة الدفع'),
+                Tables\Columns\TextColumn::make('far_sender')->formatStateUsing(fn($state)=>FarType::tryFrom($state)?->getLabel())
+                    ->color(fn($state)=>FarType::tryFrom($state)?->getColor())
+                    ->icon(fn($state)=>FarType::tryFrom($state)?->getIcon())
+                    ->label('حالة الدفع'),
                 Tables\Columns\TextColumn::make('price')->label('التحصيل'),
                 Tables\Columns\TextColumn::make('far')->label('أجور الشحن'),
                 Tables\Columns\TextColumn::make('packages.unit.name')->label('نوع الشحنة'),

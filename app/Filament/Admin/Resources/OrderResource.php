@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources;
 
 use App\Enums\ActivateStatusEnum;
 use App\Enums\CategoryTypeEnum;
+use App\Enums\FarType;
 use App\Enums\JobUserEnum;
 use App\Enums\LevelUserEnum;
 use App\Enums\TaskAgencyEnum;
@@ -359,7 +360,10 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('type')->label('نوع الطلب')
                     ->description(fn($record) => $record->status?->getLabel())
                     ->searchable(),
-                Tables\Columns\TextColumn::make('far_sender')->formatStateUsing(fn($state)=>$state?'على المرسل':'على المستلم')->label('حالة الدفع')
+                Tables\Columns\TextColumn::make('far_sender')->formatStateUsing(fn($state)=>FarType::tryFrom($state)?->getLabel())
+                    ->color(fn($state)=>FarType::tryFrom($state)?->getColor())
+                    ->icon(fn($state)=>FarType::tryFrom($state)?->getIcon())
+                    ->label('حالة الدفع')
                     ->description(fn($record) => $record->created_at->diffForHumans())
                     ->searchable(),
 
