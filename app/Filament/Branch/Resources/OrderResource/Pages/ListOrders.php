@@ -38,9 +38,9 @@ class ListOrders extends ListRecords
            /* Tab::make('pending')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::PENDING->value))->badge(Order::where('status',OrderStatusEnum::PENDING->value)->where(function($query){
                 $query->where('branch_source_id',auth()->user()->branch_id)->orWhere('branch_target_id',auth()->user()->branch_id);
             })->count())->label('بإنتظار الموافقة'),*/
-            Tab::make('agree')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::AGREE->value))->badge(Order::where('status',OrderStatusEnum::AGREE->value)->where(function($query){
+         /*   Tab::make('agree')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::AGREE->value))->badge(Order::where('status',OrderStatusEnum::AGREE->value)->where(function($query){
                 $query->where('branch_source_id',auth()->user()->branch_id)->orWhere('branch_target_id',auth()->user()->branch_id);
-            })->count())->label('بإنتظار الإنهاء'),
+            })->count())->label('بإنتظار الإنهاء'),*/
             Tab::make('pick')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::PICK->value))->badge(Order::where('status',OrderStatusEnum::PICK->value)->count())->label('تم الإلتقاط'),
 
             Tab::make('success')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::SUCCESS->value))/*->badge(Order::where('status','success')->count())*/->label('منتهي'),
