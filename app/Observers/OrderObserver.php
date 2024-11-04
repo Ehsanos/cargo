@@ -36,6 +36,8 @@ class OrderObserver
                 \DB::rollBack();
             }
 
+        }elseif($order->pick_id!=null){
+            $order->update(['status' => OrderStatusEnum::PICK->value]);
         }
     }
 
