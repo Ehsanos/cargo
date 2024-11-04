@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Filament\Branch\Widgets;
+
+use App\Models\Task;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Filament\Widgets\TableWidget as BaseWidget;
+
+class TaskWidget extends BaseWidget
+{
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(
+                Task::where('user_id', auth()->id())->where('is_complete', false),
+            )
+            ->columns([
+                Tables\Columns\TextColumn::make('user.name')->label('المستخدم'),
+                Tables\Columns\TextColumn::make('task')->label('المهمة'),
+            ])->actions([
+                Tables\Actions\Action::make('complete')->label('إتمام')->requiresConfirmation()->action(fn($record) => $record->update(['is_complete', true]))
+            ]);
+    }
+}
