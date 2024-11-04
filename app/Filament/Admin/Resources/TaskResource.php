@@ -26,7 +26,7 @@ class TaskResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('مهام')->schema([
-                    Forms\Components\Select::make('user_id')->relationship('user', 'name')->label('المستخدم'),
+                    Forms\Components\Select::make('user_id')->relationship('user', 'name')->label('المستخدم')->searchable(),
                     Forms\Components\Textarea::make('task')->label('المهمة')
                 ])
             ]);
@@ -36,7 +36,7 @@ class TaskResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user.name')->label('المستخدم'),
+                Tables\Columns\TextColumn::make('user.name')->label('المستخدم')->searchable(),
                 Tables\Columns\TextColumn::make('task')->label('المهمة'),
 
             ])
