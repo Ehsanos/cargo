@@ -45,6 +45,7 @@ class TaskResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn($query)=>$query->where('created_id',auth()->id())->orWhereNull('created_id'))
             ->defaultSort('created_at','desc')
             ->poll(10)
             ->columns([
