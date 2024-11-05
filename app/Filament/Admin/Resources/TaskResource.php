@@ -53,15 +53,17 @@ class TaskResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->poll(10)
             ->columns([
-                Tables\Columns\TextColumn::make('id')->label('التسلسل'),
-                Tables\Columns\TextColumn::make('user.name')->label('المستخدم')->searchable(),
-                Tables\Columns\TextColumn::make('from')->label('إستلام من')->color(fn($record)=>$record->is_sender?'danger':null),
-                Tables\Columns\TextColumn::make('to')->label('التسليم لـ')->color(fn($record)=>$record->is_receive?'danger':null),
+                Tables\Columns\TextColumn::make('id')->label('التسلسل')->sortable(),
+                Tables\Columns\TextColumn::make('user.name')->label('المستخدم')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('from')->label('إستلام من')->color(fn($record)=>$record->is_sender?'danger':null)->sortable(),
+                Tables\Columns\TextColumn::make('to')->label('التسليم لـ')->color(fn($record)=>$record->is_receive?'danger':null)->sortable(),
                 Tables\Columns\TextColumn::make('task')->label('المهمة'),
                 Tables\Columns\TextColumn::make('is_complete')->label('الحالة')->formatStateUsing(fn($state) => $state ? 'تم' : 'بالإنتظار')
-                    ->color(fn($state) => $state ? 'success' : 'danger'),
+                    ->color(fn($state) => $state ? 'success' : 'danger')->sortable()
+                ,
 
                 Tables\Columns\TextColumn::make('created_at')->since()->label('منذ')->sortable(),
+
 
 
             ])
