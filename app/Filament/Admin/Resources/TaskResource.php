@@ -38,6 +38,7 @@ class TaskResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at','desc')
             ->poll(10)
             ->columns([
                 Tables\Columns\TextColumn::make('id')->label('التسلسل'),
@@ -49,7 +50,7 @@ class TaskResource extends Resource
                 ->color(fn($state)=>$state?'success':'danger')
                 ,
 
-                Tables\Columns\TextColumn::make('created_at')->since()->label('منذ'),
+                Tables\Columns\TextColumn::make('created_at')->since()->label('منذ')->sortable(),
 
 
             ])
