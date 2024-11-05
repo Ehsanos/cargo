@@ -35,7 +35,6 @@ class HelperBalance
                     'debit' => 0,
                     'order_id' => $order->id,
                     'user_id' => $sender->id,
-
                     'info' => 'أجور شحن  #' . $order->code,
                     'type' => BalanceTypeEnum::CATCH->value,
                     'is_complete' => true,
