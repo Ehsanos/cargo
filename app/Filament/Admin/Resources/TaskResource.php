@@ -26,17 +26,17 @@ class TaskResource extends Resource
 
     public static function form(Form $form): Form
     {
-
+$usersList=User::select('name')->pluck('name')->toArray();
         return $form
             ->schema([
                 Forms\Components\Section::make('مهام')->schema([
                     Forms\Components\Select::make('user_id')->options(User::where('level',LevelUserEnum::STAFF->value)->orWhere('level',LevelUserEnum::BRANCH->value)->pluck('name','id'))->label('المستخدم')->searchable(),
                     Forms\Components\Grid::make()->schema([
-                        Forms\Components\TextInput::make('from')->label('إستلام من')->datalist(User::select('name')->pluck('name')->toArray()),
+                        Forms\Components\TextInput::make('from')->label('إستلام من')->datalist($usersList),
                         Forms\Components\TextInput::make('sender_phone')->label('رقم الهاتف'),
                     ]),
                     Forms\Components\Grid::make()->schema([
-                        Forms\Components\TextInput::make('to')->label('التسليم لـ'),
+                        Forms\Components\TextInput::make('to')->label('التسليم لـ')->datalist($usersList),
                         Forms\Components\TextInput::make('receive_phone')->label('رقم الهاتف'),
                     ]),
                     Forms\Components\Textarea::make('task')->label('ملاحظات')
