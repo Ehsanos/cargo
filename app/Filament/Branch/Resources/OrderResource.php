@@ -480,10 +480,10 @@ class OrderResource extends Resource
                    Tables\Actions\Action::make('select_given_id')->form([
                        Forms\Components\Select::make('given_id')
                            ->relationship('receive','name',fn($query)=>$query->where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)))
-                           ->searchable()->label('موظف الإلتقاط')
+                           ->searchable()->label('موظف التسليم')
                    ])
                        ->action(function ($record, $data) {
-                           $record->update(['given_id' => $data['given_id']]);
+                           $record->update(['given_id' => $data['given_id'],'status'=>OrderStatusEnum::TRANSFER->value]);
                            Notification::make('success')->title('نجاح العملية')->body('تم تحديد موظف التسليم بنجاح')->success()->send();
                        })
                        ->visible(fn($record) => $record->given_id === null && $record->pick_id!=null && $record->status ===OrderStatusEnum::PICK)
@@ -587,7 +587,7 @@ class OrderResource extends Resource
                         Forms\Components\Select::make('given_id')->options(User::where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value))->selectRaw('id,name,iban')->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط')
                     ])
                         ->action(function ($records, $data) {
-                            Order::whereIn('id',$records->pluck('id')->toArray())->update(['given_id' => $data['given_id']]);
+                            Order::whereIn('id',$records->pluck('id')->toArray())->update(['given_id' => $data['given_id'],'status'=>OrderStatusEnum::TRANSFER->value]);
                             Notification::make('success')->title('نجاح العملية')->body('تم تحديد موظف التسليم بنجاح')->success()->send();
                         })
                         ->label('تحديد موظف التسليم')->color('info')

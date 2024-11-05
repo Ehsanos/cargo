@@ -506,7 +506,7 @@ class OrderResource extends Resource
                             ->searchable()->label('موظف الإلتقاط'),
                     ])
                         ->action(function ($record, $data) {
-                            $record->update(['given_id' => $data['given_id']]);
+                            $record->update(['given_id' => $data['given_id'],'status'=>OrderStatusEnum::TRANSFER->value]);
                             Notification::make('success')->title('نجاح العملية')->body("تم تحديد موظف التسليم بنجاح ")->danger()->send();
 
                         })
@@ -555,7 +555,7 @@ class OrderResource extends Resource
                         Forms\Components\Select::make('given_id')->options(User::where('users.level', LevelUserEnum::STAFF->value)->orWhere('users.level', LevelUserEnum::BRANCH->value)->selectRaw('id,name,iban')->get()->mapWithKeys(fn($user) => [$user->id => $user->iban_name]))->searchable()->label('موظف الإلتقاط')
                     ])
                         ->action(function ($records, $data) {
-                            Order::whereIn('id', $records->pluck('id')->toArray())->update(['given_id' => $data['given_id']]);
+                            Order::whereIn('id', $records->pluck('id')->toArray())->update(['given_id' => $data['given_id'],'status'=>OrderStatusEnum::TRANSFER->value]);
                             Notification::make('success')->title('نجاح العملية')->body('تم تحديد موظف التسليم بنجاح')->success()->send();
                         })
                         ->label('تحديد موظف التسليم')->color('info')

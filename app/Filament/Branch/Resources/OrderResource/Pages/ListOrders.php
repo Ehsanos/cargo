@@ -42,6 +42,7 @@ class ListOrders extends ListRecords
                 $query->where('branch_source_id',auth()->user()->branch_id)->orWhere('branch_target_id',auth()->user()->branch_id);
             })->count())->label('بإنتظار الإنهاء'),*/
             Tab::make('pick')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::PICK->value))->badge(Order::where('status',OrderStatusEnum::PICK->value)->count())->label('تم الإلتقاط'),
+            Tab::make('transfer')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::TRANSFER->value))->badge(Order::where('status',OrderStatusEnum::TRANSFER->value)->count())->label('بإنتظار التسليم'),
 
             Tab::make('success')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::SUCCESS->value))/*->badge(Order::where('status','success')->count())*/->label('منتهي'),
             Tab::make('canceled')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::CANCELED->value))/*->badge(Order::where('status','success')->count())*/->label('ملغي'),

@@ -23,7 +23,7 @@ enum OrderStatusEnum:string implements HasLabel ,HasColor,HasIcon
             self::PENDING => 'إنتظار الموافقة',
             self::AGREE => 'تمت الموافقة',
             self::PICK => 'تم التحميل',
-            self::TRANSFER => 'تم النقل للوجهة',
+            self::TRANSFER => 'بإنتظار التسليم',
             self::SUCCESS => 'تم التسليم',
             self::RETURNED => 'مرتجع',
             self::CANCELED => 'ملغي',
