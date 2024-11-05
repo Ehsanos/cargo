@@ -178,7 +178,7 @@ class OrderResource extends Resource
 
                                         })
                                     //
-                                    )->id(1),
+                                    ),
 
                             ]),
 
@@ -217,7 +217,7 @@ class OrderResource extends Resource
                                 })->live() ->dehydrated(fn($context)=>$context==='create'),
                             Forms\Components\Select::make('city_target_id')
                                 ->relationship('cityTarget', 'name')
-                                ->label('الى بلدة')->required()->searchable()->id(2),
+                                ->label('الى بلدة')->required()->searchable(),
 
                         ]),
                         Forms\Components\Grid::make()->schema([
