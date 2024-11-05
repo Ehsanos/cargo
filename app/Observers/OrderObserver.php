@@ -17,7 +17,9 @@ class OrderObserver
 
     public function creating(Order $order): void
     {
-        $order->status = OrderStatusEnum::PENDING;
+        if($order->pick_id==null){
+            $order->status = OrderStatusEnum::PENDING;
+        }
     }
 
 
@@ -31,7 +33,6 @@ class OrderObserver
             \DB::beginTransaction();
             try {
                 HelperBalance::completePicker($order);
-                $order->update(['status' => OrderStatusEnum::PICK->value]);
                 info('complete success order');
                 \DB::commit();
             } catch (\Exception | \Error $e) {
