@@ -20,8 +20,8 @@ class CompletTaskResource extends Resource
     protected static ?string $model = Task::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $label='مهامي بالإنتظار';
-    protected static ?string $pluralLabel='مهامي بالإنتظار';
+    protected static ?string $label='مهامي المكتملة';
+    protected static ?string $pluralLabel='مهامي المكتملة';
     protected static ?string $navigationGroup='مهامي';
     public static function canCreate(): bool
     {
