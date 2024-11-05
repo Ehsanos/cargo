@@ -28,8 +28,14 @@ class TaskResource extends Resource
             ->schema([
                 Forms\Components\Section::make('مهام')->schema([
                     Forms\Components\Select::make('user_id')->relationship('user', 'name')->label('المستخدم')->searchable(),
-                    Forms\Components\TextInput::make('from')->label('إستلام من'),
-                    Forms\Components\Textarea::make('to')->label('التسليم لـ'),
+                    Forms\Components\Grid::make()->schema([
+                        Forms\Components\TextInput::make('from')->label('إستلام من'),
+                        Forms\Components\TextInput::make('sender_phone')->label('رقم الهاتف'),
+                    ]),
+                    Forms\Components\Grid::make()->schema([
+                        Forms\Components\TextInput::make('to')->label('التسليم لـ'),
+                        Forms\Components\TextInput::make('receive_phone')->label('رقم الهاتف'),
+                    ]),
                     Forms\Components\Textarea::make('task')->label('ملاحظات')
                 ])
             ]);
