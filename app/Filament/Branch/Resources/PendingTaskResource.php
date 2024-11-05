@@ -83,7 +83,7 @@ class PendingTaskResource extends Resource
                 Tables\Actions\Action::make('complete')->label('إتمام')->button()->requiresConfirmation()->action(fn($record) => $record->update(['is_complete' => true])),
                 Tables\Actions\Action::make('transfer')->label('توكيل موظف')->button()
                     ->form([
-                        Forms\Components\Select::make('delegate_id')->options(User::where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)->pluck('name', 'id'))->label('الموظف')
+                        Forms\Components\Select::make('delegate_id')->options(User::where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)->pluck('name', 'id'))->label('الموظف') ->searchable(),
                     ])
                     ->action(function($record, $data) {
                         $record->update(['delegate_id' => $data['delegate_id']]);
@@ -98,6 +98,7 @@ class PendingTaskResource extends Resource
                     Tables\Actions\BulkAction::make('transfer')->label('توكيل موظف')
                         ->form([
                             Forms\Components\Select::make('delegate_id')->options(User::where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)->pluck('name', 'id'))->label('الموظف')
+                            ->searchable(),
                         ])
                         ->action(function($records, $data){
                             Task::whereIn('id', $records->pluck('id')->toArray())->update(['delegate_id' => $data['delegate_id']]);
