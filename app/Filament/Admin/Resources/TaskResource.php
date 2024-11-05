@@ -63,7 +63,9 @@ class TaskResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('user_id')->relationship('user', 'name')->label('المستخدم')->searchable(),
-                TernaryFilter::make('is_complete')->lable('حالة المهمة'),
+                TernaryFilter::make('is_complete')->label('حالة المهمة'),
+
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
