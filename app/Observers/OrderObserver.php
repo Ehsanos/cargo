@@ -31,7 +31,7 @@ class OrderObserver
             \DB::beginTransaction();
             try{
                 HelperBalance::completePicker($order);
-                $order->status=OrderStatusEnum::PICK->value;
+                $order->status=OrderStatusEnum::PICK;
                 $order->save();
                 info('complete success order');
                 \DB::commit();
