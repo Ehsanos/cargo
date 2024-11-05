@@ -28,7 +28,7 @@ $usersList=User::select('name')->pluck('name')->toArray();
         return $form
             ->schema([
                 Forms\Components\Section::make('مهام')->schema([
-                    Forms\Components\Select::make('user_id')->relationship('user', 'name')->label('المستخدم')->searchable(),
+                    Forms\Components\Select::make('user_id')->relationship('user', 'name')->label('المستخدم')->searchable()->required(),
                     Forms\Components\Grid::make()->schema([
                         Forms\Components\TextInput::make('from')->label('إستلام من')->datalist($usersList),
                         Forms\Components\TextInput::make('sender_phone')->label('رقم الهاتف'),
