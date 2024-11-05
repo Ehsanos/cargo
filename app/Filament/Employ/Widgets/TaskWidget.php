@@ -10,7 +10,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 class TaskWidget extends BaseWidget
 {
     protected static ?string $heading = "المهام الإدارية";
-
+protected int | string | array $columnSpan=2;
     public function table(Table $table): Table
     {
         return $table
