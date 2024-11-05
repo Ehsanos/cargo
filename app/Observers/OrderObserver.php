@@ -26,6 +26,22 @@ class OrderObserver
      */
     public function created(Order $order): void
     {
+        info('PICK:'.$order->pick_id);
+        if( $order->pick_id!=null){
+            \DB::beginTransaction();
+            try{
+                HelperBalance::completePicker($order);
+                $order->status=OrderStatusEnum::PICK;
+                $order->save();
+                info('complete success order');
+                \DB::commit();
+            }catch (\Exception |\Error $e){
+                \DB::rollBack();
+                info("Error Observe");
+                info('Message:'.$e->getMessage());
+            }
+
+        }
 
     }
 
@@ -88,14 +104,14 @@ class OrderObserver
         }*/
 
 
-        if ($order->isDirty('status') && $order->status->value == OrderStatusEnum::CANCELED->value && $order->getOriginal('status') != OrderStatusEnum::PENDING) {
+       /* if ($order->isDirty('status') && $order->status->value == OrderStatusEnum::CANCELED->value && $order->getOriginal('status') != OrderStatusEnum::PENDING) {
             $order->balances()->delete();
         }
 
 
         if ($order->isDirty('status') && $order->status->value == OrderStatusEnum::RETURNED->value && $order->getOriginal('status') != OrderStatusEnum::PENDING) {
             $order->balances()->delete();
-        }
+        }*/
     }
 
     /**
