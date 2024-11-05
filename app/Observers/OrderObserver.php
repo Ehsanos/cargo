@@ -26,19 +26,18 @@ class OrderObserver
      */
     public function created(Order $order): void
     {
-        info('PICK:'.$order->pick_id);
-        if( $order->pick_id!=null){
+        info('PICK:' . $order->pick_id);
+        if ($order->pick_id != null) {
             \DB::beginTransaction();
-            try{
+            try {
                 HelperBalance::completePicker($order);
-                $order->status=OrderStatusEnum::PICK;
-                $order->save();
+                $order->update(['status' => OrderStatusEnum::PICK->value]);
                 info('complete success order');
                 \DB::commit();
-            }catch (\Exception |\Error $e){
+            } catch (\Exception | \Error $e) {
                 \DB::rollBack();
                 info("Error Observe");
-                info('Message:'.$e->getMessage());
+                info('Message:' . $e->getMessage());
             }
 
         }
@@ -50,68 +49,68 @@ class OrderObserver
      */
     public function updated(Order $order): void
     {
-     /*   $sender = $order->sender;
-        $receive = $order->receive;
+        /*   $sender = $order->sender;
+           $receive = $order->receive;
 
-        if ($order->isDirty('status') && $order->status->value == OrderStatusEnum::AGREE->value && $order->getOriginal('status') == OrderStatusEnum::PENDING) {
-
-
-            /// add far
-            if ($order->status === OrderStatusEnum::AGREE) {
-                if ($order->far > 0) {
-                    if ($order->far_sender == true) {
-
-                    } //
-                    else {
-                        Balance::create([
-                            'credit' => $order->far,
-                            'debit' => 0,
-                            'order_id' => $order->id,
-                            'user_id' => $receive->id,
-                            'total' => $receive->total_balance + $order->far,
-                            'info' => 'أجور شحن  #' . $order->code,
-                            'type' => BalanceTypeEnum::CATCH->value,
-                            'is_complete' => true,
-                        ]);
-                    }
-                }
-            }
-// add price
-            if ($order->price > 0) {
-                Balance::create([
-                    'credit' =>  $order->price,
-                    'debit' =>0,
-                    'order_id' => $order->id,
-                    'user_id' => $receive->id,
-                    'total' => $receive->total_balance + $order->price,
-                    'info' => 'أجور شحن  #' . $order->code,
-                    'type' => BalanceTypeEnum::CATCH->value,
-                    'is_complete' => false,
-                ]);
-
-                Balance::create([
-                    'credit' => 0,
-                    'debit' => $order->price,
-                    'order_id' => $order->id,
-                    'user_id' => $sender->id,
-                    'total' => $sender->total_balance - $order->price,
-                    'info' => 'أجور شحن  #' . $order->code,
-                    'type' => BalanceTypeEnum::CATCH->value,
-                    'is_complete' => false,
-                ]);
-            }
-
-        }*/
+           if ($order->isDirty('status') && $order->status->value == OrderStatusEnum::AGREE->value && $order->getOriginal('status') == OrderStatusEnum::PENDING) {
 
 
-       /* if ($order->isDirty('status') && $order->status->value == OrderStatusEnum::CANCELED->value && $order->getOriginal('status') != OrderStatusEnum::PENDING) {
+               /// add far
+               if ($order->status === OrderStatusEnum::AGREE) {
+                   if ($order->far > 0) {
+                       if ($order->far_sender == true) {
+
+                       } //
+                       else {
+                           Balance::create([
+                               'credit' => $order->far,
+                               'debit' => 0,
+                               'order_id' => $order->id,
+                               'user_id' => $receive->id,
+                               'total' => $receive->total_balance + $order->far,
+                               'info' => 'أجور شحن  #' . $order->code,
+                               'type' => BalanceTypeEnum::CATCH->value,
+                               'is_complete' => true,
+                           ]);
+                       }
+                   }
+               }
+   // add price
+               if ($order->price > 0) {
+                   Balance::create([
+                       'credit' =>  $order->price,
+                       'debit' =>0,
+                       'order_id' => $order->id,
+                       'user_id' => $receive->id,
+                       'total' => $receive->total_balance + $order->price,
+                       'info' => 'أجور شحن  #' . $order->code,
+                       'type' => BalanceTypeEnum::CATCH->value,
+                       'is_complete' => false,
+                   ]);
+
+                   Balance::create([
+                       'credit' => 0,
+                       'debit' => $order->price,
+                       'order_id' => $order->id,
+                       'user_id' => $sender->id,
+                       'total' => $sender->total_balance - $order->price,
+                       'info' => 'أجور شحن  #' . $order->code,
+                       'type' => BalanceTypeEnum::CATCH->value,
+                       'is_complete' => false,
+                   ]);
+               }
+
+           }*/
+
+
+        if ($order->isDirty('status') && $order->status->value == OrderStatusEnum::CANCELED->value && $order->getOriginal('status') != OrderStatusEnum::PENDING) {
             $order->balances()->delete();
         }
 
 
         if ($order->isDirty('status') && $order->status->value == OrderStatusEnum::RETURNED->value && $order->getOriginal('status') != OrderStatusEnum::PENDING) {
             $order->balances()->delete();
-        }*/
+        }
     }
 
     /**
