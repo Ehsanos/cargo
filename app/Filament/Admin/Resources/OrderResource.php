@@ -92,7 +92,8 @@ class OrderResource extends Resource
                                         }
                                     })->live()
                                     ->searchable()
-                                    ->noSearchResultsMessage('الاسم غير موجود')->suffixAction(Action::make('copyCostToPrice')->label('إضافة مستخدم جديد')
+                                    ->noSearchResultsMessage('الاسم غير موجود')
+                                    ->suffixAction(Action::make('copyCostToPrice')->label('إضافة مستخدم جديد')
                                         ->icon('fas-user-plus')
                                         ->form(function(){
                                             $max=User::max('id')+1;

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Branch\Resources;
 
+use App\Enums\ActivateStatusEnum;
 use App\Enums\BayTypeEnum;
 use App\Enums\FarType;
 use App\Enums\LevelUserEnum;
@@ -19,6 +20,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Error;
 use Filament\Forms;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
@@ -30,6 +32,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use LaraZeus\Popover\Tables\PopoverColumn;
 
 class OrderResource extends Resource
@@ -71,7 +74,95 @@ class OrderResource extends Resource
                                              $set('branch_source_id', $user?->branch_id);*/
 
                                         }
-                                    })->live()->searchable(),
+                                    })->live()->searchable()   ->suffixAction(Action::make('copyCostToPrice')->label('إضافة مستخدم جديد')
+                                        ->icon('fas-user-plus')
+                                        ->form(function(){
+                                            $max=User::max('id')+1;
+
+                                            return [
+                                                Forms\Components\Grid::make()->schema([
+                                                    Forms\Components\TextInput::make('name')->label('الاسم')->required(),
+                                                    Forms\Components\TextInput::make('email')->label('البريد الالكتروني')->email()->required()->unique(table: 'users', column: 'email')->default('user'. $max.'@gmail.com'),
+                                                ]),
+                                                Forms\Components\Grid::make()->schema([
+                                                    Forms\Components\TextInput::make('username')->label('username')
+                                                        ->unique(table: 'users', column: 'username')->required()->default('user'. $max),
+                                                    Forms\Components\TextInput::make('password')->password()->dehydrateStateUsing(fn($state) => Hash::make($state))
+                                                        ->label('كلمة المرور')->revealable()->required()->default(12345),
+
+                                                ]),
+
+                                                Forms\Components\Grid::make(2) // تقسيم الحقول إلى صفين
+                                                ->schema([
+                                                    Forms\Components\TextInput::make('phone_number')
+                                                        ->label('رقم الهاتف')
+                                                        ->placeholder('1234567890')
+                                                        ->numeric() // التأكد أن الحقل يقبل الأرقام فقط
+                                                        ->maxLength(15)
+                                                        ->extraAttributes(['style' => 'text-align: left; direction: ltr;'])
+                                                        ->tel()
+                                                        ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')// تخصيص عرض حقل الرمز ومحاذاة النص لليسار
+                                                        ->required(),
+
+                                                    Forms\Components\TextInput::make('country_code')
+                                                        ->label('رمز الدولة')
+                                                        ->placeholder('963')
+                                                        ->prefix('+')
+                                                        ->maxLength(3)
+                                                        ->numeric()
+                                                        ->extraAttributes(['style' => 'text-align: left; direction: ltr; width: 100px;']) // تخصيص عرض حقل الرمز ومحاذاة النص لليسار
+                                                        // تحديد الحد الأقصى للأرقام (بما في ذلك +)
+                                                        ->required(),
+                                                ]),
+                                                Forms\Components\Grid::make()->schema([
+                                                    Forms\Components\Textarea::make('address')->label('العنوان التفصيلي'),
+                                                    Forms\Components\Select::make('city_id')->options(City::where('is_main', false)->pluck
+                                                    ('name', 'id'))->required()
+                                                        ->label('البلدة/البلدة')
+                                                        ->searchable(),
+
+                                                ]),
+
+                                                Forms\Components\Grid::make()->schema([
+                                                    Forms\Components\TextInput::make('full_name')->label('الاسم الكامل'),
+                                                    Forms\Components\DatePicker::make('birth_date')->label('تاريخ الميلاد')
+                                                        ->format('Y-m-d')->default(now()),
+
+                                                ]),
+
+
+                                            ];
+                                        })
+                                        ->action(function ($set, $data) {
+                                            try {
+                                                $data['level'] = LevelUserEnum::USER->value;
+                                                $data['branch_id'] = City::find($data['city_id'])?->branch_id;
+                                                $data['status'] = ActivateStatusEnum::ACTIVE->value;
+                                                $data['phone'] = '+' . $data['country_code'] . $data['phone_number'];
+                                                unset($data['country_code'], $data['phone_number']);
+                                                while (true) {
+                                                    $code = \Str::random(8);
+
+                                                    $user = User::where('num_id', $code)->first();
+                                                    if (!$user) {
+                                                        $data['num_id'] = $code;
+                                                        break;
+                                                    }
+                                                }
+
+                                                $userNew = User::create($data);
+                                                $set('sender_id', $userNew->id);
+                                                $set('sender_name', $userNew->name);
+                                                $set('sender_address', $userNew->address);
+                                                $set('sender_phone', $userNew->phone);
+                                                Notification::make('success')->title('نجاح العملية')->body("تم إضافة المستخدم بنجاح IBAN:{$userNew->iban}")->success()->send();
+                                            } catch (\Exception | \Error $e) {
+                                                Notification::make('error')->title('فشل العملية')->body($e->getMessage())->danger()->send();
+                                            }
+
+                                        })
+                                    //
+                                    ),
                             ]),
                             Forms\Components\Grid::make()->schema([
                                 Forms\Components\TextInput::make('sender_phone')->label('رقم هاتف المرسل')->required(),
