@@ -178,7 +178,7 @@ class OrderResource extends Resource
 
                                         })
                                     //
-                                    )->extraInputAttributes(['tabindex'=>1]),
+                                    )->extraAttributes(['tabindex'=>1]),
 
                             ]),
 
@@ -217,7 +217,7 @@ class OrderResource extends Resource
                                 })->live() ->dehydrated(fn($context)=>$context==='create'),
                             Forms\Components\Select::make('city_target_id')
                                 ->relationship('cityTarget', 'name')
-                                ->label('الى بلدة')->required()->searchable()->extraInputAttributes(['tabindex'=>2]),
+                                ->label('الى بلدة')->required()->searchable()->extraAttributes(['tabindex'=>2]),
 
                         ]),
                         Forms\Components\Grid::make()->schema([
