@@ -19,7 +19,9 @@ class TaskResource extends Resource
     protected static ?string $model = Task::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    protected static ?string $label = 'المهام الإدارية';
+    protected static ?string $navigationLabel = 'المهام الإدارية';
+    protected static ?string $pluralLabel = 'المهام الإدارية';
     public static function form(Form $form): Form
     {
 
