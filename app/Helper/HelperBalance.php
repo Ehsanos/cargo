@@ -26,8 +26,8 @@ class HelperBalance
 
     public static function completePicker(Order $order)
     {
-        $sender = $order->sender;
-        $staff = $order->pick;
+        $sender = User::find($order->sender_id);
+        $staff = User::find($order->pick_id);
         try {
             if ($order->far_sender == true) {
                 Balance::create([
@@ -74,9 +74,9 @@ class HelperBalance
     public static function completeOrder(Order $order)
     {
 
-        $sender = $order->sender;
-        $receive = $order->receive;
-        $staff = $order->given;
+        $sender = User::find($order->sender_id);
+        $staff = User::find($order->given_id);
+        $receive = User::find($order->receive_id);
         try {
             if ($order->far_sender == false && $order->far > 0) {
                 Balance::create([
@@ -168,9 +168,11 @@ class HelperBalance
 
     public static function pendingBalancePick(Order $order)
     {
-        $sender = $order->sender;
-        $receive = $order->receive;
-        $staff = $order->pick;
+
+        $sender = User::find($order->sender_id);
+        $staff = User::find($order->pick_id);
+        $receive = User::find($order->receive_id);
+
 
         try {
             if ($order->far_sender == false && $order->far > 0) {

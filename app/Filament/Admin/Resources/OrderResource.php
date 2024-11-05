@@ -206,18 +206,6 @@ class OrderResource extends Resource
 
                     Forms\Components\Fieldset::make('المستلم')->schema([
                         Forms\Components\Grid::make()->schema([
-                            /*Forms\Components\Select::make('receive_id')->relationship('receive', 'iban')->searchable()
-                                ->afterStateUpdated(function ($state, $set) {
-                                    $user = User::with('city')->find($state);
-                                    if ($user) {
-                                        $set('receive_phone', $user?->phone);
-                                        $set('receive_address', $user?->address);
-
-                                        $set('sender_name', $user?->name);
-                                        $set('city_target_id', $user?->city_id);
-
-                                    }
-                                })->live()->label('ايبان المستلم')->default(fn() => User::where('email', 'zab@gmail.com')->first()?->id),*/
                             Forms\Components\Select::make('receive_id')->label('معرف المستلم')->default(fn() => User::where('email', 'zab@gmail.com')->first()?->id)
                                 ->options(User::all()->pluck('name', 'id')->toArray())->searchable()
                                 ->afterStateUpdated(function ($state, $set) {
