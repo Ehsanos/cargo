@@ -230,6 +230,9 @@ class OrderResource extends Resource
                                         $set('city_target_id', $user?->city_id);
                                     }
                                 })->live()->dehydrated(false) ,
+                            Forms\Components\Select::make('city_target_id')
+                                ->relationship('cityTarget', 'name')
+                                ->label('الى بلدة')->required()->searchable(),
 
                         ]),
                         Forms\Components\Grid::make()->schema([
@@ -239,9 +242,7 @@ class OrderResource extends Resource
                         ]),
                         Forms\Components\Grid::make()->schema([
                             Forms\Components\TextInput::make('global_name')->label('اسم المستلم'),
-                            Forms\Components\Select::make('city_target_id')
-                                ->relationship('cityTarget', 'name')
-                                ->label('الى بلدة')->required()->searchable(),
+
                         ]),
 
                     ]),

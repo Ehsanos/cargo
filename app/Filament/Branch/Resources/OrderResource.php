@@ -183,26 +183,6 @@ class OrderResource extends Resource
                         ->schema([
 
                             Forms\Components\Grid::make()->schema([
-                              /*  Forms\Components\Select::make('receive_id')->relationship('receive','iban')->searchable()
-                                    ->afterStateUpdated(function ($state, $set) {
-                                        $user = User::with('city')->find($state);
-                                        if ($user) {
-                                            $set('receive_phone', $user?->phone);
-                                            $set('receive_address', $user?->address);
-
-                                            $set('sender_name', $user?->name);
-                                            $set('city_target_id', $user?->city_id);
-                                            $set('branch_target_id', $user?->branch_id);
-                                        } else {
-                                            $set('receive_phone', null);
-                                            $set('receive_address', null);
-
-                                            $set('sender_name', null);
-                                            $set('city_target_id', null);
-                                            $set('branch_target_id', null);
-
-                                        }
-                                    })->live()->label('ايبان المستلم')->default(fn()=>User::where('email','zab@gmail.com')->first()?->id),*/
 
                                 Forms\Components\Select::make('receive_id')->label('معرف المستلم')
                                     ->options(User::all()->pluck('name', 'id')->toArray())->searchable()->default(fn()=>User::where('email','zab@gmail.com')->first()?->id)
@@ -230,6 +210,9 @@ class OrderResource extends Resource
                                         }
 
                                     })->live()->dehydrated(false),
+                                Forms\Components\Select::make('city_target_id')
+                                    ->relationship('cityTarget', 'name')
+                                    ->label('الى بلدة')->required()->searchable(),
                             ]),
 
                             Forms\Components\Grid::make()->schema([
@@ -239,9 +222,7 @@ class OrderResource extends Resource
 
                             Forms\Components\Grid::make()->schema([
                                 Forms\Components\TextInput::make('receive_phone')->label('هاتف المستلم'),
-                                Forms\Components\Select::make('city_target_id')
-                                    ->relationship('cityTarget', 'name')
-                                    ->label('الى بلدة')->required()->searchable(),
+
                             ]),
 
 
