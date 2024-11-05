@@ -18,7 +18,7 @@ class TaskWidget extends BaseWidget
             )
             ->poll(10)
             ->columns([
-//                Tables\Columns\TextColumn::make('user.name')->label('المستخدم')->searchable(),
+                Tables\Columns\TextColumn::make('id')->label('التسلسل'),
                 Tables\Columns\TextColumn::make('from')->label('إستلام من'),
                 Tables\Columns\TextColumn::make('to')->label('التسليم لـ'),
                 Tables\Columns\TextColumn::make('task')->label('المهمة'),
