@@ -40,6 +40,7 @@ class UserResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $max=User::max('id')+1;
         return $form
             ->schema([
 
@@ -50,9 +51,9 @@ class UserResource extends Resource
                                 Forms\Components\CheckboxList::make('roles')
                                     ->relationship('roles', 'name')->label('الصلاحيات'),
                                 Forms\Components\TextInput::make('name')->label('الاسم')->required(),
-                                Forms\Components\TextInput::make('email')->label('البريد الالكتروني')->email()->required()->unique(ignoreRecord: true)->default('user'.User::max('id')+1 .'@gmail.com'),
+                                Forms\Components\TextInput::make('email')->label('البريد الالكتروني')->email()->required()->unique(ignoreRecord: true)->default('user'. $max.'@gmail.com'),
                                 Forms\Components\TextInput::make('username')->label('username')
-                                    ->unique(ignoreRecord: true)->required()->default('user'.User::max('id')+1 ),
+                                    ->unique(ignoreRecord: true)->required()->default('user'.$max ),
                                 Forms\Components\TextInput::make('password')->password()->dehydrateStateUsing(fn($state) => Hash::make($state))
                                     ->dehydrated(fn($state) => filled($state))->label('كلمة المرور')->revealable()->default('12345'),
 

@@ -94,59 +94,63 @@ class OrderResource extends Resource
                                     ->searchable()
                                     ->noSearchResultsMessage('الاسم غير موجود')->suffixAction(Action::make('copyCostToPrice')->label('إضافة مستخدم جديد')
                                         ->icon('fas-user-plus')
-                                        ->form([
-                                            Forms\Components\Grid::make()->schema([
-                                                Forms\Components\TextInput::make('name')->label('الاسم')->required(),
-                                                Forms\Components\TextInput::make('email')->label('البريد الالكتروني')->email()->required()->unique(table: 'users', column: 'email'),
-                                            ]),
-                                            Forms\Components\Grid::make()->schema([
-                                                Forms\Components\TextInput::make('username')->label('username')
-                                                    ->unique(table: 'users', column: 'username')->required(),
-                                                Forms\Components\TextInput::make('password')->password()->dehydrateStateUsing(fn($state) => Hash::make($state))
-                                                    ->label('كلمة المرور')->revealable()->required(),
+                                        ->form(function(){
+                                            $max=User::max('id')+1;
 
-                                            ]),
+                                            return [
+                                                Forms\Components\Grid::make()->schema([
+                                                    Forms\Components\TextInput::make('name')->label('الاسم')->required(),
+                                                    Forms\Components\TextInput::make('email')->label('البريد الالكتروني')->email()->required()->unique(table: 'users', column: 'email')->default('user'. $max.'@gmail.com'),
+                                                ]),
+                                                Forms\Components\Grid::make()->schema([
+                                                    Forms\Components\TextInput::make('username')->label('username')
+                                                        ->unique(table: 'users', column: 'username')->required()->default('user'. $max),
+                                                    Forms\Components\TextInput::make('password')->password()->dehydrateStateUsing(fn($state) => Hash::make($state))
+                                                        ->label('كلمة المرور')->revealable()->required()->default(12345),
 
-                                            Forms\Components\Grid::make(2) // تقسيم الحقول إلى صفين
-                                            ->schema([
-                                                Forms\Components\TextInput::make('phone_number')
-                                                    ->label('رقم الهاتف')
-                                                    ->placeholder('1234567890')
-                                                    ->numeric() // التأكد أن الحقل يقبل الأرقام فقط
-                                                    ->maxLength(15)
-                                                    ->extraAttributes(['style' => 'text-align: left; direction: ltr;'])
-                                                    ->tel()
-                                                    ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')// تخصيص عرض حقل الرمز ومحاذاة النص لليسار
-                                                    ->required(),
+                                                ]),
 
-                                                Forms\Components\TextInput::make('country_code')
-                                                    ->label('رمز الدولة')
-                                                    ->placeholder('963')
-                                                    ->prefix('+')
-                                                    ->maxLength(3)
-                                                    ->numeric()
-                                                    ->extraAttributes(['style' => 'text-align: left; direction: ltr; width: 100px;']) // تخصيص عرض حقل الرمز ومحاذاة النص لليسار
-                                                    // تحديد الحد الأقصى للأرقام (بما في ذلك +)
-                                                    ->required(),
-                                            ]),
-                                            Forms\Components\Grid::make()->schema([
-                                                Forms\Components\Textarea::make('address')->label('العنوان التفصيلي'),
-                                                Forms\Components\Select::make('city_id')->options(City::where('is_main', false)->pluck
-                                                ('name', 'id'))->required()
-                                                    ->label('البلدة/البلدة')
-                                                    ->searchable(),
+                                                Forms\Components\Grid::make(2) // تقسيم الحقول إلى صفين
+                                                ->schema([
+                                                    Forms\Components\TextInput::make('phone_number')
+                                                        ->label('رقم الهاتف')
+                                                        ->placeholder('1234567890')
+                                                        ->numeric() // التأكد أن الحقل يقبل الأرقام فقط
+                                                        ->maxLength(15)
+                                                        ->extraAttributes(['style' => 'text-align: left; direction: ltr;'])
+                                                        ->tel()
+                                                        ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')// تخصيص عرض حقل الرمز ومحاذاة النص لليسار
+                                                        ->required(),
 
-                                            ]),
+                                                    Forms\Components\TextInput::make('country_code')
+                                                        ->label('رمز الدولة')
+                                                        ->placeholder('963')
+                                                        ->prefix('+')
+                                                        ->maxLength(3)
+                                                        ->numeric()
+                                                        ->extraAttributes(['style' => 'text-align: left; direction: ltr; width: 100px;']) // تخصيص عرض حقل الرمز ومحاذاة النص لليسار
+                                                        // تحديد الحد الأقصى للأرقام (بما في ذلك +)
+                                                        ->required(),
+                                                ]),
+                                                Forms\Components\Grid::make()->schema([
+                                                    Forms\Components\Textarea::make('address')->label('العنوان التفصيلي'),
+                                                    Forms\Components\Select::make('city_id')->options(City::where('is_main', false)->pluck
+                                                    ('name', 'id'))->required()
+                                                        ->label('البلدة/البلدة')
+                                                        ->searchable(),
 
-                                            Forms\Components\Grid::make()->schema([
-                                                Forms\Components\TextInput::make('full_name')->label('الاسم الكامل'),
-                                                Forms\Components\DatePicker::make('birth_date')->label('تاريخ الميلاد')
-                                                    ->format('Y-m-d')->default(now()),
+                                                ]),
 
-                                            ]),
+                                                Forms\Components\Grid::make()->schema([
+                                                    Forms\Components\TextInput::make('full_name')->label('الاسم الكامل'),
+                                                    Forms\Components\DatePicker::make('birth_date')->label('تاريخ الميلاد')
+                                                        ->format('Y-m-d')->default(now()),
+
+                                                ]),
 
 
-                                        ])
+                                            ];
+                                        })
                                         ->action(function ($set, $data) {
                                             try {
                                                 $data['level'] = LevelUserEnum::USER->value;
