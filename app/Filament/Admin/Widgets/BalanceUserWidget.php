@@ -20,7 +20,7 @@ class BalanceUserWidget extends BaseWidget
                            ->selectRaw('SUM(credit - debit)')
                            ->whereColumn('user_id', 'users.id')
                            ->where('balances.is_complete', 1)
-                           ->where('balances.pending', '!=',1);
+                           ->where('balances.pending', '=',0);
                    }, 'net_balance')
                    /*->orderByDesc('net_balance')*/
                    ->having('net_balance', '!=', 0),
