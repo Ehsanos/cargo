@@ -95,7 +95,7 @@ class PendingTaskResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
 //                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\BulkAction::make('transfer')->label('توكيل موظف')->button()
+                    Tables\Actions\BulkAction::make('transfer')->label('توكيل موظف')
                         ->form([
                             Forms\Components\Select::make('delegate_id')->options(User::where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)->pluck('name', 'id'))->label('الموظف')
                         ])
