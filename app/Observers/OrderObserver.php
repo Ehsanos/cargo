@@ -26,7 +26,7 @@ class OrderObserver
      */
     public function created(Order $order): void
     {
-        if($order->far_sender==true && $order->pick_id!=null){
+        if( $order->pick_id!=null){
             \DB::beginTransaction();
             try{
                 HelperBalance::completePicker($order);
@@ -36,9 +36,8 @@ class OrderObserver
                 \DB::rollBack();
             }
 
-        }elseif($order->pick_id!=null){
-            $order->update(['status' => OrderStatusEnum::PICK->value]);
         }
+
     }
 
     /**
