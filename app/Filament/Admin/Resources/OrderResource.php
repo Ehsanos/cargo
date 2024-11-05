@@ -372,7 +372,7 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('citySource.name')->label('من بلدة')->description(fn($record) => "إلى {$record->cityTarget?->name}")->searchable(),
                 Tables\Columns\TextColumn::make('receive.name')->label('معرف المستلم ')->description(fn($record) => $record->global_name)->searchable(),
                 Tables\Columns\TextColumn::make('receive_phone')
-                    ->formatStateUsing(fn($record)=>$record->receive_address .' - '. $record->receive_phone)->label('هاتف المستلم ')
+                    ->formatStateUsing(fn($record)=>(string) $record->receive_address .' - '.(string) $record->receive_phone)->label('هاتف المستلم ')
                     /*->description(fn($record) =>  ltrim($record?->receive_phone, '+'))*/
                     ->url(function($record) {
                       $far=  $record->far_sender?'على المرسل':'على المستلم';
