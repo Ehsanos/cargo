@@ -8,8 +8,8 @@ use Filament\Support\Contracts\HasLabel;
 
 enum FarType:int
 {
-    case AFTER=1;
-    case BEFORE=0;
+    case AFTER=0;
+    case BEFORE=1;
 
 
     public function getLabel(): string
