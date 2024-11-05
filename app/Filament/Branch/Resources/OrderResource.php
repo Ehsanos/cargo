@@ -364,7 +364,7 @@ class OrderResource extends Resource
                          %0a
                            من : {$record->sender?->full_name}
                            %0a
-                            إلى : {$record->receive?->full_name}
+                            إلى : {$record->receive?->name}
                        %0a
                         قيمة الطلب : {$record->price}
                         %0a
