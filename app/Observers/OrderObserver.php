@@ -26,6 +26,7 @@ class OrderObserver
      */
     public function created(Order $order): void
     {
+        info('PICK:'.$order->pick_id);
         if( $order->pick_id!=null){
             \DB::beginTransaction();
             try{
