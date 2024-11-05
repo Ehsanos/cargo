@@ -52,7 +52,7 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Forms\Components\CheckboxList::make('roles')->columnSpanFull()
-                    ->relationship('roles', 'name')->label('الصلاحيات'),
+                    ->relationship('roles', 'name',fn($query)=>$query->where('name','super_admin'))->label('الصلاحيات'),
                 Forms\Components\TextInput::make('name')->label('الاسم')->required(),
                 Forms\Components\TextInput::make('email')->label('البريد الالكتروني')->email()->required()->unique(ignoreRecord: true) ->default('user'. $max.'@gmail.com'),
                 Forms\Components\TextInput::make('username')->label('username')
