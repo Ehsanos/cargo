@@ -27,11 +27,15 @@ class TaskResource extends Resource
     public static function form(Form $form): Form
     {
         $usersList = User::select('name')->pluck('name')->toArray();
+        $staffList = User::where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)->pluck('name', 'id');
         return $form
             ->schema([
                 Forms\Components\Section::make('مهام')->schema([
-                    Forms\Components\Select::make('user_id')->options(User::where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)->pluck('name', 'id'))->label('المستخدم')->searchable()->required(),
-                    Forms\Components\Grid::make(3)->schema([
+                    Forms\Components\Grid::make()->schema([
+                        Forms\Components\Select::make('user_id')->options($staffList)->label('المستخدم')->searchable()->required(),
+                        Forms\Components\Select::make('delegate_id')->options($staffList)->label('المستخدم الثاني')->searchable(),
+
+                    ]), Forms\Components\Grid::make(3)->schema([
                         Forms\Components\TextInput::make('from')->label('إستلام من')->datalist($usersList),
                         Forms\Components\TextInput::make('sender_phone')->label('رقم الهاتف'),
                         Forms\Components\Toggle::make('is_sender')->label('صاحب البلاغ')->inline(false),
@@ -55,15 +59,14 @@ class TaskResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')->label('التسلسل')->sortable(),
                 Tables\Columns\TextColumn::make('user.name')->label('المستخدم')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('from')->label('إستلام من')->color(fn($record)=>$record->is_sender?'danger':null)->sortable(),
-                Tables\Columns\TextColumn::make('to')->label('التسليم لـ')->color(fn($record)=>$record->is_receive?'danger':null)->sortable(),
+                Tables\Columns\TextColumn::make('from')->label('إستلام من')->color(fn($record) => $record->is_sender ? 'danger' : null)->sortable(),
+                Tables\Columns\TextColumn::make('to')->label('التسليم لـ')->color(fn($record) => $record->is_receive ? 'danger' : null)->sortable(),
                 Tables\Columns\TextColumn::make('task')->label('المهمة'),
                 Tables\Columns\TextColumn::make('is_complete')->label('الحالة')->formatStateUsing(fn($state) => $state ? 'تم' : 'بالإنتظار')
                     ->color(fn($state) => $state ? 'success' : 'danger')->sortable()
                 ,
 
                 Tables\Columns\TextColumn::make('created_at')->since()->label('منذ')->sortable(),
-
 
 
             ])

@@ -60,7 +60,7 @@ class CompletTaskResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn($query) => $query->where('user_id', auth()->id())->where('is_complete',true)->latest())
+            ->modifyQueryUsing(fn($query) => $query->where(fn($query) => $query->where('user_id', auth()->id())->orWhere('delegate_id', auth()->id()))->where('is_complete', false)->latest())
             ->columns([
                 Tables\Columns\TextColumn::make('id')->label('التسلسل'),
                 Tables\Columns\TextColumn::make('from')->label('إستلام من')->color(fn($record)=>$record->is_sender?'danger':null),
