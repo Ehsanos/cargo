@@ -63,9 +63,9 @@ class CompletTaskResource extends Resource
             ->modifyQueryUsing(fn($query) => $query->where('user_id', auth()->id())->where('is_complete',true)->latest())
             ->columns([
                 Tables\Columns\TextColumn::make('id')->label('التسلسل'),
-                Tables\Columns\TextColumn::make('from')->label('إستلام من'),
+                Tables\Columns\TextColumn::make('from')->label('إستلام من')->color(fn($record)=>$record->is_sender?'danger':null),
                 Tables\Columns\TextColumn::make('sender_phone')->label('هاتف المرسل')->url(fn($state) => "https://wa.me/" . trim($state, '+'), true),
-                Tables\Columns\TextColumn::make('to')->label('التسليم لـ'),
+                Tables\Columns\TextColumn::make('to')->label('التسليم لـ')->color(fn($record)=>$record->is_receive?'danger':null),
                 Tables\Columns\TextColumn::make('receive_phone')->label('هاتف المستلم')->url(fn($state) => "https://wa.me/" . trim($state, '+'), true),
 
                 Tables\Columns\TextColumn::make('task')->label('المهمة')->color('danger'),
