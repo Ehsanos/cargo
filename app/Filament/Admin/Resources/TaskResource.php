@@ -32,7 +32,7 @@ class TaskResource extends Resource
                 Forms\Components\Section::make('مهام')->schema([
                     Forms\Components\Select::make('user_id')->options(User::where('level',LevelUserEnum::STAFF->value)->orWhere('level',LevelUserEnum::BRANCH->value)->pluck('name','id'))->label('المستخدم')->searchable(),
                     Forms\Components\Grid::make()->schema([
-                        Forms\Components\TextInput::make('from')->label('إستلام من')->datalist(User::select('name')->pluck()->toArray()),
+                        Forms\Components\TextInput::make('from')->label('إستلام من')->datalist(User::select('name')->pluck('name')->toArray()),
                         Forms\Components\TextInput::make('sender_phone')->label('رقم الهاتف'),
                     ]),
                     Forms\Components\Grid::make()->schema([
