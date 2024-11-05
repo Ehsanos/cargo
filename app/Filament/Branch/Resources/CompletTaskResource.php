@@ -4,16 +4,16 @@ namespace App\Filament\Branch\Resources;
 
 use App\Filament\Branch\Resources\CompletTaskResource\Pages;
 use App\Filament\Branch\Resources\CompletTaskResource\RelationManagers;
-use App\Models\CompletTask;
+
 use App\Models\Task;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
+
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+
 
 class CompletTaskResource extends Resource
 {

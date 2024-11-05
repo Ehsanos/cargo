@@ -4,7 +4,8 @@ namespace App\Filament\Employ\Resources;
 
 use App\Filament\Employ\Resources\CompletTaskResource\Pages;
 use App\Filament\Employ\Resources\CompletTaskResource\RelationManagers;
-use App\Models\CompletTask;
+
+use App\Models\Task;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CompletTaskResource extends Resource
 {
-    protected static ?string $model = CompletTask::class;
+    protected static ?string $model = Task::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
