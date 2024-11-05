@@ -26,22 +26,6 @@ class OrderObserver
      */
     public function created(Order $order): void
     {
-        info('PICK:'.$order->pick_id);
-        if( $order->pick_id!=null){
-            \DB::beginTransaction();
-            try{
-                HelperBalance::completePicker($order);
-                $order->status=OrderStatusEnum::PICK;
-                $order->save();
-                info('complete success order');
-                \DB::commit();
-            }catch (\Exception |\Error $e){
-                \DB::rollBack();
-                info("Error Observe");
-                info('Message:'.$e->getMessage());
-            }
-
-        }
 
     }
 
