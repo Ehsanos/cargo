@@ -359,23 +359,22 @@ class OrderResource extends Resource
                     ->url(function($record) {
                         $far=  $record->far_sender?'على المرسل':'على المستلم';
                         $message="السلام عليكم ورحمة الله وبركاته
-%0a
-  لكم طلب مرسل عبر شركة الفاتح للنقل الداخلي
-%0a
- من  {$record->sender?->full_name}
-%0a
- باسم  : {$record->receive?->full_name}
-%0a
-
-قيمة الطلب  : {$record->price}
-%0a
-اجور الطلب  : {$record->far}
-%0a
-الأجور على  : {$far}
-%0a
-يرجى تأكيد حضوركم وإرسال عنوان دقيق ليتم تسليمكم الطلب فيه مع إرفاق رقم البناء والشقة وإرفاق موقع GPS لتسريع الوصول للعنوان
-%0a
-ملاحظة : سيتم التوزيع خلال أقرب فرصة ممكنة إن شاء الله";
+                        %0a
+                         لكم طلب مرسل عبر شركة الفاتح للنقل الداخلي
+                         %0a
+                           من : {$record->sender?->full_name}
+                           %0a
+                            إلى : {$record->receive?->full_name}
+                       %0a
+                        قيمة الطلب : {$record->price}
+                        %0a
+                        أجور الطلب : {$record->far}
+                        %0a
+                        الأجور : {$far}
+                        %0a
+                        يرجى تأكيد حضوركم وإرسال عنوان دقيق ليتم تسليمكم الطلب فيه مع إرفاق رقم البناء والشقة وإرفاق موقع GPS لتسريع الوصول للعنوان
+                          %0a
+                         ملاحظة : سيتم التوزيع خلال أقرب فرصة ممكنة إن شاء الله ";
                         return url('https://wa.me/' . ltrim($record?->receive_phone, '+').'?text='.$message);
                     })->openUrlInNewTab()
                     ->searchable(),

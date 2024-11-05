@@ -386,6 +386,8 @@ class OrderResource extends Resource
                          لكم طلب مرسل عبر شركة الفاتح للنقل الداخلي
                          %0a
                            من : {$record->sender?->full_name}
+                           %0a
+                            إلى : {$record->receive?->full_name}
                        %0a
                         قيمة الطلب : {$record->price}
                         %0a
