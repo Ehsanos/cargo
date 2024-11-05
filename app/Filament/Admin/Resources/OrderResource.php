@@ -217,7 +217,7 @@ class OrderResource extends Resource
                                         $set('sender_name', $user?->name);
                                         $set('city_target_id', $user?->city_id);
                                     }
-                                })->live()->dehydrated(false) ,
+                                })->live() ,
                             Forms\Components\Select::make('city_target_id')
                                 ->relationship('cityTarget', 'name')
                                 ->label('الى بلدة')->required()->searchable(),

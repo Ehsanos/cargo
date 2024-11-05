@@ -209,7 +209,7 @@ class OrderResource extends Resource
 
                                         }
 
-                                    })->live()->dehydrated(false),
+                                    })->live(),
                                 Forms\Components\Select::make('city_target_id')
                                     ->relationship('cityTarget', 'name')
                                     ->label('الى بلدة')->required()->searchable(),
