@@ -31,9 +31,12 @@ class OrderObserver
             try{
                 HelperBalance::completePicker($order);
                 $order->update(['status' => OrderStatusEnum::PICK->value]);
+                info('complete success order');
                 \DB::commit();
             }catch (\Exception |\Error $e){
                 \DB::rollBack();
+                info("Error Observe");
+                info($e->getMessage());
             }
 
         }
