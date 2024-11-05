@@ -377,17 +377,13 @@ class OrderResource extends Resource
                     ->url(function($record) {
                       $far=  $record->far_sender?'على المرسل':'على المستلم';
 
-
-
-
-
                         $message="السلام عليكم ورحمة الله وبركاته
                         %0a
                          لكم طلب مرسل عبر شركة الفاتح للنقل الداخلي
                          %0a
                            من : {$record->sender?->full_name}
                            %0a
-                            إلى : {$record->receive?->full_name}
+                            إلى : {$record->global_name}
                        %0a
                         قيمة الطلب : {$record->price}
                         %0a
