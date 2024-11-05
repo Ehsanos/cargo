@@ -382,7 +382,8 @@ class OrderResource extends Resource
 
 
                         $message="السلام عليكم ورحمة الله وبركاته
-                         %0a لكم طلب مرسل عبر شركة الفاتح للنقل الداخلي
+                         لكم طلب مرسل عبر شركة الفاتح للنقل الداخلي
+                         %0a
                            من : {$record->sender?->full_name}
                        %0a
                         قيمة الطلب : {$record->price}
