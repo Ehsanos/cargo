@@ -31,13 +31,15 @@ $usersList=User::select('name')->pluck('name')->toArray();
             ->schema([
                 Forms\Components\Section::make('مهام')->schema([
                     Forms\Components\Select::make('user_id')->options(User::where('level',LevelUserEnum::STAFF->value)->orWhere('level',LevelUserEnum::BRANCH->value)->pluck('name','id'))->label('المستخدم')->searchable()->required(),
-                    Forms\Components\Grid::make()->schema([
+                    Forms\Components\Grid::make(3)->schema([
                         Forms\Components\TextInput::make('from')->label('إستلام من')->datalist($usersList),
                         Forms\Components\TextInput::make('sender_phone')->label('رقم الهاتف'),
+                        Forms\Components\Toggle::make('is_receive')->label('صاحب البلاغ')
                     ]),
-                    Forms\Components\Grid::make()->schema([
+                    Forms\Components\Grid::make(3)->schema([
                         Forms\Components\TextInput::make('to')->label('التسليم لـ')->datalist($usersList),
                         Forms\Components\TextInput::make('receive_phone')->label('رقم الهاتف'),
+                        Forms\Components\Toggle::make('is_receive')->label('صاحب البلاغ')
                     ]),
                     Forms\Components\Textarea::make('task')->label('ملاحظات')
                 ])
