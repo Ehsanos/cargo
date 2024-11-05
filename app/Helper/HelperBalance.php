@@ -63,6 +63,9 @@ class HelperBalance
             }
             self:: pendingBalancePick($order);
         } catch (\Exception | \Error $e) {
+            info("HELPER BALANCE");
+            info('Message HELPER BALANCE:'.$e->getMessage());
+            info('File HELPER BALANCE:'.$e->getFile(). ' Line:'.$e->getLine());
             throw new \Exception($e->getMessage());
         }
     }
@@ -202,6 +205,9 @@ class HelperBalance
             }
 
         }catch (\Exception $e){
+            info("Error Observe in created function22");
+            info('Message22:'.$e->getMessage());
+            info('File22:'.$e->getFile(). ' Line:'.$e->getLine());
             throw new \Exception('Error Pick Pending');
         }
 
