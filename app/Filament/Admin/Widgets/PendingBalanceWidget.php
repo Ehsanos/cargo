@@ -17,7 +17,7 @@ class PendingBalanceWidget extends BaseWidget
             ->query(
                 fn()=> User::select('users.*')
                     ->selectSub(function ($query) {
-                        $query->from('balances') ->where('balances.pending', '=',1)
+                        $query->from('balances') ->where('balances.pending', '=',true)
                             ->selectRaw('SUM(credit - debit)')
                             ->whereColumn('user_id', 'users.id')
                            ;

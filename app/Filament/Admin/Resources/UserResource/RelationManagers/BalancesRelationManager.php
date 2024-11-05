@@ -40,7 +40,7 @@ protected static ?string $title='الرصيد';
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn($query)=>$query->where('is_pending',0))
+
             ->recordTitleAttribute('total')
             ->columns([
                 Tables\Columns\TextColumn::make('credit')->label('إيداع'),
