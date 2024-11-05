@@ -20,6 +20,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
 
 class BranchPanelProvider extends PanelProvider
 {
@@ -31,6 +32,14 @@ class BranchPanelProvider extends PanelProvider
             ->login()
             ->colors([
                 'primary' => Color::Lime,
+            ])->plugins([
+                FilamentEditProfilePlugin::make()
+                    ->shouldShowDeleteAccountForm(false)
+                    ->shouldShowAvatarForm()
+                    ->setNavigationLabel('الملف الشخصي')
+                    ->setNavigationGroup(' معلومات الحساب')
+                    ->setIcon('heroicon-o-user')
+                    ->setSort(0)
             ])
             ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Branch/Resources'), for: 'App\\Filament\\Branch\\Resources')
