@@ -7,6 +7,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class BalanceView extends BaseWidget
 {
+    protected int | string | array $columnSpan=1;
     protected function getStats(): array
     {
         return [
