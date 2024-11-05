@@ -19,6 +19,8 @@ class OrderObserver
     {
         if($order->pick_id==null){
             $order->status = OrderStatusEnum::PENDING;
+        }else{
+            $order->status = OrderStatusEnum::PICK;
         }
     }
 
@@ -37,8 +39,9 @@ class OrderObserver
                 \DB::commit();
             } catch (\Exception | \Error $e) {
                 \DB::rollBack();
-                info("Error Observe");
-                info('Message:' . $e->getMessage());
+                info("Error Observe in created function");
+                info('Message:'.$e->getMessage());
+                info('File:'.$e->getFile(). ' Line:'.$e->getLine());
             }
 
         }
