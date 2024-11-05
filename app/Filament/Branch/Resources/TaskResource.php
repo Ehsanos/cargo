@@ -34,13 +34,13 @@ class TaskResource extends Resource
                     Forms\Components\Grid::make(3)->schema([
                         Forms\Components\TextInput::make('from')->label('إستلام من')->datalist($usersList),
                         Forms\Components\TextInput::make('sender_phone')->label('رقم الهاتف'),
-                        Forms\Components\Toggle::make('is_sender')->label('صاحب البلاغ')
+                        Forms\Components\Toggle::make('is_sender')->label('صاحب البلاغ')->inline(false),
 
                     ]),
                     Forms\Components\Grid::make(3)->schema([
                         Forms\Components\TextInput::make('to')->label('التسليم لـ')->datalist($usersList),
                         Forms\Components\TextInput::make('receive_phone')->label('رقم الهاتف'),
-                        Forms\Components\Toggle::make('is_receive')->label('صاحب البلاغ')
+                        Forms\Components\Toggle::make('is_receive')->label('صاحب البلاغ')->inline(false),
 
                     ]),
                     Forms\Components\Textarea::make('task')->label('ملاحظات')
