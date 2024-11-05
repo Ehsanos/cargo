@@ -2,9 +2,11 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Enums\LevelUserEnum;
 use App\Filament\Admin\Resources\TaskResource\Pages;
 use App\Filament\Admin\Resources\TaskResource\RelationManagers;
 use App\Models\Task;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -28,7 +30,7 @@ class TaskResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('مهام')->schema([
-                    Forms\Components\Select::make('user_id')->relationship('user', 'name')->label('المستخدم')->searchable(),
+                    Forms\Components\Select::make('user_id')->options(User::where('level',LevelUserEnum::STAFF->value)->orWhere('level',LevelUserEnum::BRANCH->value)->pluck('name','id'))->label('المستخدم')->searchable(),
                     Forms\Components\Grid::make()->schema([
                         Forms\Components\TextInput::make('from')->label('إستلام من'),
                         Forms\Components\TextInput::make('sender_phone')->label('رقم الهاتف'),
