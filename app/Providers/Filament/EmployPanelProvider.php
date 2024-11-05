@@ -45,8 +45,7 @@ class EmployPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 BalanceView::class,
-TaskWidget::class,
-TaskCompleteWidget::class,
+
 
 
 //                Widgets\FilamentInfoWidget::class,

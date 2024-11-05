@@ -41,8 +41,7 @@ class BranchPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Branch/Widgets'), for: 'App\\Filament\\Branch\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-TaskWidget::class,
-TaskCompleteWidget::class
+
 //                Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
