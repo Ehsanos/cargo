@@ -20,6 +20,7 @@ class CreateOrder extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        dd($data);
 
         $city_source=City::find($data['city_source_id']);
         $city_target=City::find($data['city_target_id']);
