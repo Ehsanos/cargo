@@ -11,6 +11,7 @@ class TaskCompleteWidget extends BaseWidget
 {
     protected static ?string $heading="المهام الإدارية المنجزة";
     protected int | string | array $columnSpan=2;
+
     public function table(Table $table): Table
     {
         return $table
