@@ -26,11 +26,11 @@ class TaskResource extends Resource
 
     public static function form(Form $form): Form
     {
-$usersList=User::select('name')->pluck('name')->toArray();
+        $usersList = User::select('name')->pluck('name')->toArray();
         return $form
             ->schema([
                 Forms\Components\Section::make('مهام')->schema([
-                    Forms\Components\Select::make('user_id')->options(User::where('level',LevelUserEnum::STAFF->value)->orWhere('level',LevelUserEnum::BRANCH->value)->pluck('name','id'))->label('المستخدم')->searchable()->required(),
+                    Forms\Components\Select::make('user_id')->options(User::where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)->pluck('name', 'id'))->label('المستخدم')->searchable()->required(),
                     Forms\Components\Grid::make(3)->schema([
                         Forms\Components\TextInput::make('from')->label('إستلام من')->datalist($usersList),
                         Forms\Components\TextInput::make('sender_phone')->label('رقم الهاتف'),
@@ -49,8 +49,8 @@ $usersList=User::select('name')->pluck('name')->toArray();
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn($query)=>$query->where('created_id',auth()->id())->orWhereNull('created_id'))
-            ->defaultSort('created_at','desc')
+            ->modifyQueryUsing(fn($query) => $query->where('created_id', auth()->id())->orWhereNull('created_id'))
+            ->defaultSort('created_at', 'desc')
             ->poll(10)
             ->columns([
                 Tables\Columns\TextColumn::make('id')->label('التسلسل'),
@@ -58,8 +58,8 @@ $usersList=User::select('name')->pluck('name')->toArray();
                 Tables\Columns\TextColumn::make('from')->label('إستلام من'),
                 Tables\Columns\TextColumn::make('to')->label('التسليم لـ'),
                 Tables\Columns\TextColumn::make('task')->label('المهمة'),
-                Tables\Columns\TextColumn::make('is_complete')->label('الحالة')->formatStateUsing(fn($state)=>$state?'تم':'بالإنتظار')
-                ->color(fn($state)=>$state?'success':'danger')
+                Tables\Columns\TextColumn::make('is_complete')->label('الحالة')->formatStateUsing(fn($state) => $state ? 'تم' : 'بالإنتظار')
+                    ->color(fn($state) => $state ? 'success' : 'danger')
                 ,
 
                 Tables\Columns\TextColumn::make('created_at')->since()->label('منذ')->sortable(),
