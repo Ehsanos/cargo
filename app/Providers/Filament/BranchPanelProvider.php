@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Branch\Widgets\TaskCompleteWidget;
+use App\Filament\Branch\Widgets\TaskWidget;
 use App\Http\Middleware\RedirectToBranchMiddleware;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -39,6 +41,8 @@ class BranchPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Branch/Widgets'), for: 'App\\Filament\\Branch\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
+TaskWidget::class,
+TaskCompleteWidget::class
 //                Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([

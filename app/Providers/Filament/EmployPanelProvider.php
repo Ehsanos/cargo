@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Employ\Widgets\TaskCompleteWidget;
+use App\Filament\Employ\Widgets\TaskWidget;
 use App\Http\Middleware\IsBranchMiddleware;
 use App\Http\Middleware\RedirectToEmployMiddleware;
 use App\Http\Middleware\RedirectToPanelMiddleware;
@@ -41,6 +43,8 @@ class EmployPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Employ/Widgets'), for: 'App\\Filament\\Employ\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
+TaskWidget::class,
+TaskCompleteWidget::class
 //                Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
