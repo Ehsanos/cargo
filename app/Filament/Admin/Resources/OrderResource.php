@@ -178,7 +178,7 @@ class OrderResource extends Resource
 
                                         })
                                     //
-                                    ),
+                                    )->extraInputAttributes(['tabindex'=>0]),
 
                             ]),
 
