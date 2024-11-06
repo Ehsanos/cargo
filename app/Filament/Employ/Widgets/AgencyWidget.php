@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\DB;
 class AgencyWidget extends BaseWidget
 {
     protected static ?string $heading = "مهام إدارية";
-
+protected static ?int $sort=5;
     /**
      * @return int|int[]|null[]|string
      */
