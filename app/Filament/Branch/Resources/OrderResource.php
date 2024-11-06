@@ -248,23 +248,36 @@ class OrderResource extends Resource
                             ]),
 
                         ]),
-                    Forms\Components\Fieldset::make('أجور الطلب')->schema([
+                    Forms\Components\Fieldset::make('الأجور')->schema([
+                        Forms\Components\Grid::make(2)->schema([
+                            Forms\Components\TextInput::make('price')->numeric()->label('التحصيل دولار')->default(0)->columnSpan(3)->dehydrated(fn($context)=>$context=='create'),
+                            Forms\Components\TextInput::make('far')->numeric()->label('أجور الشحن دولار')->default(0)->columnSpan(3)->dehydrated(fn($context)=>$context=='create'),
+
+                        ])->columnSpan(2),
+                        Forms\Components\Grid::make(2)->schema([
+                            Forms\Components\TextInput::make('price_tr')->numeric()->label('التحصيل تركي')->default(0)->columnSpan(3)->dehydrated(fn($context)=>$context=='create'),
+                            Forms\Components\TextInput::make('far_tr')->numeric()->label('أجور الشحن تركي')->default(0)->columnSpan(3)->dehydrated(fn($context)=>$context=='create'),
+
+                        ])->columnSpan(2),
                         Forms\Components\Grid::make()->schema([
-                            Forms\Components\TextInput::make('price')->numeric()->label('التحصيل')->default(0)->columnSpan(2),
-                            Forms\Components\TextInput::make('far')->numeric()->label('أجور الشحن')->default(1),
+
+                            Forms\Components\Select::make('pick_id')->label('الموظف الملتقط')->options(User::where('level',LevelUserEnum::BRANCH->value)->orWhere('level',LevelUserEnum::STAFF->value)->pluck('name','id'))->searchable()->required()->dehydrated(fn($context)=>$context==='create'),
+
+                        ]),
+
+                        Forms\Components\Grid::make()->schema([
                             Forms\Components\Radio::make('far_sender')
                                 ->options([
                                     true => 'المرسل',
                                     false => 'المستلم'
                                 ])->required()->default(false)->inline(false)
-                                ->label('أجور الشحن على'),
-                            Forms\Components\Select::make('currency_id')->relationship('currency','name')->required()->label('العملة ')->dehydrated(fn($context)=>$context=='create'),
+                                ->label('أجور الشحن على')->dehydrated(fn($context)=>$context==='create'),
 
-                            Forms\Components\Select::make('pick_id')->label('الموظف الملتقط')->options(User::where('level', LevelUserEnum::BRANCH->value)->orWhere('level', LevelUserEnum::STAFF->value)->pluck('name', 'id'))->searchable()->required(),
-
-
-                        ]),
-                    ]),
+                            Forms\Components\TextInput::make('canceled_info')
+                                ->hidden(fn(Forms\Get $get): bool => !$get('active'))->live()
+                                ->label('سبب الارجاع في حال ارجاع الطلب')->dehydrated(fn($context)=>$context==='create'),
+                        ])->visible(fn($context)=>$context==='create'),
+                    ])->columns(4),
 
 
                     // ttrrtt
