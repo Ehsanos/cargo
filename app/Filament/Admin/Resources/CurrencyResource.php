@@ -16,8 +16,15 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class CurrencyResource extends Resource
 {
     protected static ?string $model = Currency::class;
+    protected static ?string $navigationGroup = 'العملات';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+
+    protected static ?string $pluralModelLabel = 'العملات';
+
+    protected static ?string $label = 'العملات';
+    protected static ?string $navigationLabel = 'العملات';
+    protected static ?string $navigationIcon = 'fas-dollar-sign';
 
     public static function form(Form $form): Form
     {
