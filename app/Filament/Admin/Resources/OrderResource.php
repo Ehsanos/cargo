@@ -52,8 +52,25 @@ class OrderResource extends Resource
     protected static ?string $navigationLabel = 'الشحنات';
     protected static ?string $navigationIcon = 'heroicon-o-truck';
 
+    public static function canDelete(Model $record): bool
+    {
+        return false;
+    }
 
+    public static function canDeleteAny(): bool
+    {
+        return false;
+    }
 
+    public static function canForceDelete(Model $record): bool
+    {
+        return false;
+    }
+
+    public static function canForceDeleteAny(): bool
+    {
+        return false;
+    }
 
     public static function form(Form $form): Form
     {
@@ -253,13 +270,17 @@ class OrderResource extends Resource
                         ]),
                     ]),
                     Forms\Components\Fieldset::make('الأجور')->schema([
-                        Forms\Components\Grid::make()->schema([
-                            Forms\Components\TextInput::make('price')->numeric()->label('التحصيل')->default(0),
-                            Forms\Components\TextInput::make('far')->numeric()->label('أجور الشحن')->default(1),
+                        Forms\Components\Grid::make(2)->schema([
+                            Forms\Components\TextInput::make('price')->numeric()->label('التحصيل دولار')->default(0)->columnSpan(3)->dehydrated(fn($context)=>$context=='create'),
+                            Forms\Components\TextInput::make('far')->numeric()->label('أجور الشحن دولار')->default(0)->columnSpan(3)->dehydrated(fn($context)=>$context=='create'),
 
-                        ]),
+                        ])->columnSpan(2),
+                        Forms\Components\Grid::make(2)->schema([
+                            Forms\Components\TextInput::make('price_tr')->numeric()->label('التحصيل تركي')->default(0)->columnSpan(3)->dehydrated(fn($context)=>$context=='create'),
+                            Forms\Components\TextInput::make('far_tr')->numeric()->label('أجور الشحن تركي')->default(0)->columnSpan(3)->dehydrated(fn($context)=>$context=='create'),
+
+                        ])->columnSpan(2),
                         Forms\Components\Grid::make()->schema([
-                            Forms\Components\Select::make('currency_id')->relationship('currency','name')->required()->label('العملة ')->dehydrated(fn($context)=>$context=='create'),
 
                             Forms\Components\Select::make('pick_id')->label('الموظف الملتقط')->options(User::where('level',LevelUserEnum::BRANCH->value)->orWhere('level',LevelUserEnum::STAFF->value)->pluck('name','id'))->searchable()->required()->dehydrated(fn($context)=>$context==='create'),
 
@@ -277,7 +298,7 @@ class OrderResource extends Resource
                                 ->hidden(fn(Forms\Get $get): bool => !$get('active'))->live()
                                 ->label('سبب الارجاع في حال ارجاع الطلب')->dehydrated(fn($context)=>$context==='create'),
                         ])->visible(fn($context)=>$context==='create'),
-                    ]),
+                    ])->columns(4),
 
 
                 ])->collapsible(true)->collapsed(false),

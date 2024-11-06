@@ -16,6 +16,7 @@ use App\Filament\Admin\Resources\UserResource;
 */
 
 Route::get('/', function () {
+
     return view('welcome');
 });
 
