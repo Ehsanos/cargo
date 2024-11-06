@@ -109,4 +109,9 @@ class Order extends Model
         return $this->belongsTo(User::class,'given_id');
     }
 
+    public function currency(): BelongsTo
+    {
+        return $this->belongsTo(Currency::class);
+    }
+
 }
