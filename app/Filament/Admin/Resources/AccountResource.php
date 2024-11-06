@@ -34,7 +34,7 @@ class AccountResource extends Resource
                     Forms\Components\TextInput::make('name')->label('اسم الحساب')->required(),
 
                     Forms\Components\TextInput::make('iban')->label('كود الحساب')->required()->unique(ignoreRecord: true)->dehydrated(fn($context) => $context === 'create')->default(HelperBalance::getMaxCodeAccount()),
-                   Forms\Components\Select::make('currency_id')->relationship('currency','name')->required()->label('عملة الحساب'),
+                   Forms\Components\Select::make('currency_id')->relationship('currency','name')->required()->label('عملة الحساب')->dehydrated(fn($context)=>$context=='create'),
                     Forms\Components\Select::make('branch_id')->options(Branch::pluck('name', 'id'))->label('الفرع'),
                 ]),
             ]);
@@ -47,6 +47,7 @@ class AccountResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')->label('اسم الحساب')->searchable(),
                 Tables\Columns\TextColumn::make('iban')->label('كود الحساب')->searchable(),
+                Tables\Columns\TextColumn::make('currency.name')->label('عملة الحساب')->searchable(),
                 Tables\Columns\TextColumn::make('branch.name')->label('الفرع')->searchable(),
                 Tables\Columns\TextColumn::make('total_balance')->label('الرصيد'),
             ])
