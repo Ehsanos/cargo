@@ -58,35 +58,37 @@ class OrderResource extends Resource
                                     OrderTypeEnum::BRANCH->value => OrderTypeEnum::BRANCH->getLabel(),
                                     OrderTypeEnum::HOME->value => OrderTypeEnum::HOME->getLabel(),
 
-                                ])->label('نوع الطلب')->default( OrderTypeEnum::HOME->value)
+                                ])->label('نوع الطلب')->default(OrderTypeEnum::HOME->value)
                                     ->required(),
                                 Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('معرف المرسل')->required()
                                     ->afterStateUpdated(function ($state, $set) {
                                         $user = User::with('city')->find($state);
+                                        $branch = User::where(['level' => LevelUserEnum::BRANCH->value, 'branch_id' => $user->branch_id])->first()?->id;
+
                                         if ($user) {
                                             $set('sender_phone', $user?->phone);
                                             $set('sender_address', $user?->address);
                                             $set('city_source_id', $user?->city_id);
-
+                                            $set('pick_id', $branch);
 
                                             /*
 
                                              $set('branch_source_id', $user?->branch_id);*/
 
                                         }
-                                    })->live()->searchable()   ->suffixAction(Action::make('copyCostToPrice')->label('إضافة مستخدم جديد')
+                                    })->live()->searchable()->suffixAction(Action::make('copyCostToPrice')->label('إضافة مستخدم جديد')
                                         ->icon('fas-user-plus')
-                                        ->form(function(){
-                                            $max=User::max('id')+1;
+                                        ->form(function () {
+                                            $max = User::max('id') + 1;
 
                                             return [
                                                 Forms\Components\Grid::make()->schema([
                                                     Forms\Components\TextInput::make('name')->label('الاسم')->required(),
-                                                    Forms\Components\TextInput::make('email')->label('البريد الالكتروني')->email()->required()->unique(table: 'users', column: 'email')->default('user'. $max.'@gmail.com'),
+                                                    Forms\Components\TextInput::make('email')->label('البريد الالكتروني')->email()->required()->unique(table: 'users', column: 'email')->default('user' . $max . '@gmail.com'),
                                                 ]),
                                                 Forms\Components\Grid::make()->schema([
                                                     Forms\Components\TextInput::make('username')->label('username')
-                                                        ->unique(table: 'users', column: 'username')->required()->default('user'. $max),
+                                                        ->unique(table: 'users', column: 'username')->required()->default('user' . $max),
                                                     Forms\Components\TextInput::make('password')->password()->dehydrateStateUsing(fn($state) => Hash::make($state))
                                                         ->label('كلمة المرور')->revealable()->required()->default(12345),
 
@@ -185,7 +187,7 @@ class OrderResource extends Resource
                             Forms\Components\Grid::make()->schema([
 
                                 Forms\Components\Select::make('receive_id')->label('معرف المستلم')
-                                    ->options(User::all()->pluck('name', 'id')->toArray())->searchable()->default(fn()=>User::where('email','zab@gmail.com')->first()?->id)
+                                    ->options(User::all()->pluck('name', 'id')->toArray())->searchable()->default(fn() => User::where('email', 'zab@gmail.com')->first()?->id)
                                     ->afterStateUpdated(function ($state, $set) {
                                         $user = User::with('city')->find($state);
                                         if ($user) {
@@ -226,7 +228,6 @@ class OrderResource extends Resource
                             ]),
 
 
-
                         ]),
                     Forms\Components\Fieldset::make('معلومات الطلب')
                         ->schema([
@@ -257,7 +258,7 @@ class OrderResource extends Resource
                                     false => 'المستلم'
                                 ])->required()->default(false)->inline()
                                 ->label('أجور الشحن'),
-                            Forms\Components\Select::make('pick_id')->label('الموظف الملتقط')->options(User::where('level',LevelUserEnum::BRANCH->value)->orWhere('level',LevelUserEnum::STAFF->value)->pluck('name','id'))->searchable()->required(),
+                            Forms\Components\Select::make('pick_id')->label('الموظف الملتقط')->options(User::where('level', LevelUserEnum::BRANCH->value)->orWhere('level', LevelUserEnum::STAFF->value)->pluck('name', 'id'))->searchable()->required(),
 
 
                         ]),
@@ -325,40 +326,39 @@ class OrderResource extends Resource
                     ->content(fn($record) => \LaraZeus\Qr\Facades\Qr::render($record->code))
                     ->icon('heroicon-o-qr-code'),
 
-                Tables\Columns\TextColumn::make('id')->description(fn($record)=>$record->code)->copyable(),
+                Tables\Columns\TextColumn::make('id')->description(fn($record) => $record->code)->copyable(),
 
 
 //                Tables\Columns\TextColumn::make('status')->label('حالة الطلب')
 
 
                 Tables\Columns\TextColumn::make('type')->label('نوع الطلب')
-                    ->description(fn($record)=>$record->status?->getLabel())
+                    ->description(fn($record) => $record->status?->getLabel())
                     ->searchable(),
-                Tables\Columns\TextColumn::make('far_sender')->formatStateUsing(fn($state)=>FarType::tryFrom($state)?->getLabel())
-                    ->color(fn($state)=>FarType::tryFrom($state)?->getColor())
-                    ->icon(fn($state)=>FarType::tryFrom($state)?->getIcon())
+                Tables\Columns\TextColumn::make('far_sender')->formatStateUsing(fn($state) => FarType::tryFrom($state)?->getLabel())
+                    ->color(fn($state) => FarType::tryFrom($state)?->getColor())
+                    ->icon(fn($state) => FarType::tryFrom($state)?->getIcon())
                     ->label('حالة الدفع')
-
-                    ->description(fn($record)=>$record->created_at->diffForHumans())
+                    ->description(fn($record) => $record->created_at->diffForHumans())
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('unit.name')->label('الوحدة'),
 
-                Tables\Columns\TextColumn::make('price')->label('التحصيل')->description(fn($record)=>'اجور الشحن : '.$record->far),
+                Tables\Columns\TextColumn::make('price')->label('التحصيل')->description(fn($record) => 'اجور الشحن : ' . $record->far),
 //                Tables\Columns\TextColumn::make('far')->label('أجور الشحن'),
-                Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل')->description(fn($record)=>$record->general_sender_name)->searchable(),
+                Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل')->description(fn($record) => $record->general_sender_name)->searchable(),
                 /*Tables\Columns\TextColumn::make('sender.address')->label('هاتف المرسل')->description(fn($record)=>$record->phone)
                     ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive?->phone, '+')))->openUrlInNewTab()
                     ->searchable(),*/
-                Tables\Columns\TextColumn::make('citySource.name')->label('من بلدة')->description(fn($record)=>"إلى {$record->cityTarget?->name}")->searchable(),
-                Tables\Columns\TextColumn::make('receive.name')->label('معرف المستلم ')->description(fn($record)=>$record->global_name)->searchable(),
+                Tables\Columns\TextColumn::make('citySource.name')->label('من بلدة')->description(fn($record) => "إلى {$record->cityTarget?->name}")->searchable(),
+                Tables\Columns\TextColumn::make('receive.name')->label('معرف المستلم ')->description(fn($record) => $record->global_name)->searchable(),
 //                Tables\Columns\TextColumn::make('receive_address')->label('عنوان المستلم ')->searchable(),
                 Tables\Columns\TextColumn::make('receive_address')
-                    ->formatStateUsing(fn($record)=>(string) $record->receive_address .' - '.(string) $record->receive_phone)->label('هاتف المستلم ')
+                    ->formatStateUsing(fn($record) => (string)$record->receive_address . ' - ' . (string)$record->receive_phone)->label('هاتف المستلم ')
                     /*->description(fn($record) =>  ltrim($record?->receive_phone, '+'))*/
-                    ->url(function($record) {
-                        $far=  $record->far_sender?'على المرسل':'على المستلم';
-                        $message="السلام عليكم ورحمة الله وبركاته
+                    ->url(function ($record) {
+                        $far = $record->far_sender ? 'على المرسل' : 'على المستلم';
+                        $message = "السلام عليكم ورحمة الله وبركاته
                         %0a
                          لكم طلب مرسل عبر شركة الفاتح للنقل الداخلي
                          %0a
@@ -375,7 +375,7 @@ class OrderResource extends Resource
                         يرجى تأكيد حضوركم وإرسال عنوان دقيق ليتم تسليمكم الطلب فيه مع إرفاق رقم البناء والشقة وإرفاق موقع GPS لتسريع الوصول للعنوان
                           %0a
                          ملاحظة : سيتم التوزيع خلال أقرب فرصة ممكنة إن شاء الله ";
-                        return url('https://wa.me/' . ltrim($record?->receive_phone, '+').'?text='.$message);
+                        return url('https://wa.me/' . ltrim($record?->receive_phone, '+') . '?text=' . $message);
                     })->openUrlInNewTab()
                     ->searchable(),
 //                Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم'),
@@ -456,121 +456,121 @@ class OrderResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-               Tables\Actions\ActionGroup::make([
-                   Tables\Actions\Action::make('set_picker')->form([
-                       Forms\Components\Select::make('pick_id')->relationship('receive','name',fn($query)=>$query->where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)))
-                           ->searchable()->label('موظف الإلتقاط'),
-                   ])
-                       ->action(function ($record, $data) {
-                           DB::beginTransaction();
-                           try {
-                             if($record->pick_id==null){
-                                 $record->update(['pick_id' => $data['pick_id'], 'status' => OrderStatusEnum::AGREE->value]);
-                                 HelperBalance::setPickOrder($record);
-                                 Notification::make('success')->title('نجاح العملية')->body("تم تحديد موظف الإلتقاط بنجاح ")->success()->send();
-                                 DB::commit();
-                             }
-                           } catch (\Exception $e) {
-                               DB::rollBack();
-                               Notification::make('error')->title('فشل العملية')->body("{$e->getMessage()}")->danger()->send();
-                           }
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('set_picker')->form([
+                        Forms\Components\Select::make('pick_id')->relationship('receive', 'name', fn($query) => $query->where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)))
+                            ->searchable()->label('موظف الإلتقاط'),
+                    ])
+                        ->action(function ($record, $data) {
+                            DB::beginTransaction();
+                            try {
+                                if ($record->pick_id == null) {
+                                    $record->update(['pick_id' => $data['pick_id'], 'status' => OrderStatusEnum::AGREE->value]);
+                                    HelperBalance::setPickOrder($record);
+                                    Notification::make('success')->title('نجاح العملية')->body("تم تحديد موظف الإلتقاط بنجاح ")->success()->send();
+                                    DB::commit();
+                                }
+                            } catch (\Exception $e) {
+                                DB::rollBack();
+                                Notification::make('error')->title('فشل العملية')->body("{$e->getMessage()}")->danger()->send();
+                            }
 
-                       })
-                       ->visible(fn($record) => $record->pick_id == null)
-                       ->label('تحديد موظف الإلتقاط')->color('info'),
+                        })
+                        ->visible(fn($record) => $record->pick_id == null)
+                        ->label('تحديد موظف الإلتقاط')->color('info'),
 
-                   Tables\Actions\Action::make('select_given_id')->form([
-                       Forms\Components\Select::make('given_id')
-                           ->relationship('receive','name',fn($query)=>$query->where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)))
-                           ->searchable()->label('موظف التسليم')
-                   ])
-                       ->action(function ($record, $data) {
-                          if($record->given_id==null){
-                              $record->update(['given_id' => $data['given_id'],'status'=>OrderStatusEnum::TRANSFER->value]);
-                              Notification::make('success')->title('نجاح العملية')->body('تم تحديد موظف التسليم بنجاح')->success()->send();
-                          }
-                       })
-                       ->visible(fn($record) => $record->given_id === null && $record->pick_id!=null && $record->status ===OrderStatusEnum::PICK)
-                       ->label('تحديد موظف التسليم')->color('info'),
-
-
-                   Tables\Actions\Action::make('cancel_order')
-                       ->form([
-                           Forms\Components\Radio::make('status')->options([
-                               OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
-                               OrderStatusEnum::RETURNED->value => OrderStatusEnum::RETURNED->getLabel(),
-                           ])->label('الحالة')->required()->default(OrderStatusEnum::CANCELED->value),
-                           Forms\Components\Textarea::make('msg_cancel')->label('سبب الإلغاء / الإعادة')
-                       ])
-                       ->action(function ($record, $data) {
-                           DB::beginTransaction();
-                           try {
-                               $record->update(['status' => $data['status'], 'canceled_info' => $data['msg_cancel']]);
-                               DB::commit();
-                               Notification::make('success')->title('نجاح العملية')->body('تم تغيير حالة الطلب')->success()->send();
-                           } catch (\Exception | Error $e) {
-                               Notification::make('error')->title('فشل العملية')->body($e->getLine())->danger()->send();
-                           }
-                       })->label('الإلغاء / الإعادة')->color('danger')
-                       ->visible(fn($record) => $record->status === OrderStatusEnum::PENDING || $record->status === OrderStatusEnum::AGREE || $record->status === OrderStatusEnum::PICK || $record->status === OrderStatusEnum::TRANSFER),
+                    Tables\Actions\Action::make('select_given_id')->form([
+                        Forms\Components\Select::make('given_id')
+                            ->relationship('receive', 'name', fn($query) => $query->where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)))
+                            ->searchable()->label('موظف التسليم')
+                    ])
+                        ->action(function ($record, $data) {
+                            if ($record->given_id == null) {
+                                $record->update(['given_id' => $data['given_id'], 'status' => OrderStatusEnum::TRANSFER->value]);
+                                Notification::make('success')->title('نجاح العملية')->body('تم تحديد موظف التسليم بنجاح')->success()->send();
+                            }
+                        })
+                        ->visible(fn($record) => $record->given_id === null && $record->pick_id != null && $record->status === OrderStatusEnum::PICK)
+                        ->label('تحديد موظف التسليم')->color('info'),
 
 
-                   Tables\Actions\Action::make('success_pick')
-                       ->form(function ($record) {
-                           if ($record->far_sender == true && $record->far) {
-                               return [
-                                   Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد إلتقاط الطلب وإستلام أجور الشحن {$record->far}")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
-                               ];
-                           }
-                           return [
-                               Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد إلتقاط الطلب ")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
-                           ];
-                       })
-                       ->action(function ($record, $data) {
-                           DB::beginTransaction();
-                           try {
-                               HelperBalance::completePicker($record);
-                               $record->update(['status' => OrderStatusEnum::PICK->value]);
-                               DB::commit();
-                               Notification::make('success')->title('نجاح العملية')->body('تم تأكيد إلتقاط الطلب')->success()->send();
-                           } catch (\Exception | Error $e) {
-                               Notification::make('error')->title('فشل العملية')->body($e->getLine())->danger()->send();
-                           }
-                       })
-                       ->label('تأكيد إلتقاط الشحنة')->color('info')
-                       ->visible(fn($record) => $record->pick_id == auth()->id() ),
+                    Tables\Actions\Action::make('cancel_order')
+                        ->form([
+                            Forms\Components\Radio::make('status')->options([
+                                OrderStatusEnum::CANCELED->value => OrderStatusEnum::CANCELED->getLabel(),
+                                OrderStatusEnum::RETURNED->value => OrderStatusEnum::RETURNED->getLabel(),
+                            ])->label('الحالة')->required()->default(OrderStatusEnum::CANCELED->value),
+                            Forms\Components\Textarea::make('msg_cancel')->label('سبب الإلغاء / الإعادة')
+                        ])
+                        ->action(function ($record, $data) {
+                            DB::beginTransaction();
+                            try {
+                                $record->update(['status' => $data['status'], 'canceled_info' => $data['msg_cancel']]);
+                                DB::commit();
+                                Notification::make('success')->title('نجاح العملية')->body('تم تغيير حالة الطلب')->success()->send();
+                            } catch (\Exception | Error $e) {
+                                Notification::make('error')->title('فشل العملية')->body($e->getLine())->danger()->send();
+                            }
+                        })->label('الإلغاء / الإعادة')->color('danger')
+                        ->visible(fn($record) => $record->status === OrderStatusEnum::PENDING || $record->status === OrderStatusEnum::AGREE || $record->status === OrderStatusEnum::PICK || $record->status === OrderStatusEnum::TRANSFER),
 
-                   Tables\Actions\Action::make('success_given')
-                       ->form(function ($record) {
-                           $price = $record->price;
-                           $far = $record->far;
-                           $totalPrice = $price;
-                           if ($record->far_sender == false && $record->far > 0) {
-                               $totalPrice = $price + $far;
-                           }
-                           if ($totalPrice > 0) {
-                               return [
-                                   Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد تسليم الطلب وإستلام أجور الشحن {$totalPrice}")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
-                               ];
-                           }
-                           return [
-                               Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد تسليم الطلب ")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
-                           ];
-                       })
-                       ->action(function ($record, $data) {
-                           DB::beginTransaction();
-                           try {
-                               HelperBalance::completeOrder($record);
-                               $record->update(['status' => OrderStatusEnum::SUCCESS->value]);
-                               DB::commit();
-                               Notification::make('success')->title('نجاح العملية')->body('تم تأكيد تسليم الطلب')->success()->send();
-                           } catch (\Exception | Error $e) {
-                               Notification::make('error')->title('فشل العملية')->body($e->getLine())->danger()->send();
-                           }
-                       })->label('تأكيد تسليم الشحنة')->color('info')
-                       ->visible(fn($record) => $record->given_id == auth()->id() && ($record->status == OrderStatusEnum::TRANSFER || $record->status == OrderStatusEnum::PICK)),
 
-               ])
+                    Tables\Actions\Action::make('success_pick')
+                        ->form(function ($record) {
+                            if ($record->far_sender == true && $record->far) {
+                                return [
+                                    Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد إلتقاط الطلب وإستلام أجور الشحن {$record->far}")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
+                                ];
+                            }
+                            return [
+                                Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد إلتقاط الطلب ")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
+                            ];
+                        })
+                        ->action(function ($record, $data) {
+                            DB::beginTransaction();
+                            try {
+                                HelperBalance::completePicker($record);
+                                $record->update(['status' => OrderStatusEnum::PICK->value]);
+                                DB::commit();
+                                Notification::make('success')->title('نجاح العملية')->body('تم تأكيد إلتقاط الطلب')->success()->send();
+                            } catch (\Exception | Error $e) {
+                                Notification::make('error')->title('فشل العملية')->body($e->getLine())->danger()->send();
+                            }
+                        })
+                        ->label('تأكيد إلتقاط الشحنة')->color('info')
+                        ->visible(fn($record) => $record->pick_id == auth()->id()),
+
+                    Tables\Actions\Action::make('success_given')
+                        ->form(function ($record) {
+                            $price = $record->price;
+                            $far = $record->far;
+                            $totalPrice = $price;
+                            if ($record->far_sender == false && $record->far > 0) {
+                                $totalPrice = $price + $far;
+                            }
+                            if ($totalPrice > 0) {
+                                return [
+                                    Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد تسليم الطلب وإستلام أجور الشحن {$totalPrice}")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
+                                ];
+                            }
+                            return [
+                                Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد تسليم الطلب ")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
+                            ];
+                        })
+                        ->action(function ($record, $data) {
+                            DB::beginTransaction();
+                            try {
+                                HelperBalance::completeOrder($record);
+                                $record->update(['status' => OrderStatusEnum::SUCCESS->value]);
+                                DB::commit();
+                                Notification::make('success')->title('نجاح العملية')->body('تم تأكيد تسليم الطلب')->success()->send();
+                            } catch (\Exception | Error $e) {
+                                Notification::make('error')->title('فشل العملية')->body($e->getLine())->danger()->send();
+                            }
+                        })->label('تأكيد تسليم الشحنة')->color('info')
+                        ->visible(fn($record) => $record->given_id == auth()->id() && ($record->status == OrderStatusEnum::TRANSFER || $record->status == OrderStatusEnum::PICK)),
+
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -591,7 +591,7 @@ class OrderResource extends Resource
                         Forms\Components\Select::make('given_id')->options(User::where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value))->selectRaw('id,name,iban')->pluck('name', 'id'))->searchable()->label('موظف الإلتقاط')
                     ])
                         ->action(function ($records, $data) {
-                            Order::whereNull('given_id')->whereIn('id', $records->pluck('id')->toArray())->update(['given_id' => $data['given_id'],'status'=>OrderStatusEnum::TRANSFER->value]);
+                            Order::whereNull('given_id')->whereIn('id', $records->pluck('id')->toArray())->update(['given_id' => $data['given_id'], 'status' => OrderStatusEnum::TRANSFER->value]);
                             Notification::make('success')->title('نجاح العملية')->body('تم تحديد موظف التسليم بنجاح')->success()->send();
                         })
                         ->label('تحديد موظف التسليم')->color('info')
