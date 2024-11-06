@@ -218,6 +218,8 @@ public static function canCreate(): bool
                 Tables\Columns\TextColumn::make('unit.name')->label('نوع الشحنة'),
 
                 Tables\Columns\TextColumn::make('price')->label('التحصيل')->description(fn($record) => 'اجور الشحن : ' . $record->far),
+                Tables\Columns\TextColumn::make('price_tr')->label('التحصيل تركي')->description(fn($record) => 'اجور الشحن : ' . $record->far_tr),
+
                 Tables\Columns\TextColumn::make('currency.name')->label('العملة'),
 
                 Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل')->description(fn($record) => $record->general_sender_name)->searchable(),
