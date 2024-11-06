@@ -256,8 +256,10 @@ class OrderResource extends Resource
                                 ->options([
                                     true => 'المرسل',
                                     false => 'المستلم'
-                                ])->required()->default(false)->inline()
-                                ->label('أجور الشحن'),
+                                ])->required()->default(false)->inline(false)
+                                ->label('أجور الشحن على'),
+                            Forms\Components\Select::make('currency_id')->relationship('currency','name')->required()->label('العملة '),
+
                             Forms\Components\Select::make('pick_id')->label('الموظف الملتقط')->options(User::where('level', LevelUserEnum::BRANCH->value)->orWhere('level', LevelUserEnum::STAFF->value)->pluck('name', 'id'))->searchable()->required(),
 
 

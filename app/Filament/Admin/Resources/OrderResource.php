@@ -270,8 +270,8 @@ class OrderResource extends Resource
                                 ->options([
                                     true => 'المرسل',
                                     false => 'المستلم'
-                                ])->required()->default(false)->inline()
-                                ->label('أجور الشحن')->dehydrated(fn($context)=>$context==='create'),
+                                ])->required()->default(false)->inline(false)
+                                ->label('أجور الشحن على')->dehydrated(fn($context)=>$context==='create'),
 
                             Forms\Components\TextInput::make('canceled_info')
                                 ->hidden(fn(Forms\Get $get): bool => !$get('active'))->live()
