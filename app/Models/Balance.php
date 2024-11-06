@@ -33,4 +33,9 @@ class Balance extends Model
         return $this->belongsTo(Order::class);
     }
 
+    public function currency(): BelongsTo
+    {
+        return $this->belongsTo(Currency::class);
+    }
+
 }
