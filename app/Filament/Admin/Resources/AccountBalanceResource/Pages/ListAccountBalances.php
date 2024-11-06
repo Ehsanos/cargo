@@ -23,7 +23,7 @@ class ListAccountBalances extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
-            Actions\Action::make('created')->form([
+         /*   Actions\Action::make('created')->form([
                 Grid::make(3)->schema([
                     Select::make('from')->options(User::accounts()->pluck('name', "id"))->required()->label('الحساب الرئيسي')->searchable(),
                     Select::make('to')->options(User::accounts()->pluck('name', "id"))->required()->label('الحساب المقابل')->searchable(),
@@ -37,7 +37,8 @@ class ListAccountBalances extends ListRecords
 
                 ]),
                 Textarea::make('info')->label('البيان')
-            ])->action(function ($data) {
+            ])
+                ->action(function ($data) {
                 $accountSource = User::accounts()->find($data['from']);
 
                 $accountTarget = User::accounts()->find($data['to']);
@@ -76,7 +77,7 @@ class ListAccountBalances extends ListRecords
                     Notification::make('error')->danger()->title('فشل العملية')->body($e->getMessage())->send();
                 }
 
-            })->label('إضافة سند')
+            })->label('إضافة سند')*/
         ];
     }
 }

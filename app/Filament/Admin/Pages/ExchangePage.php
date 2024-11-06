@@ -23,6 +23,11 @@ class ExchangePage extends Page implements HasForms
     use InteractsWithForms;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $model = Balance::class;
+    protected static ?string $navigationGroup = 'الحسابات المالية';
+    protected static ?string $label = 'إنشاء سند';
+    protected static ?string $pluralLabel = 'إنشاء سند';
+
     public $data = [
         'from' => '',
         'to' => '',
