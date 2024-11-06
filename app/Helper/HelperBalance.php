@@ -38,6 +38,7 @@ class HelperBalance
                     'info' => 'أجور شحن  #' . $order->code,
                     'type' => BalanceTypeEnum::CATCH->value,
                     'is_complete' => true,
+                    'currency_id'=>$order->currency_id
                 ]);
                 Balance::create([
                     'credit' => 0,
@@ -48,6 +49,7 @@ class HelperBalance
                     'info' => 'دفع أجور شحن  #' . $order->code,
                     'type' => BalanceTypeEnum::CATCH->value,
                     'is_complete' => true,
+                    'currency_id'=>$order->currency_id
                 ]);
                 Balance::create([
                     'credit' => $order->far,
@@ -58,14 +60,13 @@ class HelperBalance
                     'info' => 'دفع أجور شحن  #' . $order->code,
                     'type' => BalanceTypeEnum::CATCH->value,
                     'is_complete' => true,
+                    'currency_id'=>$order->currency_id
                 ]);
 
             }
             self:: pendingBalancePick($order);
         } catch (\Exception | \Error $e) {
-            info("HELPER BALANCE");
-            info('Message HELPER BALANCE:'.$e->getMessage());
-            info('File HELPER BALANCE:'.$e->getFile(). ' Line:'.$e->getLine());
+
             throw new \Exception($e->getMessage());
         }
     }
@@ -84,7 +85,7 @@ class HelperBalance
                     'debit' => 0,
                     'order_id' => $order->id,
                     'user_id' => $receive->id,
-
+                    'currency_id'=>$order->currency_id,
                     'info' => 'أجور شحن  #' . $order->code,
                     'type' => BalanceTypeEnum::CATCH->value,
                     'is_complete' => true,
@@ -95,7 +96,7 @@ class HelperBalance
                     'debit' => $order->far,
                     'order_id' => $order->id,
                     'user_id' => $receive->id,
-
+                    'currency_id'=>$order->currency_id,
                     'info' => 'دفع أجور شحن  #' . $order->code,
                     'type' => BalanceTypeEnum::CATCH->value,
                     'is_complete' => true,
@@ -106,7 +107,7 @@ class HelperBalance
                     'debit' => 0,
                     'order_id' => $order->id,
                     'user_id' => $staff->id,
-
+                    'currency_id'=>$order->currency_id,
                     'info' => 'دفع أجور شحن  #' . $order->code,
                     'type' => BalanceTypeEnum::CATCH->value,
                     'is_complete' => true,
@@ -118,7 +119,7 @@ class HelperBalance
                     'debit' => 0,
                     'order_id' => $order->id,
                     'user_id' => $receive->id,
-
+                    'currency_id'=>$order->currency_id,
                     'info' => 'أجور تحصيل  #' . $order->code,
                     'type' => BalanceTypeEnum::CATCH->value,
                     'is_complete' => true,
@@ -129,7 +130,7 @@ class HelperBalance
                     'debit' => $order->price,
                     'order_id' => $order->id,
                     'user_id' => $receive->id,
-
+                    'currency_id'=>$order->currency_id,
                     'info' => 'دفع أجور تحصيل  #' . $order->code,
                     'type' => BalanceTypeEnum::CATCH->value,
                     'is_complete' => true,
@@ -140,7 +141,7 @@ class HelperBalance
                     'debit' => 0,
                     'order_id' => $order->id,
                     'user_id' => $staff->id,
-
+                    'currency_id'=>$order->currency_id,
                     'info' => 'دفع أجور تحصيل  #' . $order->code,
                     'type' => BalanceTypeEnum::CATCH->value,
                     'is_complete' => true,
@@ -151,7 +152,7 @@ class HelperBalance
                     'debit' => $order->price,
                     'order_id' => $order->id,
                     'user_id' => $sender->id,
-
+                    'currency_id'=>$order->currency_id,
                     'info' => 'دفع أجور تحصيل  #' . $order->code,
                     'type' => BalanceTypeEnum::CATCH->value,
                     'is_complete' => true,
@@ -182,7 +183,8 @@ class HelperBalance
                     'credit' => $order->far,
                     'info' => 'اجور شحن الطلب #' . $order->id,
                     'pending' => true,
-                    'order_id' => $order->id
+                    'order_id' => $order->id,
+                    'currency_id'=>$order->currency_id,
                 ]);
             }
 
@@ -193,6 +195,7 @@ class HelperBalance
                     'credit' =>$order->price,
                     'info' => 'قيمة تحصيل الطلب #' . $order->id,
                     'pending' => true,
+                    'currency_id'=>$order->currency_id,
                     'order_id' => $order->id
                 ]);
 
@@ -202,14 +205,12 @@ class HelperBalance
                     'credit' => 0,
                     'info' => 'قيمة تحصيل الطلب #' . $order->id,
                     'pending' => true,
+                    'currency_id'=>$order->currency_id,
                     'order_id' => $order->id
                 ]);
             }
 
         }catch (\Exception $e){
-            info("Error Observe in created function22");
-            info('Message22:'.$e->getMessage());
-            info('File22:'.$e->getFile(). ' Line:'.$e->getLine());
             throw new \Exception('Error Pick Pending');
         }
 
