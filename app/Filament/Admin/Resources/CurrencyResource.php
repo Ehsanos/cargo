@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class CurrencyResource extends Resource
 {
     protected static ?string $model = Currency::class;
-    protected static ?string $navigationGroup = 'العملات';
+    protected static ?string $navigationGroup = 'الحسابات المالية';
 
 
 
