@@ -534,9 +534,18 @@ class OrderResource extends Resource
 
                     Tables\Actions\Action::make('success_pick')
                         ->form(function ($record) {
-                            if ($record->far_sender == true && $record->far) {
+                            $farMessage='انت على وشك تأكيد إستلام مبلغ : ';
+                            if ($record->far_sender == true && ($record->far>0 || $record->far_tr>0)) {
+                                $far=$record->far;
+                                if($record->far_tr>0){
+                                    $far=$record->far_tr;
+                                    $farMessage.=$far.' TRY ';
+                                }else{
+                                    $farMessage.=$far.' USD ';
+                                }
+                                $farMessage.='أجور شحن';
                                 return [
-                                    Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد إلتقاط الطلب وإستلام أجور الشحن {$record->far}")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
+                                    Forms\Components\Placeholder::make('msg')->content($farMessage)->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
                                 ];
                             }
                             return [
@@ -559,15 +568,36 @@ class OrderResource extends Resource
 
                     Tables\Actions\Action::make('success_given')
                         ->form(function ($record) {
-                            $price = $record->price;
-                            $far = $record->far;
-                            $totalPrice = $price;
-                            if ($record->far_sender == false && $record->far > 0) {
-                                $totalPrice = $price + $far;
+
+                            $totalPrice=$record->price+$record->far;
+                            if($totalPrice==0){
+                                $totalPrice=$record->price_tr+$record->far_tr;
                             }
+                            $priceMessage='انت تأكد إستلامك مبلغ : ';
+
+
+                            if($record->price_tr>0){
+                                $priceMessage.=$record->price_tr .' TRY ';
+                            }elseif($record->price>0){
+                                $priceMessage.=$record->price .' USD ';
+                            }
+                            $priceMessage.='قيمة تحصيل الطلب';
+
+
+                            $farMessage='انت تأكد إستلامك مبلغ : ';
+
+
+                            if($record->far_tr>0){
+                                $farMessage.=$record->far_tr .' TRY ';
+                            }elseif($record->far>0){
+                                $farMessage.=$record->far .' USD ';
+                            }
+                            $farMessage.='أجور شحن الطلب';
+
                             if ($totalPrice > 0) {
                                 return [
-                                    Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد تسليم الطلب وإستلام أجور الشحن {$totalPrice}")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
+                                    Forms\Components\Placeholder::make('msg')->content($priceMessage)->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;']),
+                                    Forms\Components\Placeholder::make('msg')->content($farMessage)->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
                                 ];
                             }
                             return [
