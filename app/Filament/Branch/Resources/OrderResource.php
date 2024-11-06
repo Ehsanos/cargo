@@ -347,7 +347,7 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('unit.name')->label('الوحدة'),
 
                 Tables\Columns\TextColumn::make('price')->label('التحصيل')->description(fn($record) => 'اجور الشحن : ' . $record->far),
-//                Tables\Columns\TextColumn::make('far')->label('أجور الشحن'),
+                Tables\Columns\TextColumn::make('currency.name')->label('العملة'),
                 Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل')->description(fn($record) => $record->general_sender_name)->searchable(),
                 /*Tables\Columns\TextColumn::make('sender.address')->label('هاتف المرسل')->description(fn($record)=>$record->phone)
                     ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive?->phone, '+')))->openUrlInNewTab()
