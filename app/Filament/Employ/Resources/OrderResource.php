@@ -217,8 +217,8 @@ public static function canCreate(): bool
 
                 Tables\Columns\TextColumn::make('unit.name')->label('نوع الشحنة'),
 
-                Tables\Columns\TextColumn::make('price')->label('التحصيل')->description(fn($record) => 'اجور الشحن : ' . $record->far),
-                Tables\Columns\TextColumn::make('price_tr')->label('التحصيل تركي')->description(fn($record) => 'اجور الشحن : ' . $record->far_tr),
+                Tables\Columns\TextColumn::make('price')->formatStateUsing(fn($state)=>$state .'usd')->label('التحصيل USD')->description(fn($record) => 'اجور الشحن : ' . $record->far.'usd'),
+                Tables\Columns\TextColumn::make('price_tr')->formatStateUsing(fn($state)=>$state .'try')->label('التحصيل TRY')->description(fn($record) => 'اجور الشحن : ' . $record->far_tr .'try'),
 
                 Tables\Columns\TextColumn::make('currency.name')->label('العملة'),
 
