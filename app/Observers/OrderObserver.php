@@ -22,6 +22,8 @@ class OrderObserver
         }else{
             $order->status = OrderStatusEnum::PICK;
         }
+
+        $order->ex_cur=$order->currency->value;
     }
 
 
