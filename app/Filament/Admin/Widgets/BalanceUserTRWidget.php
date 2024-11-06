@@ -7,9 +7,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 
-class BalanceUserWidget extends BaseWidget
+class BalanceUserTRWidget extends BaseWidget
 {
-  protected static ?string $heading="أرصدة الزبائن USD";
+  protected static ?string $heading="أرصدة الزبائن TRY";
     public function table(Table $table): Table
     {
         return $table
@@ -21,7 +21,7 @@ class BalanceUserWidget extends BaseWidget
                            ->whereColumn('user_id', 'users.id')
                            ->where('balances.is_complete', 1)
                            ->where('balances.pending', '=',false)
-                           ->where('balances.currency_id', '=',1);
+                           ->where('balances.currency_id', '=',2);
                    }, 'net_balance')
                    ->having('net_balance', '!=', 0),
             )
