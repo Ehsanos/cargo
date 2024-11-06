@@ -51,6 +51,7 @@ class User extends Authenticatable implements HasMedia, FilamentUser, HasAvatar
     {
         return $this->avatar_url ? Storage::url("$this->avatar_url") : null;
     }
+
     /**
      * The attributes that are mass assignable.
      *
@@ -145,5 +146,9 @@ class User extends Authenticatable implements HasMedia, FilamentUser, HasAvatar
         return $query->withoutGlobalScope('userOnly')->where('is_account', true);
     }
 
+    public function currency(): BelongsTo
+    {
+        return $this->belongsTo(Currency::class);
+    }
 
 }
