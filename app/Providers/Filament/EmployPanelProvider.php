@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Employ\Widgets\AgencyWidget;
 use App\Filament\Employ\Widgets\BalanceView;
 use App\Filament\Employ\Widgets\TaskCompleteWidget;
 use App\Filament\Employ\Widgets\TaskWidget;
@@ -53,9 +54,10 @@ class EmployPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Employ/Widgets'), for: 'App\\Filament\\Employ\\Widgets')
             ->widgets([
+
                 Widgets\AccountWidget::class,
                 BalanceView::class,
-
+                AgencyWidget::class,
 
 
 //                Widgets\FilamentInfoWidget::class,
