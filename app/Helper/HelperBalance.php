@@ -28,31 +28,32 @@ class HelperBalance
     {
         $sender = User::find($order->sender_id);
         $staff = User::find($order->pick_id);
+
         try {
             if ($order->far_sender == true) {
                 Balance::create([
-                    'credit' => $order->far,
+                    'credit' => $order->far>0 ?$order->far :$order->far_tr ,
                     'debit' => 0,
                     'order_id' => $order->id,
                     'user_id' => $sender->id,
                     'info' => 'أجور شحن  #' . $order->code,
                     'type' => BalanceTypeEnum::CATCH->value,
                     'is_complete' => true,
-                    'currency_id'=>$order->currency_id
+                    'currency_id'=>$order->far>0?1:2,
                 ]);
                 Balance::create([
                     'credit' => 0,
-                    'debit' => $order->far,
+                    'debit' =>  $order->far>0 ?$order->far :$order->far_tr ,
                     'order_id' => $order->id,
                     'user_id' => $sender->id,
 
                     'info' => 'دفع أجور شحن  #' . $order->code,
                     'type' => BalanceTypeEnum::CATCH->value,
                     'is_complete' => true,
-                    'currency_id'=>$order->currency_id
+                    'currency_id'=>$order->far>0?1:2,
                 ]);
                 Balance::create([
-                    'credit' => $order->far,
+                    'credit' =>  $order->far>0 ?$order->far :$order->far_tr ,
                     'debit' => 0,
                     'order_id' => $order->id,
                     'user_id' => $staff->id,
@@ -60,7 +61,7 @@ class HelperBalance
                     'info' => 'دفع أجور شحن  #' . $order->code,
                     'type' => BalanceTypeEnum::CATCH->value,
                     'is_complete' => true,
-                    'currency_id'=>$order->currency_id
+                    'currency_id'=>$order->far>0?1:2,
                 ]);
 
             }
@@ -82,7 +83,7 @@ class HelperBalance
             if ($order->far_sender == false && ($order->far > 0 || $order->far_tr >0)) {
 
                 Balance::create([
-                    'credit' => $order->far,
+                    'credit' => $order->far>0 ?$order->far :$order->far_tr ,
                     'debit' => 0,
                     'order_id' => $order->id,
                     'user_id' => $receive->id,
@@ -94,7 +95,7 @@ class HelperBalance
 
                 Balance::create([
                     'credit' => 0,
-                    'debit' => $order->far,
+                    'debit' =>  $order->far>0 ?$order->far :$order->far_tr ,
                     'order_id' => $order->id,
                     'user_id' => $receive->id,
                     'currency_id'=>$order->far>0 ?1 : 2,
@@ -104,7 +105,7 @@ class HelperBalance
                 ]);
 
                 Balance::create([
-                    'credit' => $order->far,
+                    'credit' => $order->far>0 ?$order->far :$order->far_tr ,
                     'debit' => 0,
                     'order_id' => $order->id,
                     'user_id' => $staff->id,
@@ -116,7 +117,7 @@ class HelperBalance
             }
             if ($order->price > 0 || $order->price_tr>0) {
                 Balance::create([
-                    'credit' => $order->price,
+                    'credit' => $order->price>0?$order->price:$order->price_tr,
                     'debit' => 0,
                     'order_id' => $order->id,
                     'user_id' => $receive->id,
@@ -128,7 +129,7 @@ class HelperBalance
 
                 Balance::create([
                     'credit' => 0,
-                    'debit' => $order->price,
+                    'debit' => $order->price>0?$order->price:$order->price_tr,
                     'order_id' => $order->id,
                     'user_id' => $receive->id,
                     'currency_id'=>$order->price>0 ?1 : 2,
@@ -138,7 +139,7 @@ class HelperBalance
                 ]);
 
                 Balance::create([
-                    'credit' => $order->price,
+                    'credit' => $order->price>0?$order->price:$order->price_tr,
                     'debit' => 0,
                     'order_id' => $order->id,
                     'user_id' => $staff->id,
@@ -150,7 +151,7 @@ class HelperBalance
 
                 Balance::create([
                     'credit' => 0,
-                    'debit' => $order->price,
+                    'debit' => $order->price>0?$order->price:$order->price_tr,
                     'order_id' => $order->id,
                     'user_id' => $sender->id,
                     'currency_id'=>$order->price>0 ?1 : 2,
@@ -181,7 +182,7 @@ class HelperBalance
                 Balance::create([
                     'user_id'=>$receive->id,
                     'debit' =>0,
-                    'credit' => $order->far,
+                    'credit' => $order->far>0 ?$order->far :$order->far_tr ,
                     'info' => 'اجور شحن الطلب #' . $order->id,
                     'pending' => true,
                     'order_id' => $order->id,
@@ -189,24 +190,24 @@ class HelperBalance
                 ]);
             }
 
-            if($order->price>0){
+            if($order->price>0 || $order->price_tr>0){
                 Balance::create([
                     'user_id'=>$receive->id,
                     'debit' =>  0,
-                    'credit' =>$order->price,
+                    'credit' =>$order->price>0?$order->price:$order->price_tr,
                     'info' => 'قيمة تحصيل الطلب #' . $order->id,
                     'pending' => true,
-                    'currency_id'=>$order->far>0?1:2,
+                    'currency_id'=>$order->price>0?1:2,
                     'order_id' => $order->id
                 ]);
 
                 Balance::create([
                     'user_id'=>$sender->id,
-                    'debit' =>$order->price,
+                    'debit' =>$order->price>0?$order->price:$order->price_tr,
                     'credit' => 0,
                     'info' => 'قيمة تحصيل الطلب #' . $order->id,
                     'pending' => true,
-                    'currency_id'=>$order->far>0?1:2,
+                    'currency_id'=>$order->price>0?1:2,
                     'order_id' => $order->id
                 ]);
             }
