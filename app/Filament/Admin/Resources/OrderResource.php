@@ -80,10 +80,12 @@ class OrderResource extends Resource
                                     ->label('معرف المرسل')->required()
                                     ->afterStateUpdated(function ($state, $set) {
                                         $user = User::with('city')->find($state);
+                                        $branch=User::where(['level'=>LevelUserEnum::BRANCH->value,'branch_id' => $user->branch_id])->first()?->id;
                                         if ($user) {
                                             $set('sender_phone', $user?->phone);
                                             $set('sender_address', $user?->address);
                                             $set('city_source_id', $user?->city_id);
+                                            $set('pick_id', $branch);
 
 
                                         }
