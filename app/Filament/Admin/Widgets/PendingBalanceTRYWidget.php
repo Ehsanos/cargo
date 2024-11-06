@@ -7,9 +7,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 
-class PendingBalanceWidget extends BaseWidget
+class PendingBalanceTRYWidget extends BaseWidget
 {
-    protected static ?string $heading="الأرصدة قيد التحصيل USD";
+    protected static ?string $heading="الأرصدة قيد التحصيل TRY";
     public function table(Table $table): Table
     {
         return $table
@@ -20,7 +20,7 @@ class PendingBalanceWidget extends BaseWidget
                         $query->from('balances') ->where('balances.pending', '=',true)
                             ->selectRaw('SUM(credit - debit)')
                             ->whereColumn('balances.user_id', 'users.id')
-                            ->where('balances.currency_id',1)
+                            ->where('balances.currency_id',2)
                            ;
                     }, 'net_balance')
                     /*->orderByDesc('net_balance')*/
