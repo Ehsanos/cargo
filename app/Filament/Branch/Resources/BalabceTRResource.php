@@ -2,9 +2,9 @@
 
 namespace App\Filament\Branch\Resources;
 
-use App\Enums\BalanceTypeEnum;
-use App\Filament\Branch\Resources\BalanceResource\Pages;
-use App\Filament\Branch\Resources\BalanceResource\RelationManagers;
+use App\Filament\Branch\Resources\BalabceTRResource\Pages;
+use App\Filament\Branch\Resources\BalabceTRResource\RelationManagers;
+use App\Models\BalabceTR;
 use App\Models\Balance;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class BalanceResource extends Resource
+class BalabceTRResource extends Resource
 {
     protected static ?string $model = Balance::class;
 
@@ -83,9 +83,9 @@ class BalanceResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBalances::route('/'),
-            'create' => Pages\CreateBalance::route('/create'),
-            'edit' => Pages\EditBalance::route('/{record}/edit'),
+            'index' => Pages\ListBalabceTRS::route('/'),
+            'create' => Pages\CreateBalabceTR::route('/create'),
+            'edit' => Pages\EditBalabceTR::route('/{record}/edit'),
         ];
     }
 }
