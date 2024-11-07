@@ -20,9 +20,9 @@ class ListTasks extends ListRecords
     public function getTabs(): array
     {
         return [
-            Tab::make('all')->modifyQueryUsing(fn($query)=>$query)->label('الكل'),
-            Tab::make('pending')->modifyQueryUsing(fn($query)=>$query->where('is_complete',false))->label('بالإنتظار'),
-            Tab::make('pending')->modifyQueryUsing(fn($query)=>$query->where('is_complete',true))->label('مكتملة'),
+            Tab::make('all')->modifyQueryUsing(fn($query)=>$query->where('created_id', auth()->id()))->label('الكل'),
+            Tab::make('pending')->modifyQueryUsing(fn($query)=>$query->where('created_id', auth()->id())->where('is_complete',false))->label('بالإنتظار'),
+            Tab::make('pending')->modifyQueryUsing(fn($query)=>$query->where('created_id', auth()->id())->where('is_complete',true))->label('مكتملة'),
         ];
     }
 }
