@@ -29,7 +29,7 @@ class BalanceEmployeeTRWidget extends BaseWidget
                     ->having('net_balance', '!=', 0),
             )
             ->columns([
-                Tables\Columns\TextColumn::make('name')->label('المستخدم')->searchable(),
+                Tables\Columns\TextColumn::make('name')->label('المستخدم'),
                 Tables\Columns\TextColumn::make('net_balance')->label('الرصيد الحالي')->sortable()
             ]);
     }

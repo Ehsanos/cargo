@@ -31,10 +31,12 @@ class PendingBalanceEmployeeTRYWidget extends BaseWidget
                     ->having('net_balance', '!=', 0),
             )
             ->columns([
-                Tables\Columns\TextColumn::make('name')->label('المستخدم')->searchable(),
+                Tables\Columns\TextColumn::make('name')->label('المستخدم'),
                 Tables\Columns\TextColumn::make('net_balance')->label('الرصيد الحالي')->sortable()
             ])
-
+            ->filters([
+                Tables\Filters\SelectFilter::make('id')->options(User::pluck('name','id'))->searchable()
+            ])
             ;
     }
 }
