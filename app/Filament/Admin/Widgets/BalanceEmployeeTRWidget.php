@@ -9,7 +9,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class BalanceEmployeeTRWidget extends BaseWidget
 {
-    protected static ?string $heading = "أرصدة الزبائن TRY";
+    protected static ?string $heading = "أرصدة الموظفين TRY";
     protected int | string | array $columnSpan=1;
     public static function canView(): bool
     {
