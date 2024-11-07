@@ -79,7 +79,7 @@ class OrderResource extends Resource
 
 
                 Forms\Components\Section::make('معلومات الطلب')->schema([
-                    SpatieMediaLibraryFileUpload::make('images')->collection('images')->label('أرفق صور')->imageEditor(),
+                 //   SpatieMediaLibraryFileUpload::make('images')->collection('images')->label('أرفق صور')->imageEditor(),
                     Forms\Components\Fieldset::make('المرسل')->schema([
                         Forms\Components\Grid::make(2)
                             ->schema([
@@ -359,7 +359,7 @@ class OrderResource extends Resource
         return $table
             ->poll(10)
             ->columns([
-                Tables\Columns\SpatieMediaLibraryImageColumn::make('images')->collection('images')->circular()->openUrlInNewTab(),
+              // Tables\Columns\SpatieMediaLibraryImageColumn::make('images')->collection('images')->circular()->openUrlInNewTab(),
                 PopoverColumn::make('qr_url')
                     ->trigger('click')
                     ->placement('right')

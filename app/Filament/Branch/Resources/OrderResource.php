@@ -51,7 +51,7 @@ class OrderResource extends Resource
             ->schema([
 
                 Forms\Components\Section::make('الطلب')->schema([
-                    SpatieMediaLibraryFileUpload::make('images')->collection('images')->label('أرفق صور')->imageEditor(),
+                   // SpatieMediaLibraryFileUpload::make('images')->collection('images')->label('أرفق صور')->imageEditor(),
                     Forms\Components\Fieldset::make('معلومات المرسل')
                         ->schema([
                             Forms\Components\Grid::make()->schema([
@@ -336,7 +336,7 @@ class OrderResource extends Resource
             ->poll(10)
             ->columns([
 //                Tables\Columns\TextColumn::make('id')->label('#'),
-                Tables\Columns\SpatieMediaLibraryImageColumn::make('images')->collection('images')->circular()->openUrlInNewTab(),
+               // Tables\Columns\SpatieMediaLibraryImageColumn::make('images')->collection('images')->circular()->openUrlInNewTab(),
 
                 PopoverColumn::make('qr_url')
                     ->trigger('click')
