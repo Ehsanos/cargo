@@ -65,6 +65,7 @@ class AccountStatmentResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->poll(10)
             ->modifyQueryUsing(fn($query) => $query->where('pending',false)->where('is_complete',true)->latest())
             ->columns([
                 Tables\Columns\TextColumn::make('credit'),
