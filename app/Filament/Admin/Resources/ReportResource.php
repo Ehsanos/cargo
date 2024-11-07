@@ -24,7 +24,7 @@ class ReportResource extends Resource
     protected static ?string $model = User::class;
 
     protected static ?string $pluralModelLabel = 'التقارير';
-
+    protected static ?string $navigationGroup = 'التقارير';
 
     protected static ?string $navigationIcon = 'heroicon-o-document-chart-bar';
 
