@@ -46,7 +46,7 @@ class BalanceEmployeeView extends BaseWidget
             ->selectRaw('SUM(credit - debit)as total')
 
             ->where('balances.is_complete', 1)
-            ->where('balances.pending', '=',false)
+            ->where('balances.pending', '=',true)
             ->where('balances.currency_id', '=',2)->first();
 
       return [
