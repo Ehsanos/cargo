@@ -531,7 +531,7 @@ class OrderResource extends Resource
                         ->action(function ($record, $data) {
                             if($record->given_id==null){
                                 $record->update(['given_id' => $data['given_id'],'status'=>OrderStatusEnum::TRANSFER->value]);
-                                Notification::make('success')->title('نجاح العملية')->body("تم تحديد موظف التسليم بنجاح ")->danger()->send();
+                                Notification::make('success')->title('نجاح العملية')->body("تم تحديد موظف التسليم بنجاح ")->success()->send();
                             }
 
 
