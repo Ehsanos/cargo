@@ -242,20 +242,21 @@ public static function canCreate(): bool
                     ->form(function ($record) {
                         $farMessage='انت على وشك تأكيد إستلام مبلغ : ';
                         if ($record->far_sender == true && ($record->far>0 || $record->far_tr>0)) {
-                            $far=$record->far;
+
                             if($record->far_tr>0){
-                                $far=$record->far_tr;
-                                $farMessage.=$far.' TRY ';
-                            }else{
-                                $farMessage.=$far.' USD ';
+
+                                $farMessage.=$record->far_tr.' TRY ';
+                            }
+                            if($record->far >0){
+                                $farMessage.=' و'.$record->far.' USD ';
                             }
                             $farMessage.='أجور شحن';
                             return [
-                                Forms\Components\Placeholder::make('msg')->content($farMessage)->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
+                                Forms\Components\Placeholder::make('msg')->content($farMessage)->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])->label('تنبيه')
                             ];
                         }
                         return [
-                            Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد إلتقاط الطلب ")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
+                            Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد إلتقاط الطلب ")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])->label('تنبيه')
                         ];
                     })
                     ->action(function ($record, $data) {
@@ -283,8 +284,9 @@ public static function canCreate(): bool
 
                         if($record->price_tr>0){
                             $priceMessage.=$record->price_tr .' TRY ';
-                        }elseif($record->price>0){
-                            $priceMessage.=$record->price .' USD ';
+                        }
+                            if($record->price>0){
+                            $priceMessage.=' و '.$record->price .' USD ';
                         }
                         $priceMessage.='قيمة تحصيل الطلب';
 
@@ -294,19 +296,20 @@ public static function canCreate(): bool
 
                         if($record->far_tr>0){
                             $farMessage.=$record->far_tr .' TRY ';
-                        }elseif($record->far>0){
-                            $farMessage.=$record->far .' USD ';
+                        }
+                            if($record->far>0){
+                            $farMessage.=' و '.$record->far .' USD ';
                         }
                         $farMessage.='أجور شحن الطلب';
 
                         if ($totalPrice > 0) {
                             return [
-                                Forms\Components\Placeholder::make('msg')->content($priceMessage)->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;']),
-                                Forms\Components\Placeholder::make('msg')->content($farMessage)->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
+                                Forms\Components\Placeholder::make('msg')->content($priceMessage)->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])->label('تنبيه'),
+                                Forms\Components\Placeholder::make('msg')->content($farMessage)->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])->label('تنبيه')
                             ];
                         }
                         return [
-                            Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد تسليم الطلب ")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])
+                            Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد تسليم الطلب ")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])->label('تنبيه')
                         ];
                     })
                     ->action(function ($record, $data) {
