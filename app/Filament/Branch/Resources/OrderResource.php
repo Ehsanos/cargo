@@ -565,7 +565,7 @@ class OrderResource extends Resource
                             }
                         })
                         ->label('تأكيد إلتقاط الشحنة')->color('info')
-                        ->visible(fn($record) => $record->pick_id == auth()->id()),
+                        ->visible(fn($record) => $record->pick_id == auth()->id() && ($record->status == OrderStatusEnum::AGREE ) ),
 
                     Tables\Actions\Action::make('success_given')
                         ->form(function ($record) {
