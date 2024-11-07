@@ -53,12 +53,13 @@ class TaskResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn($query) => $query->where('created_id', auth()->id())->orWhereNull('created_id'))
+          //  ->modifyQueryUsing(fn($query) => $query->where('created_id', auth()->id())->orWhereNull('created_id'))
             ->defaultSort('created_at', 'desc')
             ->poll(10)
             ->columns([
                 Tables\Columns\TextColumn::make('id')->label('التسلسل')->sortable(),
-                Tables\Columns\TextColumn::make('user.name')->label('المستخدم')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('user.name')->label('الموكل1')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('user.name')->label('الموكل1')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('from')->label('إستلام من')->color(fn($record) => $record->is_sender ? 'danger' : null)->sortable(),
                 Tables\Columns\TextColumn::make('to')->label('التسليم لـ')->color(fn($record) => $record->is_receive ? 'danger' : null)->sortable(),
                 Tables\Columns\TextColumn::make('task')->label('المهمة'),
