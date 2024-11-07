@@ -59,7 +59,8 @@ class TaskResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')->label('التسلسل')->sortable(),
                 Tables\Columns\TextColumn::make('user.name')->label('الموكل1')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('user.name')->label('الموكل1')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('delegate.name')->label('الموكل2')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('createdBy.name')->label('أنشأ بواسطة')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('from')->label('إستلام من')->color(fn($record) => $record->is_sender ? 'danger' : null)->sortable(),
                 Tables\Columns\TextColumn::make('to')->label('التسليم لـ')->color(fn($record) => $record->is_receive ? 'danger' : null)->sortable(),
                 Tables\Columns\TextColumn::make('task')->label('المهمة'),

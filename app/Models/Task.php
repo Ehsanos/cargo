@@ -21,4 +21,8 @@ class Task extends Model
     {
         return $this->belongsTo(User::class,'created_id');
     }
+    public function delegate(): BelongsTo
+    {
+        return $this->belongsTo(User::class,'delegate_id');
+    }
 }
