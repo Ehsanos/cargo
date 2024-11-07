@@ -33,6 +33,7 @@ class BalanceEmployeeView extends BaseWidget
             ->where('balances.pending', '=',false)
             ->where('balances.currency_id', '=',2)->first();
 
+
         $pendingUsd=Balance::
         whereHas('user',fn($query)=>$query->where('users.level',LevelUserEnum::STAFF->value)->orWhere('level',LevelUserEnum::BRANCH->value)->orWhere('level',LevelUserEnum::ADMIN->value))
             ->selectRaw('SUM(credit - debit)as total')
