@@ -15,18 +15,22 @@ class BalanceObserver
             if ($balance->is_complete || $balance->is_complete == null) {
                 $balance->total = \DB::table('balances')->where('user_id', $balance->user_id)->where('is_complete', 1)
                         ->where('pending', true)
+                        ->where('balances.currency_id',$balance->currency_id)
                         ->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0 - $balance->credit + $balance->debit;
             } else {
                 $balance->total = \DB::table('balances')->where('user_id', $balance->user_id)->where('is_complete', 0)
+                        ->where('balances.currency_id',$balance->currency_id)
                         ->where('pending', '!=', true)
                         ->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0 - $balance->credit + $balance->debit;
             }
         } else {
             if ($balance->is_complete || $balance->is_complete == null) {
                 $balance->total = \DB::table('balances')->where('user_id', $balance->user_id)->where('is_complete', 1)
+                        ->where('balances.currency_id',$balance->currency_id)
                         ->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0 - $balance->credit + $balance->debit;
             } else {
                 $balance->total = \DB::table('balances')->where('user_id', $balance->user_id)->where('is_complete', 0)
+                        ->where('balances.currency_id',$balance->currency_id)
                         ->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0 - $balance->credit + $balance->debit;
             }
         }
