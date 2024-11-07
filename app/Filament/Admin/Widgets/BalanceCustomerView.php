@@ -10,7 +10,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 class BalanceCustomerView extends BaseWidget
 {
     protected static ?string $pollingInterval = '10s';
-    protected int|string|array $columnSpan =6;
+    protected int|string|array $columnSpan =4;
 
     protected function getStats(): array
     {
