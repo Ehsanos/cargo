@@ -2,22 +2,15 @@
 
 namespace App\Filament\Admin\Pages;
 
-use App\Filament\Admin\Widgets\BalanceCustomerView;
-use App\Filament\Admin\Widgets\BalanceCustomerTRWidget;
-use App\Filament\Admin\Widgets\BalanceCustomerWidget;
-use App\Filament\Admin\Widgets\PendingBalanceCustomerTRYWidget;
-use App\Filament\Admin\Widgets\PendingBalanceCustomerWidget;
-use App\Models\Balance;
-use App\Models\User;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
+
+
+use App\Filament\Admin\BalanceWidget\BalanceCustomerTRWidget;
+use App\Filament\Admin\BalanceWidget\BalanceCustomerView;
+use App\Filament\Admin\BalanceWidget\BalanceCustomerWidget;
+use App\Filament\Admin\BalanceWidget\PendingBalanceCustomerTRYWidget;
+use App\Filament\Admin\BalanceWidget\PendingBalanceCustomerWidget;
 use Filament\Pages\Page;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\Relation;
+
 
 class CustomerReport extends Page
 {

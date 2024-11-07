@@ -1,7 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Widgets;
-
+namespace App\Filament\Admin\BalanceWidget;
 use App\Enums\LevelUserEnum;
 use App\Models\User;
 use Filament\Tables;

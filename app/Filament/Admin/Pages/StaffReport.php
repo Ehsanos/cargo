@@ -2,11 +2,13 @@
 
 namespace App\Filament\Admin\Pages;
 
-use App\Filament\Admin\Widgets\BalanceEmployeeTRWidget;
-use App\Filament\Admin\Widgets\BalanceEmployeeView;
-use App\Filament\Admin\Widgets\BalanceEmployeeWidget;
-use App\Filament\Admin\Widgets\PendingBalanceEmployeeTRYWidget;
-use App\Filament\Admin\Widgets\PendingBalanceEmployeeWidget;
+
+
+use App\Filament\Admin\BalanceWidget\BalanceEmployeeTRWidget;
+use App\Filament\Admin\BalanceWidget\BalanceEmployeeView;
+use App\Filament\Admin\BalanceWidget\BalanceEmployeeWidget;
+use App\Filament\Admin\BalanceWidget\PendingBalanceEmployeeTRYWidget;
+use App\Filament\Admin\BalanceWidget\PendingBalanceEmployeeWidget;
 use Filament\Pages\Page;
 
 class StaffReport extends Page
