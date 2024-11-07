@@ -8,31 +8,29 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 
-class PendingBalanceTRYWidget extends BaseWidget
+class BalanceEmployeeTRWidget extends BaseWidget
 {
-    protected static ?string $heading="الأرصدة قيد التحصيل TRY";
+    protected static ?string $heading = "أرصدة الزبائن TRY";
+
     public function table(Table $table): Table
     {
         return $table
-            ->poll(10)
             ->query(
-                fn()=> User::select('users.*')
-                    ->where('level',LevelUserEnum::USER->value)
+                fn() => User::select('users.*')
+                    ->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)->orWhere('level', LevelUserEnum::ADMIN->value)
                     ->selectSub(function ($query) {
-                        $query->from('balances') ->where('balances.pending', '=',true)
+                        $query->from('balances')
                             ->selectRaw('SUM(credit - debit)')
-                            ->whereColumn('balances.user_id', 'users.id')
-                            ->where('balances.currency_id',2)
-                           ;
+                            ->whereColumn('user_id', 'users.id')
+                            ->where('balances.is_complete', 1)
+                            ->where('balances.pending', '=', false)
+                            ->where('balances.currency_id', '=', 2);
                     }, 'net_balance')
-                    /*->orderByDesc('net_balance')*/
                     ->having('net_balance', '!=', 0),
             )
             ->columns([
                 Tables\Columns\TextColumn::make('name')->label('المستخدم')->searchable(),
                 Tables\Columns\TextColumn::make('net_balance')->label('الرصيد الحالي')->sortable()
-            ])
-
-            ;
+            ]);
     }
 }

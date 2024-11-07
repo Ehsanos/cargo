@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Widgets;
 
+use App\Enums\LevelUserEnum;
 use App\Models\User;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,6 +16,7 @@ class BalanceUserWidget extends BaseWidget
         return $table
             ->query(
                fn()=> User::select('users.*')
+                   ->where('level',LevelUserEnum::USER->value)
                    ->selectSub(function ($query) {
                        $query->from('balances')
                            ->selectRaw('SUM(credit - debit)')

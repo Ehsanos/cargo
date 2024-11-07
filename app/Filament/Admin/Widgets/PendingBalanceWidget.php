@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Widgets;
 
+use App\Enums\LevelUserEnum;
 use App\Models\User;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -16,6 +17,7 @@ class PendingBalanceWidget extends BaseWidget
             ->poll(10)
             ->query(
                 fn()=> User::select('users.*')
+                    ->where('level',LevelUserEnum::USER->value)
                     ->selectSub(function ($query) {
                         $query->from('balances') ->where('balances.pending', '=',true)
                             ->selectRaw('SUM(credit - debit)')
