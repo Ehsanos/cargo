@@ -81,7 +81,7 @@ class BalabceTRResource extends Resource
                 Tables\Columns\TextColumn::make('debit')->label('سحب'),
                 Tables\Columns\TextColumn::make('total')->label('الرصيد'),
                 Tables\Columns\TextColumn::make('info')->label('الملاحظات'),
-                Tables\Columns\TextColumn::make('created_at')->since()->label('منذ'),
+                Tables\Columns\TextColumn::make('created_at')->date('Y-m')->label('التاريخ'),
             ])
             ->filters([
                 //
