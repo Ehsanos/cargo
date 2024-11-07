@@ -4,11 +4,12 @@ namespace App\Filament\Admin\Pages;
 
 
 
-use App\Filament\Admin\BalanceWidget\BalanceCustomerTRWidget;
-use App\Filament\Admin\BalanceWidget\BalanceCustomerView;
-use App\Filament\Admin\BalanceWidget\BalanceCustomerWidget;
-use App\Filament\Admin\BalanceWidget\PendingBalanceCustomerTRYWidget;
-use App\Filament\Admin\BalanceWidget\PendingBalanceCustomerWidget;
+
+use App\Filament\Admin\Widgets\BalanceCustomerTRWidget;
+use App\Filament\Admin\Widgets\BalanceCustomerView;
+use App\Filament\Admin\Widgets\BalanceCustomerWidget;
+use App\Filament\Admin\Widgets\PendingBalanceCustomerTRYWidget;
+use App\Filament\Admin\Widgets\PendingBalanceCustomerWidget;
 use Filament\Pages\Page;
 
 

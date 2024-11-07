@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\Admin\BalanceWidget;
+namespace App\Filament\Admin\Widgets;
 use App\Enums\LevelUserEnum;
 use App\Models\User;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 
-class PendingBalanceEmployeeTRYWidget extends BaseWidget
+class PendingBalanceEmployeeWidget extends BaseWidget
 {
-    protected static ?string $heading="الأرصدة قيد التحصيل TRY";
+    protected static ?string $heading="الأرصدة قيد التحصيل USD";
     protected int | string | array $columnSpan=1;
 
     public function table(Table $table): Table
@@ -19,13 +19,11 @@ class PendingBalanceEmployeeTRYWidget extends BaseWidget
             ->query(
                 fn()=> User::select('users.*')
                     ->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)->orWhere('level', LevelUserEnum::ADMIN->value)
-
-
                     ->selectSub(function ($query) {
                         $query->from('balances') ->where('balances.pending', '=',true)
                             ->selectRaw('SUM(credit - debit)')
                             ->whereColumn('balances.user_id', 'users.id')
-                            ->where('balances.currency_id',2)
+                            ->where('balances.currency_id',1)
                            ;
                     }, 'net_balance')
                     /*->orderByDesc('net_balance')*/
