@@ -20,7 +20,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Order extends Model implements HasMedia
 {
-    use HasFactory , InteractsWithMedia;
+    use  InteractsWithMedia;
 
     protected $casts = [
         'options' => 'array',
@@ -31,7 +31,6 @@ class Order extends Model implements HasMedia
 
     ];
     protected $guarded = [];
-
 
 
     public function citySource(): BelongsTo
@@ -70,8 +69,8 @@ class Order extends Model implements HasMedia
     }
 
 
-
-    public function fofo():HasOne {
+    public function fofo(): HasOne
+    {
         return $this->hasOne(Package::class);
     }
 
@@ -79,20 +78,22 @@ class Order extends Model implements HasMedia
     {
         return $this->hasMany(Agency::class);
     }
+
     public function balances(): HasMany
     {
         return $this->hasMany(Balance::class, 'order_id');
     }
 
 
-
-    public function weight():BelongsTo{
-        return  $this->belongsTo(Category::class)->where('type',CategoryTypeEnum::WEIGHT->value);
+    public function weight(): BelongsTo
+    {
+        return $this->belongsTo(Category::class)->where('type', CategoryTypeEnum::WEIGHT->value);
 
     }
 
-    public function size():BelongsTo{
-        return  $this->belongsTo(Category::class)->where('type',CategoryTypeEnum::SIZE->value);
+    public function size(): BelongsTo
+    {
+        return $this->belongsTo(Category::class)->where('type', CategoryTypeEnum::SIZE->value);
 
     }
 
@@ -103,12 +104,12 @@ class Order extends Model implements HasMedia
 
     public function pick(): BelongsTo
     {
-        return $this->belongsTo(User::class,'pick_id');
+        return $this->belongsTo(User::class, 'pick_id');
     }
 
     public function given(): BelongsTo
     {
-        return $this->belongsTo(User::class,'given_id');
+        return $this->belongsTo(User::class, 'given_id');
     }
 
     public function currency(): BelongsTo
