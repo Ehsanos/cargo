@@ -31,6 +31,9 @@ class BalanceUserTRWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('name')->label('المستخدم')->searchable(),
                 Tables\Columns\TextColumn::make('net_balance')->label('الرصيد الحالي')->sortable()
             ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('id')->options(User::pluck('name','id'))
+            ])
 
             ;
     }
