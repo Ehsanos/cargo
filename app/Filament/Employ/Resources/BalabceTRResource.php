@@ -22,8 +22,8 @@ class BalabceTRResource extends Resource
     protected static ?string $model = Balance::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $pluralModelLabel = ' الرصيد';
-    protected static ?string $navigationGroup = 'الرصيد TRY';
+    protected static ?string $pluralModelLabel = 'الرصيد TRY';
+    protected static ?string $navigationGroup = 'الرصيد';
     protected static ?string $label = 'الرصيد TRY';
     protected static ?string $navigationLabel = 'الرصيد TRY';
 

@@ -22,8 +22,8 @@ class BalanceResource extends Resource
     protected static ?string $model = Balance::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $pluralModelLabel = ' الرصيد';
-    protected static ?string $navigationGroup = 'الرصيد USD';
+    protected static ?string $pluralModelLabel = 'الرصيد USD';
+    protected static ?string $navigationGroup = 'الرصيد';
     protected static ?string $label = 'الرصيد USD';
     protected static ?string $navigationLabel = 'الرصيد USD';
 
