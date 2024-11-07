@@ -285,27 +285,30 @@ public static function canCreate(): bool
                         if($record->price_tr>0){
                             $priceMessage.=$record->price_tr .' TRY ';
                         }
-                            if($record->price>0){
+                        if($record->price>0){
                             $priceMessage.=' و '.$record->price .' USD ';
                         }
                         $priceMessage.='قيمة تحصيل الطلب';
 
 
-                        $farMessage='انت تأكد إستلامك مبلغ : ';
 
+                        $farMessage=null;
 
-                        if($record->far_tr>0){
-                            $farMessage.=$record->far_tr .' TRY ';
-                        }
+                        if($record->far_sender ===false){
+                            $farMessage='انت تأكد إستلامك مبلغ : ';
+                            if($record->far_tr>0){
+                                $farMessage.=$record->far_tr .' TRY ';
+                            }
                             if($record->far>0){
-                            $farMessage.=' و '.$record->far .' USD ';
-                        }
-                        $farMessage.='أجور شحن الطلب';
+                                $farMessage.=' و '.$record->far .' USD ';
+                            }
+                            $farMessage.='أجور شحن الطلب';
 
+                        }
                         if ($totalPrice > 0) {
                             return [
                                 Forms\Components\Placeholder::make('msg')->content($priceMessage)->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])->label('تنبيه'),
-                                Forms\Components\Placeholder::make('msg')->content($farMessage)->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])->label('تنبيه')
+                                Forms\Components\Placeholder::make('msg')->content($farMessage)->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])->label('تنبيه')->visible($farMessage!=null)
                             ];
                         }
                         return [
