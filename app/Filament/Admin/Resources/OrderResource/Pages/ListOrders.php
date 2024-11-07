@@ -18,6 +18,7 @@ class ListOrders extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+            Actions\Action::make('export')->url(route('export-order'),true)->label('تصدير إلى Excel'),
         ];
     }
 
