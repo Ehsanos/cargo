@@ -6,6 +6,7 @@ use App\Enums\BalanceTypeEnum;
 use App\Filament\Admin\Resources\BalabceTRResource\Pages;
 use App\Filament\Admin\Resources\BalabceTRResource\RelationManagers;
 use App\Models\BalabceTR;
+use App\Models\Balance;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class BalabceTRResource extends Resource
 {
+
+    protected static ?string $model = Balance::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $pluralModelLabel = 'الرصيد TRY';
     protected static ?string $navigationGroup = 'الرصيد';
