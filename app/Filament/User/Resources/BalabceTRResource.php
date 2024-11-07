@@ -4,11 +4,11 @@ namespace App\Filament\User\Resources;
 
 use App\Enums\ActivateStatusEnum;
 use App\Enums\BalanceTypeEnum;
-use App\Filament\User\Resources\BalanceResource\Pages;
-use App\Filament\User\Resources\BalanceResource\RelationManagers;
+use App\Filament\User\Resources\BalabceTRResource\Pages;
+use App\Filament\User\Resources\BalabceTRResource\RelationManagers;
+use App\Models\BalabceTR;
 use App\Models\Balance;
 use App\Models\User;
-use Filament\Actions\CreateAction;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -19,15 +19,15 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class BalanceResource extends Resource
+class BalabceTRResource extends Resource
 {
     protected static ?string $model = Balance::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationLabel = "الرصيد USD";
+    protected static ?string $navigationLabel = "الرصيد TRY";
     protected static ?string $navigationGroup = "الرصيد";
-    protected static ?string $label = 'الرصيد USD';
-    protected static ?string $pluralLabel = 'الرصيد USD';
+    protected static ?string $label = 'الرصيد TRY';
+    protected static ?string $pluralLabel = 'الرصيد TRY';
 
     public static function canCreate(): bool
     {
@@ -74,7 +74,7 @@ class BalanceResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn($query)=>$query->where(['user_id' => auth()->id(), 'is_complete' => true])->where('currency_id',1)->latest())
+            ->modifyQueryUsing(fn($query)=>$query->where(['user_id' => auth()->id(), 'is_complete' => true])->where('currency_id',2)->latest())
 
             ->columns([
                 Tables\Columns\TextColumn::make('credit')->label('ايداع'),
@@ -164,9 +164,9 @@ class BalanceResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBalances::route('/'),
-            'create' => Pages\CreateBalance::route('/create'),
-            'edit' => Pages\EditBalance::route('/{record}/edit'),
+            'index' => Pages\ListBalabceTRS::route('/'),
+            'create' => Pages\CreateBalabceTR::route('/create'),
+            'edit' => Pages\EditBalabceTR::route('/{record}/edit'),
         ];
     }
 }
