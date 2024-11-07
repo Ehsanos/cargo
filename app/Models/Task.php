@@ -17,7 +17,7 @@ class Task extends Model
         return $this->belongsTo(User::class)->where('level',LevelUserEnum::STAFF->value)->orWhere('level',LevelUserEnum::BRANCH->value);
     }
 
-    public function created(): BelongsTo
+    public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class,'created_id');
     }
