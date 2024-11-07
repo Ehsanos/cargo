@@ -12,7 +12,7 @@ class BalanceCustomerTRWidget extends BaseWidget
 {
   protected static ?string $heading="أرصدة الزبائن TRY";
 
-   protected int | string | array $columnSpan=1;
+   protected int | string | array $columnSpan=2;
 
     public function table(Table $table): Table
     {
