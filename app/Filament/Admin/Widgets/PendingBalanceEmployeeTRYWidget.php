@@ -11,7 +11,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 class PendingBalanceEmployeeTRYWidget extends BaseWidget
 {
     protected static ?string $heading="الأرصدة قيد التحصيل TRY";
-    protected int | string | array $columnSpan=2;
+    protected int | string | array $columnSpan=1;
 
     public function table(Table $table): Table
     {

@@ -11,7 +11,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 class BalanceEmployeeWidget extends BaseWidget
 {
   protected static ?string $heading="أرصدة الزبائن USD";
-  protected int | string | array $columnSpan=2;
+  protected int | string | array $columnSpan=1;
     public function table(Table $table): Table
     {
         return $table

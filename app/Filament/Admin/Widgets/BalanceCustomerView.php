@@ -16,7 +16,7 @@ class BalanceCustomerView extends BaseWidget
     {
 
         $totalUsd=Balance::
-        whereHas('user',fn($query)=>$query->where('users.level',LevelUserEnum::USER->value))->selectRaw('SUM(credit - debit)as total')
+                whereHas('user',fn($query)=>$query->where('users.level',LevelUserEnum::USER->value))->selectRaw('SUM(credit - debit)as total')
 
         ->where('balances.is_complete', 1)
         ->where('balances.pending', '=',false)
