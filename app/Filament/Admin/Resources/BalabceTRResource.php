@@ -3,9 +3,9 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Enums\BalanceTypeEnum;
-use App\Filament\Admin\Resources\BalanceResource\Pages;
-use App\Filament\Admin\Resources\BalanceResource\RelationManagers;
-use App\Models\Balance;
+use App\Filament\Admin\Resources\BalabceTRResource\Pages;
+use App\Filament\Admin\Resources\BalabceTRResource\RelationManagers;
+use App\Models\BalabceTR;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -15,15 +15,13 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class BalanceResource extends Resource
+class BalabceTRResource extends Resource
 {
-    protected static ?string $model = Balance::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $pluralModelLabel = 'الرصيد USD';
+    protected static ?string $pluralModelLabel = 'الرصيد TRY';
     protected static ?string $navigationGroup = 'الرصيد';
-    protected static ?string $label = 'الرصيد USD';
-    protected static ?string $navigationLabel = 'الرصيد USD';
+    protected static ?string $label = 'الرصيد TRY';
+    protected static ?string $navigationLabel = 'الرصيد TRY';
 
     public static function canCreate(): bool
     {
@@ -50,7 +48,7 @@ class BalanceResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->modifyQueryUsing(fn($query) => $query->where('user_id', auth()->id())->where('currency_id',1)->latest())
+        return $table->modifyQueryUsing(fn($query) => $query->where('user_id', auth()->id())->where('currency_id',2)->latest())
             ->columns([
                 Tables\Columns\TextColumn::make('credit')->label('إيداع'),
                 Tables\Columns\TextColumn::make('debit')->label('قبض'),
@@ -83,9 +81,9 @@ class BalanceResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBalances::route('/'),
-            'create' => Pages\CreateBalance::route('/create'),
-            'edit' => Pages\EditBalance::route('/{record}/edit'),
+            'index' => Pages\ListBalabceTRS::route('/'),
+            'create' => Pages\CreateBalabceTR::route('/create'),
+            'edit' => Pages\EditBalabceTR::route('/{record}/edit'),
         ];
     }
 }
