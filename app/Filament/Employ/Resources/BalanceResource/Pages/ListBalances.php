@@ -30,36 +30,41 @@ class ListBalances extends ListRecords
                             if ($value <= 0) {
                                 $fail('يجب أن تكون القيمة أكبر من 0');
                             }
-                            if(auth()->user()->total_balance<$value){
+                            if (auth()->user()->total_balance < $value) {
                                 $fail('لا تملك رصيد كافي');
                             }
                         },
                     ]),
 
 
-
                 Select::make('user_id')->options(User::pluck('name', 'id'))->searchable()->label('الطرف الثاني في القيد'),
-               TextInput::make('customer_name')->required()->label('اسم المستلم'),
+                TextInput::make('customer_name')->required()->label('اسم المستلم'),
                 TextInput::make('info')->label('ملاحظات')
             ])
                 ->action(function ($data) {
-                $user=User::find($data['user_id']);
-                if(!$user){
-                    Notification::make('success')->title('فشل العملية')->body('لم يتم العثور على المستخدم')->danger()->send();
+                    $user = User::find($data['user_id']);
+                    if (!$user) {
+                        Notification::make('success')->title('فشل العملية')->body('لم يتم العثور على المستخدم')->danger()->send();
 
-                    return ;
-                }
+                        return;
+                    }
+
+                    if ($user->total_balance < $data['value']) {
+                        Notification::make('success')->title('فشل العملية')->body('لا تملك رصيد كافي')->danger()->send();
+
+                        return;
+                    }
                     \DB::beginTransaction();
                     try {
                         Balance::create([
                             'credit' => 0,
-                            'debit' =>$data['value'],
+                            'debit' => $data['value'],
                             'type' => BalanceTypeEnum::PUSH->value,
                             'is_complete' => true,
                             'user_id' => auth()->id(),
-
+                            'currency_id' => 1,
                             'info' => $data['info'],
-                            'customer_name'=>$data['customer_name'],
+                            'customer_name' => $data['customer_name'],
 
                         ]);
 
@@ -69,9 +74,10 @@ class ListBalances extends ListRecords
                             'type' => BalanceTypeEnum::CATCH->value,
                             'is_complete' => false,
                             'user_id' => $data['user_id'],
+                            'currency_id' => 1,
 
                             'info' => $data['info'],
-                            'customer_name'=>$data['customer_name'],
+                            'customer_name' => $data['customer_name'],
 
                         ]);
                         \DB::commit();
@@ -82,7 +88,7 @@ class ListBalances extends ListRecords
 
                     }
 
-            })->label('إضافة سند'),
+                })->label('إضافة سند'),
         ];
     }
 }

@@ -125,6 +125,16 @@ class User extends Authenticatable implements HasMedia, FilamentUser, HasAvatar
     public function getTotalBalanceAttribute(): float
     {
         $total = DB::table('balances')->where('user_id', $this->id)->where('is_complete', true)
+                ->where('currency_id',1)
+                ->where('pending', '!=', true)
+                ->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0;
+        return sprintf('%.2f', $total);
+    }
+
+    public function getTotalBalanceTrAttribute(): float
+    {
+        $total = DB::table('balances')->where('user_id', $this->id)->where('is_complete', true)
+                ->where('currency_id',2)
                 ->where('pending', '!=', true)
                 ->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0;
         return sprintf('%.2f', $total);

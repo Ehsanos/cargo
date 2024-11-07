@@ -90,7 +90,7 @@ class BalabceTRResource extends Resource
                 Tables\Actions\Action::make('transfer')
                     ->form([
                         Forms\Components\Placeholder::make('content')->dehydrated(false)->content('سيتم تحويل الرصيد من حسابك إلى حساب مستخدم آخر ولن تستطيع التراجع عن العملية'),
-                        Forms\Components\TextInput::make('debit')->label('قيمة الحوالة')->numeric()->gt(0),
+                        Forms\Components\TextInput::make('debit')->label('قيمة الحوالة')->numeric(),
                         Forms\Components\TextInput::make('code')->label('رقم المستخدم الذي تريد التحويل له')
 
                     ])
@@ -103,7 +103,7 @@ class BalabceTRResource extends Resource
 
                         }
 
-                        if (auth()->user()->total_balance < (float)$data['debit']) {
+                        if (auth()->user()->total_balance_tr < (float)$data['debit']) {
                             Notification::make('error')->title('فشل في العملية')
                                 ->body('لا تملك رصيد كافي لتحويل المبلغ')->danger()->send();
                             return;
@@ -121,6 +121,7 @@ class BalabceTRResource extends Resource
                                 'debit' => $data['debit'],
                                 'type' => BalanceTypeEnum::PUSH->value,
                                 'is_complete' => 1,
+                                'currency_id'=>2,
                                 'info' => 'تحويل رصيد للمستخدم ' . $user->name,
                                 'user_id' => auth()->id(),
 
@@ -132,7 +133,8 @@ class BalabceTRResource extends Resource
                                 'type' => BalanceTypeEnum::CATCH->value,
                                 'is_complete' => 1,
                                 'info' => 'تحويل رصيد من المستخدم ' . auth()->user()->name,
-                                'user_id' => $user->id
+                                'user_id' => $user->id,
+                                'currency_id'=>2,
                             ]);
                             \DB::commit();
                             Notification::make('success')->title('نجاح العملية')
@@ -145,11 +147,11 @@ class BalabceTRResource extends Resource
                     })->label('تحويل الرصيد'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+               // Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

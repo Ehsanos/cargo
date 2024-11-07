@@ -74,8 +74,7 @@ class BalanceResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn($query)=>$query->where(['user_id' => auth()->id(), 'is_complete' => true])->where('currency_id',1)->latest())
-
+            ->modifyQueryUsing(fn($query) => $query->where(['user_id' => auth()->id(), 'is_complete' => true])->where('currency_id', 1)->latest())
             ->columns([
                 Tables\Columns\TextColumn::make('credit')->label('ايداع'),
                 Tables\Columns\TextColumn::make('debit')->label('سحب'),
@@ -90,7 +89,7 @@ class BalanceResource extends Resource
                 Tables\Actions\Action::make('transfer')
                     ->form([
                         Forms\Components\Placeholder::make('content')->dehydrated(false)->content('سيتم تحويل الرصيد من حسابك إلى حساب مستخدم آخر ولن تستطيع التراجع عن العملية'),
-                        Forms\Components\TextInput::make('debit')->label('قيمة الحوالة')->numeric()->gt(0),
+                        Forms\Components\TextInput::make('debit')->label('قيمة الحوالة')->numeric(),
                         Forms\Components\TextInput::make('code')->label('رقم المستخدم الذي تريد التحويل له')
 
                     ])
@@ -123,7 +122,7 @@ class BalanceResource extends Resource
                                 'is_complete' => 1,
                                 'info' => 'تحويل رصيد للمستخدم ' . $user->name,
                                 'user_id' => auth()->id(),
-
+                                'currency_id' => 1,
                             ]);
 
                             Balance::create([
@@ -132,7 +131,8 @@ class BalanceResource extends Resource
                                 'type' => BalanceTypeEnum::CATCH->value,
                                 'is_complete' => 1,
                                 'info' => 'تحويل رصيد من المستخدم ' . auth()->user()->name,
-                                'user_id' => $user->id
+                                'user_id' => $user->id,
+                                'currency_id' => 1,
                             ]);
                             \DB::commit();
                             Notification::make('success')->title('نجاح العملية')

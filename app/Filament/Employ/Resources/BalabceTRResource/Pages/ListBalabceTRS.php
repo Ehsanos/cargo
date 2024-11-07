@@ -2,8 +2,16 @@
 
 namespace App\Filament\Employ\Resources\BalabceTRResource\Pages;
 
+use App\Enums\BalanceTypeEnum;
 use App\Filament\Employ\Resources\BalabceTRResource;
+use App\Models\Balance;
+use App\Models\User;
+use Closure;
 use Filament\Actions;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 
 class ListBalabceTRS extends ListRecords
@@ -13,7 +21,74 @@ class ListBalabceTRS extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\Action::make('add')->form([
+                Placeholder::make('type')->dehydrated(false)->content('سند دفع'),
+
+                TextInput::make('value')->label('القيمة')->numeric()->required()
+                    ->rules([
+                        fn(): Closure => function (string $attribute, $value, Closure $fail) {
+                            if ($value <= 0) {
+                                $fail('يجب أن تكون القيمة أكبر من 0');
+                            }
+                            if (auth()->user()->total_balance_tr < $value) {
+                                $fail('لا تملك رصيد كافي');
+                            }
+                        },
+                    ]),
+
+
+                Select::make('user_id')->options(User::pluck('name', 'id'))->searchable()->label('الطرف الثاني في القيد'),
+                TextInput::make('customer_name')->required()->label('اسم المستلم'),
+                TextInput::make('info')->label('ملاحظات')
+            ])
+                ->action(function ($data) {
+                    $user = User::find($data['user_id']);
+                    if (!$user) {
+                        Notification::make('success')->title('فشل العملية')->body('لم يتم العثور على المستخدم')->danger()->send();
+
+                        return;
+                    }
+
+                    if ($user->total_balance_tr < $data['value']) {
+                        Notification::make('success')->title('فشل العملية')->body('لا تملك رصيد كافي')->danger()->send();
+
+                        return;
+                    }
+                    \DB::beginTransaction();
+                    try {
+                        Balance::create([
+                            'credit' => 0,
+                            'debit' => $data['value'],
+                            'type' => BalanceTypeEnum::PUSH->value,
+                            'is_complete' => true,
+                            'user_id' => auth()->id(),
+                            'currency_id' => 2,
+                            'info' => $data['info'],
+                            'customer_name' => $data['customer_name'],
+
+                        ]);
+
+                        Balance::create([
+                            'credit' => $data['value'],
+                            'debit' => 0,
+                            'type' => BalanceTypeEnum::CATCH->value,
+                            'is_complete' => false,
+                            'user_id' => $data['user_id'],
+                            'currency_id' => 2,
+
+                            'info' => $data['info'],
+                            'customer_name' => $data['customer_name'],
+
+                        ]);
+                        \DB::commit();
+                        Notification::make('success')->title('نجاح العملية')->body('تم إضافة السند')->success()->send();
+                    } catch (\Exception | \Error $e) {
+                        \DB::rollBack();
+                        Notification::make('success')->title('فشل العملية')->body('لم يتم إضافة السند')->danger()->send();
+
+                    }
+
+                })->label('إضافة سند'),
         ];
     }
 }
