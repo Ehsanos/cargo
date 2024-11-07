@@ -51,7 +51,7 @@ protected static ?string $navigationLabel='تصريف دولار';
             ])->label('نوع العملية')->required(),*/
             Select::make('from')->options($accounts)->label('الحساب الدائن')->required()->searchable(),
             Select::make('to')->options($accounts)->label('الحساب المدين')->required()->searchable(),
-            TextInput::make('price')->label('سعر صرف التركي بالنسبة للدولار')->required(),
+            TextInput::make('price')->label('سعر صرف الدولار بالنسبة للتركي')->required(),
 
             TextInput::make('value')->label('القيمة بالدولار')->rules([
                 fn(): Closure => function (string $attribute, $value, Closure $fail) {
