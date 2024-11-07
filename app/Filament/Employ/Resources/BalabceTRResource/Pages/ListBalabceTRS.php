@@ -49,7 +49,7 @@ class ListBalabceTRS extends ListRecords
                         return;
                     }
 
-                    if ($user->total_balance_tr < $data['value']) {
+                    if (auth()->user()->total_balance_tr < $data['value']) {
                         Notification::make('success')->title('فشل العملية')->body('لا تملك رصيد كافي')->danger()->send();
 
                         return;

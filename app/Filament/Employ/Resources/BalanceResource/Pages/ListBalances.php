@@ -38,7 +38,7 @@ class ListBalances extends ListRecords
 
 
                 Select::make('user_id')->options(User::pluck('name', 'id'))->searchable()->label('الطرف الثاني في القيد'),
-                TextInput::make('customer_name')->required()->label('اسم المستلم'),
+                TextInput::make('customer_name')->label('اسم المستلم'),
                 TextInput::make('info')->label('ملاحظات')
             ])
                 ->action(function ($data) {
@@ -49,7 +49,7 @@ class ListBalances extends ListRecords
                         return;
                     }
 
-                    if ($user->total_balance < $data['value']) {
+                    if (auth()->user()->total_balance < $data['value']) {
                         Notification::make('success')->title('فشل العملية')->body('لا تملك رصيد كافي')->danger()->send();
 
                         return;
