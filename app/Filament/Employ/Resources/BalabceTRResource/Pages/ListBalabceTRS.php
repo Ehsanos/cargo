@@ -37,7 +37,7 @@ class ListBalabceTRS extends ListRecords
                     ]),
 
 
-                Select::make('user_id')->options(User::pluck('name', 'id'))->searchable()->label('الطرف الثاني في القيد'),
+                Select::make('user_id')->options(User::pluck('name', 'id'))->searchable()->label('الطرف الثاني في القيد')->required(),
                 TextInput::make('customer_name')->required()->label('اسم المستلم'),
                 TextInput::make('info')->label('ملاحظات')
             ])
