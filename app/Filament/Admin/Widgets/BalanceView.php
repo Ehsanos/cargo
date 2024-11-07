@@ -19,7 +19,7 @@ class BalanceView extends BaseWidget
         // dd($balances);
         $list = [];
         foreach ($balances as $balance) {
-            $list[] = Stat::make('رصيد صندوق ' . $balance->currency?->name, $balance->totalBalance);
+            $list[] = Stat::make('رصيد صندوق ' . $balance->currency?->name, sprintf('%.2f',$balance->totalBalance));
 
         }
         return $list;

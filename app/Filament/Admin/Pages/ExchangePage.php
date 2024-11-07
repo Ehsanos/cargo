@@ -27,6 +27,8 @@ class ExchangePage extends Page implements HasForms
     protected static ?string $navigationGroup = 'الحسابات المالية';
     protected static ?string $label = 'إنشاء سند';
     protected static ?string $pluralLabel = 'إنشاء سند';
+    protected static ?string $navigationLabel='مناقلات الحسابات المالية';
+    protected ?string $heading='مناقلات الحسابات المالية';
 
     public $data = [
         'from' => '',
