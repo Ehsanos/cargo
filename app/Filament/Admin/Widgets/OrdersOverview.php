@@ -13,7 +13,7 @@ use App\Filament\Admin\Resources\OrderResource;
 class OrdersOverview extends BaseWidget
 {
     protected static bool $isLazy = true;
-
+protected int | string | array $columnSpan=4;
     protected static ?string $pollingInterval = '10s';
 
 

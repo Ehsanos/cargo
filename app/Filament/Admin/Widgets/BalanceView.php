@@ -11,6 +11,9 @@ class BalanceView extends BaseWidget
     protected static ?string $pollingInterval = '10s';
     protected int|string|array $columnSpan = 4;
 
+
+
+
     protected function getStats(): array
     {
         $balances = Balance::groupBy('currency_id')->where([
