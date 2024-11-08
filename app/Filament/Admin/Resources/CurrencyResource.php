@@ -74,8 +74,8 @@ class CurrencyResource extends Resource
                 Tables\Columns\TextColumn::make('code')->label('رمز العملة'),
                 Tables\Columns\TextColumn::make('is_main')->label('نوع العملة')->formatStateUsing(fn($state)=>$state?'رئيسية':'')->color(fn($state)=>$state?'danger':null),
                 Tables\Columns\TextInputColumn::make('value')->label('سعر 1 من العملة الرئيسية')->extraInputAttributes(fn($record)=>$record->is_main?['readonly'=>'readonly']:[]),
-                Tables\Columns\TextInputColumn::make('down_value')->label('سعر الشراء'),
-                Tables\Columns\TextInputColumn::make('up_value')->label('سعرالمبيع'),
+                Tables\Columns\TextInputColumn::make('down_value')->label('سعر الشراء')->extraInputAttributes(fn($record)=>$record->is_main?['readonly'=>'readonly']:[]),
+                Tables\Columns\TextInputColumn::make('up_value')->label('سعرالمبيع')->extraInputAttributes(fn($record)=>$record->is_main?['readonly'=>'readonly']:[]),
                 Tables\Columns\TextColumn::make('updated_at')->since()->label('آخر تعديل'),
 
 

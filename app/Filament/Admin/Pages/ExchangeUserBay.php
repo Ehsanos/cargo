@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Pages;
 
 use App\Models\Balance;
+use App\Models\Currency;
 use App\Models\User;
 use Closure;
 use Filament\Forms\Components\Select;
@@ -38,6 +39,7 @@ class ExchangeUserBay extends Page  implements HasForms
 
     public function mount(): void
     {
+        $this->data['price']=Currency::find(2)->up_value;
         $this->form->fill($this->data);
     }
 

@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Pages;
 
 use App\Models\Balance;
+use App\Models\Currency;
 use App\Models\User;
 use Closure;
 use Filament\Forms\Components\Select;
@@ -47,6 +48,8 @@ class ExchangePage extends Page implements HasForms
     public function getFormSchema(): array
     {
         $accounts = User::accounts()->pluck('name', 'id');
+
+
         return [
             Select::make('from')->options($accounts)->label('الحساب الرئيسي')->required(),
             Select::make('to')->options($accounts)->label('الحساب المقابل')->required(),
@@ -56,7 +59,7 @@ class ExchangePage extends Page implements HasForms
                         $fail('يجب ان تكون القيمة أكبر من 0');
                     }
                 },
-            ])->required(),
+            ])->required()->numeric(),
             Textarea::make('info')->label('بيانات'),
         ];
     }

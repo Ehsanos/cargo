@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Filament\Admin\Pages;
+namespace App\Filament\Branch\Pages;
 
 use App\Models\Balance;
 use App\Models\Currency;
 use App\Models\User;
 use Closure;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -45,24 +46,21 @@ protected static ?string $navigationLabel='تصريف دولار';
 
     public function getFormSchema(): array
     {
-        $accounts = User::pluck('name', 'id');
-        return [
-          /*  Select::make('type')->options([
-                'debit' => 'مبيع دولار',
-                'credit' => 'شراء دولار',
-            ])->label('نوع العملية')->required(),*/
-            Select::make('from')->options($accounts)->label('الحساب الدائن')->required()->searchable(),
-            Select::make('to')->options($accounts)->label('الحساب المدين')->required()->searchable(),
-            TextInput::make('price')->label('سعر صرف الدولار بالنسبة للتركي')->required(),
 
-            TextInput::make('value')->label('القيمة بالدولار')->rules([
+        return [
+
+            TextInput::make('price')->label('سعر صرف الدولار بالنسبة للتركي')->required()->readOnly(),
+
+            TextInput::make('value')->numeric()->label('القيمة بالدولار')->rules([
                 fn(): Closure => function (string $attribute, $value, Closure $fail) {
                     if ($value <= 0) {
                         $fail('يجب ان تكون القيمة أكبر من 0');
                     }
                 },
-            ])->required(),
+            ])->required()->live()->dehydrated(false),
             Textarea::make('info')->label('بيانات'),
+            Placeholder::make('message')->dehydrated(false)->content(fn($get)=>"سيتم تحويل مبلغ {$get('value')} من صندوق التركي  إلى صندوق الدولار بقيمة ". (float)$get('value')*(float)$get('price'))->label('تحذير')->extraAttributes(['style'=>'color:red']),
+
         ];
     }
 
@@ -70,17 +68,11 @@ protected static ?string $navigationLabel='تصريف دولار';
     public function submit()
     {
         $data = $this->form->getState();
-        $accountSource = User::find($data['from']);
 
-        $accountTarget = User::find($data['to']);
         \DB::beginTransaction();
         try {
-            if ($accountSource == null || $accountTarget == null) {
-                throw new \Exception('تأكد من تحديد الحسابات بشكل صحيح');
-            }
-
-               // dd($accountSource,$data['value']);
-                if($accountSource->total_balance < $data['value']){
+          $down=  Currency::find(2)->down_value;
+                if(auth()->user()->total_balance < $data['value']){
                     throw  new \Exception('لا تملك رصيد كافي');
                 }
                 Balance::create([
@@ -88,20 +80,20 @@ protected static ?string $navigationLabel='تصريف دولار';
                     'debit' => $data['value'],
                     'is_complete' => true,
                     'pending' => false,
-                    'user_id' => $accountSource->id,
+                    'user_id' => auth()->id(),
                     'currency_id' => 1,
-                    'ex_cur' => $data['price'],
-                    'info' => 'تحويل إلى حساب #' . $accountTarget->name . ' - ' . $data['info'],
+                    'ex_cur' => $down,
+                    'info' => 'تحويل من حساب الدولار إلى حساب التركي #' . ' - ' . $data['info'],
                 ]);
                 Balance::create([
-                    'credit' => $data['value'] * $data['price'],
+                    'credit' => $data['value'] * $down,
                     'debit' => 0,
                     'is_complete' => true,
                     'pending' => false,
-                    'user_id' => $accountTarget->id,
+                    'user_id' => auth()->id(),
                     'currency_id' =>2,
-                    'ex_cur' => $data['price'],
-                    'info' => 'تحويل من حساب #' . $accountSource->name . ' - ' . $data['info'],
+                    'ex_cur' => $down,
+                    'info' => 'تحويل من حساب الدولار إلى حساب التركي #' . ' - ' . $data['info'],
                 ]);
 
 
