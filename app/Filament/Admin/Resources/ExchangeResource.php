@@ -22,7 +22,7 @@ class ExchangeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $pluralModelLabel = 'طلبات تصريف العملة';
-    protected static ?string $navigationGroup = 'الرصيد';
+    protected static ?string $navigationGroup = 'الحسابات المالية';
 
     protected static ?string $label = 'طلبات تصريف العملة';
     protected static ?string $navigationLabel = 'طلبات تصريف العملة';
