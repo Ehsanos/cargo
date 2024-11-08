@@ -85,7 +85,7 @@ class ListBalances extends ListRecords
                 //
                 ->action(function ($data) {
                     \DB::beginTransaction();
-                    if (auth()->user()->total_balance < $data['value']) {
+                    if (auth()->user()->total_balance < $data['value'] && !auth()->user()->hasRole('super_admin')) {
                         Notification::make('error')->title('فشل العملية')->body('لا تملك رصيد كافي')->danger()->send();
                         return;
                     }
@@ -271,7 +271,7 @@ class ListBalances extends ListRecords
                     ->action(function ($data) {
                         \DB::beginTransaction();
                         try {
-                            if (auth()->user()->total_balance < $data['value']) {
+                            if (auth()->user()->total_balance < $data['value'] && !auth()->user()->hasRole('super_admin')) {
                                 Notification::make('error')->title('فشل العملية')->body('لا تملك رصيد كافي')->danger()->send();
                                 return;
                             }
