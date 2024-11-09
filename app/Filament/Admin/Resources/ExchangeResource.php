@@ -64,7 +64,7 @@ class ExchangeResource extends Resource
                 Tables\Columns\TextColumn::make('amount')->label('الكمية'),
                 Tables\Columns\TextColumn::make('exchange')->label('سعر الصرف'),
                 Tables\Columns\TextColumn::make('user.name')->label('طلب من'),
-                Tables\Columns\TextColumn::make('status')->formatStateUsing(fn($state) => OrderStatusEnum::tryFrom($state)?->getLabel())->label('الحالة'),
+                Tables\Columns\TextColumn::make('status')->formatStateUsing(fn($state) => OrderStatusEnum::tryFrom($state)?->getLabel())->label('الحالة')->sortable(),
             ])
             ->filters([
                 //
