@@ -402,6 +402,7 @@ class OrderResource extends Resource
 //                Tables\Columns\TextColumn::make('cityTarget.name')->label('الى بلدة ')->searchable(),
 //                Tables\Columns\TextColumn::make('created_at')->label('تاريخ الشحنة')
 //                    ->formatStateUsing(fn($state) => Carbon::parse($state)->diffForHumans()) // عرض الزمن بشكل نسبي
+                Tables\Columns\TextColumn::make('pick.name')->formatStateUsing(fn($record)=>'موظف الإلتقاط : '.$record->pick?->name)->description(fn($record)=>'موظف التسليم : '.$record->given?->name)
 
 
             ])->defaultSort('created_at', 'desc')

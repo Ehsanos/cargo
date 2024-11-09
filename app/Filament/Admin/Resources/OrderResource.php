@@ -419,6 +419,7 @@ class OrderResource extends Resource
                         return url('https://wa.me/' . ltrim($record?->receive_phone, '+').'?text='.$message);
                     })->openUrlInNewTab()
                     ->searchable()->color('danger'),
+                Tables\Columns\TextColumn::make('pick.name')->formatStateUsing(fn($record)=>'موظف الإلتقاط : '.$record->pick?->name)->description(fn($record)=>'موظف التسليم : '.$record->given?->name)
 
 
             ])->defaultSort('created_at', 'desc')
