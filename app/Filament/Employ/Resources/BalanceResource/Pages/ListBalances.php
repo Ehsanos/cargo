@@ -64,7 +64,7 @@ class ListBalances extends ListRecords
                             'user_id' => auth()->id(),
                             'currency_id' => 1,
                             'info' => $data['info'],
-                            'customer_name' => $data['customer_name'],
+                            'customer_name' => $user?->name,
 
                         ]);
 
@@ -77,7 +77,7 @@ class ListBalances extends ListRecords
                             'currency_id' => 1,
 
                             'info' => $data['info'],
-                            'customer_name' => $data['customer_name'],
+                            'customer_name' => auth()->user()->name,
 
                         ]);
                         \DB::commit();

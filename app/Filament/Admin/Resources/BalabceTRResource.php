@@ -55,8 +55,9 @@ class BalabceTRResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('credit')->label('إيداع'),
                 Tables\Columns\TextColumn::make('debit')->label('قبض'),
-                //Tables\Columns\TextColumn::make('customer_name')->label('اسم الزبون المستلم'),
+
                 Tables\Columns\TextColumn::make('info')->label('الملاحظات'),
+                Tables\Columns\TextColumn::make('customer_name')->label('الطرف المقابل'),
                 Tables\Columns\TextColumn::make('total')->label('الرصيد'),
             ])
             ->filters([

@@ -114,6 +114,7 @@ class BalanceResource extends Resource
                 Tables\Columns\TextColumn::make('debit')->label('قبض'),
                 Tables\Columns\TextColumn::make('customer_name')->label('اسم الزبون المستلم'),
                 Tables\Columns\TextColumn::make('info')->label('الملاحظات'),
+                Tables\Columns\TextColumn::make('customer_name')->label('الطرف المقابل'),
                 Tables\Columns\TextColumn::make('total')->label('الرصيد'),
                 Tables\Columns\TextColumn::make('created_at')->date('Y-m')->label('التاريخ'),
 

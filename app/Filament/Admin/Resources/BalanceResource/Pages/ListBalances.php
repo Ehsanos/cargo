@@ -40,7 +40,7 @@ class ListBalances extends ListRecords
                 ->action(function ($data) {
 
                     \DB::beginTransaction();
-
+$user=User::find($data['user_id']);
                     try {
                         Balance::create([
                             'type' => BalanceTypeEnum::CATCH->value,
@@ -50,6 +50,7 @@ class ListBalances extends ListRecords
                             'info' => $data['info'],
                             'currency_id'=>1,
                             'is_complete' => true,
+                            'customer_name'=>auth()->user()->name,
                         ]);
 
                         Balance::create([
@@ -60,6 +61,7 @@ class ListBalances extends ListRecords
                             'info' => $data['info'],
                             'currency_id'=>1,
                             'is_complete' => true,
+                            'customer_name'=>$user->name,
                         ]);
                         \DB::commit();
                         Notification::make('success')->title('نجاح العملية')->body('تم إضافة السندات بنجاح')->success()->send();
@@ -90,7 +92,7 @@ class ListBalances extends ListRecords
                         return;
                     }
                     try {
-
+                        $user=User::find($data['user_id']);
                         Balance::create([
                             'type' => BalanceTypeEnum::PUSH->value,
                             'user_id' => $data['user_id'],
@@ -99,6 +101,7 @@ class ListBalances extends ListRecords
                             'info' => $data['info'],
                             'currency_id'=>1,
                             'is_complete' => true,
+                            'customer_name'=>auth()->user()->name,
                         ]);
                         Balance::create([
                             'type' => BalanceTypeEnum::CATCH->value,
@@ -108,6 +111,7 @@ class ListBalances extends ListRecords
                             'info' => $data['info'],
                             'currency_id'=>1,
                             'is_complete' => true,
+                            'customer_name'=>$user->name,
                         ]);
 
                         \DB::commit();
@@ -150,6 +154,7 @@ class ListBalances extends ListRecords
                                     'info' => $user['info'],
                                     'currency_id'=>1,
                                     'is_complete' => true,
+                                    'customer_name'=>'بداية المدة'
                                 ]);
                             }
                             \DB::commit();
@@ -190,6 +195,7 @@ class ListBalances extends ListRecords
                                     'info' => $user['info'],
                                     'currency_id'=>1,
                                     'is_complete' => true,
+                                    'customer_name'=>'بداية المدة'
                                 ]);
                             }
                             \DB::commit();
@@ -225,7 +231,7 @@ class ListBalances extends ListRecords
                     ->action(function ($data) {
                         \DB::beginTransaction();
                         try {
-
+                            $user=User::find($data['user_id']);
                             Balance::create([
                                 'type' => BalanceTypeEnum::PUSH->value,
                                 'user_id' => $data['user_id'],
@@ -234,6 +240,7 @@ class ListBalances extends ListRecords
                                 'info' => $data['info'],
                                 'currency_id'=>1,
                                 'is_complete' => true,
+                                'customer_name'=>auth()->user()->name,
                             ]);
                             Balance::create([
                                 'type' => BalanceTypeEnum::CATCH->value,
@@ -243,6 +250,7 @@ class ListBalances extends ListRecords
                                 'info' => $data['info'],
                                 'is_complete' => true,
                                 'currency_id'=>1,
+                                'customer_name'=>$user->name,
                             ]);
 
                             \DB::commit();
@@ -275,6 +283,7 @@ class ListBalances extends ListRecords
                                 Notification::make('error')->title('فشل العملية')->body('لا تملك رصيد كافي')->danger()->send();
                                 return;
                             }
+                            $user=User::find($data['user_id']);
                             Balance::create([
                                 'type' => BalanceTypeEnum::CATCH->value,
                                 'user_id' => $data['user_id'],
@@ -283,6 +292,7 @@ class ListBalances extends ListRecords
                                 'info' => $data['info'],
                                 'currency_id'=>1,
                                 'is_complete' => true,
+                                'customer_name'=>auth()->user()->name,
                             ]);
 
                             Balance::create([
@@ -293,6 +303,7 @@ class ListBalances extends ListRecords
                                 'info' => $data['info'],
                                 'currency_id'=>1,
                                 'is_complete' => true,
+                                'customer_name'=>$user->name,
                             ]);
 
                             \DB::commit();
