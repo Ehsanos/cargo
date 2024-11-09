@@ -511,7 +511,7 @@ class OrderResource extends Resource
                                 Notification::make('success')->title('نجاح العملية')->body('تم تحديد موظف التسليم بنجاح')->success()->send();
                             }
                         })
-                        ->visible(fn($record) => $record->given_id === null && $record->pick_id != null && $record->status === OrderStatusEnum::PICK)
+                        ->visible(fn($record) =>  $record->pick_id != null && ($record->status === OrderStatusEnum::PICK || $record->status === OrderStatusEnum::TRANSFER))
                         ->label('تحديد موظف التسليم')->color('info'),
 
 

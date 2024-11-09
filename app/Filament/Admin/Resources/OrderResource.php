@@ -539,7 +539,7 @@ class OrderResource extends Resource
 
 
                         })
-                        ->visible(fn($record) => $record->given_id == null && $record->pick_id != null && $record->status === OrderStatusEnum::PICK)
+                        ->visible(fn($record) => $record->given_id == null && ($record->status === OrderStatusEnum::PICK || $record->status === OrderStatusEnum::TRANSFER))
                         ->label('تحديد موظف التسليم')->color('info'),
                     Tables\Actions\Action::make('cancel_order')
                         ->form([
