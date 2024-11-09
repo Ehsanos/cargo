@@ -68,7 +68,7 @@ class ExchangeResource extends Resource
                 Tables\Columns\TextColumn::make('status')->formatStateUsing(fn($state) => OrderStatusEnum::tryFrom($state)?->getLabel())->label('الحالة'),
             ])
             ->filters([
-                Tables\Filters\TernaryFilter::make('status')->trueLabel('تم')->falseLabel('بالإنتظار')
+                Tables\Filters\TernaryFilter::make('status')->trueLabel('بالإنتظار')->falseLabel('تم')
                     ->queries(
                         true: fn($query) => $query->where('status', 'pending'), false: fn($query) => $query->where('status', 'success'), blank: fn($query) => $query
                     )->label('الحالة')
