@@ -23,6 +23,7 @@ class ExchangeResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $pluralModelLabel = 'طلبات تصريف العملة';
     protected static ?string $navigationGroup = 'الحسابات المالية';
+
     public static function getNavigationBadge(): ?string
     {
         $count = Exchange::where('status', 'pending')->count();
@@ -64,10 +65,13 @@ class ExchangeResource extends Resource
                 Tables\Columns\TextColumn::make('amount')->label('الكمية'),
                 Tables\Columns\TextColumn::make('exchange')->label('سعر الصرف'),
                 Tables\Columns\TextColumn::make('user.name')->label('طلب من'),
-                Tables\Columns\TextColumn::make('status')->formatStateUsing(fn($state) => OrderStatusEnum::tryFrom($state)?->getLabel())->label('الحالة')->sortable(),
+                Tables\Columns\TextColumn::make('status')->formatStateUsing(fn($state) => OrderStatusEnum::tryFrom($state)?->getLabel())->label('الحالة'),
             ])
             ->filters([
-                //
+                Tables\Filters\TernaryFilter::make('status')->trueLabel('تم')->falseLabel('بالإنتظار')
+                    ->queries(
+                        true: fn($query) => $query->where('status', 'pending'), false: fn($query) => $query->where('status', 'success'), blank: fn($query) => $query
+                    )->label('الحالة')
             ])
             ->actions([
                 Tables\Actions\EditAction::make()->visible(fn($record) => $record->status === 'pending'),
