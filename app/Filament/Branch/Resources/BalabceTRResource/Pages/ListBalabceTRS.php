@@ -40,6 +40,7 @@ class ListBalabceTRS extends ListRecords
                         Notification::make('error')->title('فشل العملية')->body('لا تملك رصيد كافي')->danger()->send();
                         return ;
                     }
+                    $target=User::find($data['user_id']);
                     try {
 
                         Balance::create([
@@ -50,12 +51,14 @@ class ListBalabceTRS extends ListRecords
                             'info'=>$data['info'],
                             'is_complete'=>true,
                             'currency_id'=>2,
+                            'customer_name'=>auth()->user()->name,
                         ]);
                         Balance::create([
                             'type'=>BalanceTypeEnum::CATCH->value,
                             'user_id'=>auth()->id(),
                             'debit'=>$data['value'],
                             'credit'=>0,
+                            'customer_name'=>$target->name,
                             'info'=>$data['info'],
                             'is_complete'=>true,
                             'currency_id'=>2,

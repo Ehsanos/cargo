@@ -43,6 +43,8 @@ class ListBalances extends ListRecords
                         Notification::make('error')->title('فشل العملية')->body('لا تملك رصيد كافي')->danger()->send();
                         return ;
                     }
+                    $target=User::find($data['user_id']);
+
                     try {
 
                             Balance::create([
@@ -52,6 +54,7 @@ class ListBalances extends ListRecords
                                 'credit'=>$data['value'],
                                 'info'=>$data['info'],
                                 'currency_id'=>1,
+                                'customer_name'=>auth()->user()->name,
                                 'is_complete'=>true,
                             ]);
                             Balance::create([
@@ -62,6 +65,7 @@ class ListBalances extends ListRecords
                                 'info'=>$data['info'],
                                 'is_complete'=>true,
                                 'currency_id'=>1,
+                                'customer_name'=>$target->name,
                             ]);
 
                         \DB::commit();
