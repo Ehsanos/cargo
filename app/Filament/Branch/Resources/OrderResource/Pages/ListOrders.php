@@ -7,7 +7,7 @@ use App\Filament\Branch\Resources\OrderResource;
 use App\Models\Order;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Resources\Pages\ListRecords\Tab;
+use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
 
 class ListOrders extends ListRecords
@@ -33,11 +33,10 @@ class ListOrders extends ListRecords
     public function getTabs(): array
     {
         return [
-          'all'=>  Tab::make('all')
-                ->query(fn($query) => $query)
-                ->label('الكل'),
+          'all'=>  Tab::make('all')->label('الكل'),
 
-          'pick'=>  Tab::make('pick')->query(fn($query) => $query->where('status', OrderStatusEnum::PICK->value))->label('تم الإلتقاط'),
+          'pick'=>  Tab::make('pick')
+              ->query(fn($query) => $query->where('status', OrderStatusEnum::PICK->value))->label('تم الإلتقاط'),
 
           'transfer'=>  Tab::make('transfer')->query(fn($query) => $query->where('status', OrderStatusEnum::TRANSFER->value))
 
