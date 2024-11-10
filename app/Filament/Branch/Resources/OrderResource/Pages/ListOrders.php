@@ -34,17 +34,8 @@ class ListOrders extends ListRecords
     {
         return [
             Tab::make('all')
-                ->modifyQueryUsing(fn($query) => $query
-                    ->where(fn($query)=>$query
-                        ->where('branch_source_id', auth()->user()->branch_id)
-                        ->orWhere('branch_target_id', auth()->user()->branch_id)
-                        ->orWhere('pick_id', auth()->id())
-                        ->orWhere('given_id', auth()->id())))
-                ->badge(Order::
-                    where(fn($query)=>$query ->where('branch_source_id', auth()->user()->branch_id)
-                        ->orWhere('branch_target_id', auth()->user()->branch_id)
-                        ->orWhere('pick_id', auth()->id())
-                        ->orWhere('given_id', auth()->id()))->count()),
+                ->modifyQueryUsing(fn($query) => $query)
+                ->label('الكل'),
 
             Tab::make('pick')->modifyQueryUsing(fn($query) => $query->where('status', OrderStatusEnum::PICK->value))->label('تم الإلتقاط'),
 
