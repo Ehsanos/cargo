@@ -619,7 +619,7 @@ $form=[];
                             return $form;
 
                         })
-                        ->action(function ($record, $data) {
+                        ->action(function ($record) {
                             DB::beginTransaction();
                             try {
                                 HelperBalance::completeOrder($record);
