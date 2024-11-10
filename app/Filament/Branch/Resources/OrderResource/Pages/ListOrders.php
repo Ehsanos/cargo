@@ -46,23 +46,9 @@ class ListOrders extends ListRecords
                         ->orWhere('pick_id', auth()->id())
                         ->orWhere('given_id', auth()->id()))->count()),
 
-            Tab::make('pick')->modifyQueryUsing(fn($query) => $query->where('status', OrderStatusEnum::PICK->value)
-                ->where(fn($query)=>$query
-                    ->where('branch_source_id', auth()->user()->branch_id)
-                    ->orWhere('branch_target_id', auth()->user()->branch_id)
-                    ->orWhere('pick_id', auth()->id())
-                    ->orWhere('given_id', auth()->id())))
-                ->badge(Order::where('status', OrderStatusEnum::PICK->value)
-                    ->where(fn($query)=>$query ->where('branch_source_id', auth()->user()->branch_id)
-                        ->orWhere('branch_target_id', auth()->user()->branch_id)
-                        ->orWhere('pick_id', auth()->id())
-                        ->orWhere('given_id', auth()->id()))->count())->label('تم الإلتقاط'),
+            Tab::make('pick')->modifyQueryUsing(fn($query) => $query->where('status', OrderStatusEnum::PICK->value))->label('تم الإلتقاط'),
 
-            Tab::make('transfer')->modifyQueryUsing(fn($query) => $query->where('status', OrderStatusEnum::TRANSFER->value)
-                ->where(fn($query)=>$query ->where('branch_source_id', auth()->user()->branch_id)
-                    ->orWhere('branch_target_id', auth()->user()->branch_id)
-                    ->orWhere('pick_id', auth()->id())
-                    ->orWhere('given_id', auth()->id())))
+            Tab::make('transfer')->modifyQueryUsing(fn($query) => $query->where('status', OrderStatusEnum::TRANSFER->value))
                 ->badge(Order::where('status', OrderStatusEnum::TRANSFER->value)
                     ->where(fn($query)=>$query ->where('branch_source_id', auth()->user()->branch_id)
                         ->orWhere('branch_target_id', auth()->user()->branch_id)
