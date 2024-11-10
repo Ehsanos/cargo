@@ -544,6 +544,101 @@ $cities=City::selectRaw('id,name')->get();
                         ->visible(fn($record) =>  $record->pick_id != null && ($record->status === OrderStatusEnum::PICK || $record->status === OrderStatusEnum::TRANSFER))
                         ->label('تحديد موظف التسليم')->color('info'),
 
+                    Tables\Actions\Action::make('success_pick')
+                        ->form(function ($record) {
+                            $farMessage='انت على وشك تأكيد إستلام مبلغ : ';
+                            if ($record->far_sender == true && ($record->far>0 || $record->far_tr>0)) {
+
+                                if($record->far_tr>0){
+
+                                    $farMessage.=$record->far_tr.' TRY ';
+                                }
+                                if($record->far >0){
+                                    $farMessage.=' و'.$record->far.' USD ';
+                                }
+                                $farMessage.='أجور شحن';
+                                return [
+                                    Forms\Components\Placeholder::make('msg')->content($farMessage)->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])->label('تنبيه')
+                                ];
+                            }
+                            return [
+                                Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد إلتقاط الطلب ")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])->label('تنبيه')
+                            ];
+                        })
+                        ->action(function ($record, $data) {
+                            DB::beginTransaction();
+                            try {
+                                HelperBalance::completePicker($record);
+                                $record->update(['status' => OrderStatusEnum::PICK->value]);
+                                DB::commit();
+                                Notification::make('success')->title('نجاح العملية')->body('تم تأكيد إلتقاط الطلب')->success()->send();
+                            } catch (\Exception | Error $e) {
+                                Notification::make('error')->title('فشل العملية')->body($e->getLine())->danger()->send();
+                            }
+                        })
+                        ->label('تأكيد إلتقاط الشحنة')->color('info')
+                        ->visible(fn($record) =>auth()->user()->hasRole('super_admin') && $record->pick_id == auth()->id() && ($record->status == OrderStatusEnum::AGREE ) ),
+
+                    Tables\Actions\Action::make('success_given')
+                        ->form(function ($record) {
+                            $form=[];
+                            $totalPrice=$record->price+$record->far;
+                            if($totalPrice==0){
+                                $totalPrice=$record->price_tr+$record->far_tr;
+                            }
+                            $priceMessage='انت تأكد إستلامك مبلغ : ';
+
+
+                            if($record->price_tr>0){
+                                $priceMessage.=$record->price_tr .' TRY ';
+                            }
+                            if($record->price>0){
+                                $priceMessage.=' و '.$record->price .' USD ';
+                            }
+                            $priceMessage.='قيمة تحصيل الطلب';
+
+
+
+                            $farMessage=null;
+
+                            if($record->far_sender ===false){
+                                $farMessage='انت تأكد إستلامك مبلغ : ';
+                                if($record->far_tr>0){
+                                    $farMessage.=$record->far_tr .' TRY ';
+                                }
+                                if($record->far>0){
+                                    $farMessage.=' و '.$record->far .' USD ';
+                                }
+                                $farMessage.='أجور شحن الطلب';
+
+                            }
+                            if ($totalPrice > 0) {
+                                $form= [
+                                    Forms\Components\Placeholder::make('msg')->content($priceMessage)->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])->label('تنبيه'),
+                                    Forms\Components\Placeholder::make('msg')->content($farMessage)->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])->label('تنبيه')->visible($farMessage!=null)
+                                ];
+                            }else{
+                                $form= [
+                                    Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد تسليم الطلب ")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])->label('تنبيه')
+                                ];
+                            }
+                            return $form;
+
+                        })
+                        ->action(function ($record, $data) {
+                            DB::beginTransaction();
+                            try {
+                                HelperBalance::completeOrder($record);
+                                $record->update(['status' => OrderStatusEnum::SUCCESS->value]);
+                                DB::commit();
+                                Notification::make('success')->title('نجاح العملية')->body('تم تأكيد تسليم الطلب')->success()->send();
+                            } catch (\Exception | Error $e) {
+                                Notification::make('error')->title('فشل العملية')->body($e->getLine())->danger()->send();
+                            }
+                        })->label('تأكيد تسليم الشحنة')->color('info')
+                        ->visible(fn($record) =>auth()->user()->hasRole('super_admin') && $record->given_id == auth()->id() && ($record->status == OrderStatusEnum::TRANSFER || $record->status == OrderStatusEnum::PICK)),
+
+
                     Tables\Actions\Action::make('cancel_order')
                         ->form([
                             Forms\Components\Radio::make('status')->options([
