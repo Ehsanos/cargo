@@ -24,7 +24,7 @@ class ListOrders extends ListRecords
 
 
 
-/*
+
     public function getTabs(): array
     {
         return [
@@ -51,6 +51,6 @@ class ListOrders extends ListRecords
            'returned'=> Tab::make('returned')->query(fn($query) =>
             $query->where('status', OrderStatusEnum::RETURNED->value))->label('مرتجع'),
         ];
-    }*/
+    }
 
 }

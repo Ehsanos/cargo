@@ -575,7 +575,7 @@ class OrderResource extends Resource
 
                     Tables\Actions\Action::make('success_given')
                         ->form(function ($record) {
-
+$form=[];
                             $totalPrice=$record->price+$record->far;
                             if($totalPrice==0){
                                 $totalPrice=$record->price_tr+$record->far_tr;
@@ -607,14 +607,17 @@ class OrderResource extends Resource
 
                           }
                             if ($totalPrice > 0) {
-                                return [
+                                $form= [
                                     Forms\Components\Placeholder::make('msg')->content($priceMessage)->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])->label('تنبيه'),
                                     Forms\Components\Placeholder::make('msg')->content($farMessage)->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])->label('تنبيه')->visible($farMessage!=null)
                                 ];
+                            }else{
+                                $form= [
+                                    Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد تسليم الطلب ")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])->label('تنبيه')
+                                ];
                             }
-                            return [
-                                Forms\Components\Placeholder::make('msg')->content("أنت على وشك تأكيد تسليم الطلب ")->extraAttributes(['style' => 'color:red;font-weight:900;font-size:1rem;'])->label('تنبيه')
-                            ];
+                            return $form;
+
                         })
                         ->action(function ($record, $data) {
                             DB::beginTransaction();
