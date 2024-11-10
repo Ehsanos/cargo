@@ -577,7 +577,7 @@ $cities=City::selectRaw('id,name')->get();
                             }
                         })
                         ->label('تأكيد إلتقاط الشحنة')->color('info')
-                        ->visible(fn($record) =>auth()->user()->hasRole('super_admin') && $record->pick_id !=null && ($record->status == OrderStatusEnum::AGREE ) ),
+                        ->visible(fn($record) => !auth()->user()->hasRole('super_admin') && $record->pick_id !=null && ($record->status == OrderStatusEnum::AGREE ) ),
 
                     Tables\Actions\Action::make('success_given')
                         ->form(function ($record) {
@@ -636,7 +636,7 @@ $cities=City::selectRaw('id,name')->get();
                                 Notification::make('error')->title('فشل العملية')->body($e->getLine())->danger()->send();
                             }
                         })->label('تأكيد تسليم الشحنة')->color('info')
-                        ->visible(fn($record) =>auth()->user()->hasRole('super_admin') && $record->given_id !=null && ($record->status == OrderStatusEnum::TRANSFER || $record->status == OrderStatusEnum::PICK)),
+                        ->visible(fn($record) =>!auth()->user()->hasRole('super_admin') && $record->given_id !=null && ($record->status == OrderStatusEnum::TRANSFER || $record->status == OrderStatusEnum::PICK)),
 
 
                     Tables\Actions\Action::make('cancel_order')
