@@ -57,14 +57,12 @@ class OrderObserver
 
 
 
-        if ($order->isDirty('status') && $order->status->value == OrderStatusEnum::CANCELED->value && $order->getOriginal('status') != OrderStatusEnum::PENDING) {
+        if ($order->status->value == OrderStatusEnum::CANCELED->value || $order->status->value == OrderStatusEnum::RETURNED->value ) {
             $order->balances()->delete();
         }
 
 
-        if ($order->isDirty('status') && $order->status->value == OrderStatusEnum::RETURNED->value && $order->getOriginal('status') != OrderStatusEnum::PENDING) {
-            $order->balances()->delete();
-        }
+
     }
 
     /**
