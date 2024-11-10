@@ -39,9 +39,10 @@ class ListOrders extends ListRecords
                   $query->orWhere('branch_target_id', auth()->user()->branch_id);
               })->orWhere(fn($query) => $query->where('pick_id', auth()->id())->orWhere('given_id', auth()->id())))->label('تم الإلتقاط'),
 
-          'transfer'=>  Tab::make('transfer')->query(fn($query) => $query->where('status', OrderStatusEnum::TRANSFER->value))
-
-                ->label('بإنتظار التسليم'),
+          'transfer'=>  Tab::make('transfer')  ->query(fn($query) => $query->where('status',OrderStatusEnum::TRANSFER->value)->where(function ($query) {
+              $query->where('branch_source_id', auth()->user()->branch_id);
+              $query->orWhere('branch_target_id', auth()->user()->branch_id);
+          })->orWhere(fn($query) => $query->where('pick_id', auth()->id())->orWhere('given_id', auth()->id())))->label('بإنتظار التسليم'),
 
            'success'=> Tab::make('success')->query(fn($query) =>
             $query->where('status', OrderStatusEnum::SUCCESS->value))->label('منتهي'),
