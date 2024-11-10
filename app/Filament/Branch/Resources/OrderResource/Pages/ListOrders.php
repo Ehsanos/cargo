@@ -35,17 +35,20 @@ class ListOrders extends ListRecords
         return [
             Tab::make('all')
                 ->modifyQueryUsing(fn($query) => $query
-                    ->where('branch_source_id', auth()->user()->branch_id)
-                    ->orWhere('branch_target_id', auth()->user()->branch_id)
-                    ->orWhere('pick_id', auth()->id())
-                    ->orWhere('given_id', auth()->id()))
-                ->badge(Order::where('branch_source_id', auth()->user()->branch_id)
-                    ->where(fn($query)=>$query ->where('branch_source_id', auth()->user()->branch_id)
+                    ->where(fn($query)=>$query
+                        ->where('branch_source_id', auth()->user()->branch_id)
+                        ->orWhere('branch_target_id', auth()->user()->branch_id)
+                        ->orWhere('pick_id', auth()->id())
+                        ->orWhere('given_id', auth()->id())))
+                ->badge(Order::
+                    where(fn($query)=>$query ->where('branch_source_id', auth()->user()->branch_id)
                         ->orWhere('branch_target_id', auth()->user()->branch_id)
                         ->orWhere('pick_id', auth()->id())
                         ->orWhere('given_id', auth()->id()))->count()),
+
             Tab::make('pick')->modifyQueryUsing(fn($query) => $query->where('status', OrderStatusEnum::PICK->value)
-                ->where(fn($query)=>$query ->where('branch_source_id', auth()->user()->branch_id)
+                ->where(fn($query)=>$query
+                    ->where('branch_source_id', auth()->user()->branch_id)
                     ->orWhere('branch_target_id', auth()->user()->branch_id)
                     ->orWhere('pick_id', auth()->id())
                     ->orWhere('given_id', auth()->id())))
