@@ -8,8 +8,8 @@ use App\Models\Order;
 use Filament\Actions;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Resources\Components\Tab;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Resources\Pages\ListRecords\Tab;
+
 
 class ListOrders extends ListRecords
 {
@@ -22,34 +22,57 @@ class ListOrders extends ListRecords
         ];
     }
 
-
-  /*  public function getTabs(): array
+    public function getTabs(): array
     {
         return [
-            'all'=>  Tab::make('all')->query(fn($query)=>$query->where(function ($query) {
-                $query->where('branch_source_id', auth()->user()->branch_id);
-                $query->orWhere('branch_target_id', auth()->user()->branch_id);
-            })->orWhere(fn($query) => $query->where('pick_id', auth()->id())->orWhere('given_id', auth()->id())))->label('الكل'),
+            Tab::make('all')->modifyQueryUsing(fn($query)=>$query->where('status','!=' ,""))->badge(Order::all()->count())->label('الكل'),
+            Tab::make('pick')->modifyQueryUsing(fn($query)=>$query
+                ->where('status',OrderStatusEnum::PICK->value)
+                ->where(fn($query)=>$query->orWhere([
+                    'pick_id'=>auth()->id(),
+                    'given_id'=>auth()->id(),
+                    'branch_source_id'=>auth()->user()->branch_id,
+                    'branch_target_id'=>auth()->user()->branch_id,
+                    ]))
 
-            'pick'=>  Tab::make('pick')
-                ->query(fn($query) => $query->where('status',OrderStatusEnum::PICK->value)->where(function ($query) {
-                    $query->where('branch_source_id', auth()->user()->branch_id);
-                    $query->orWhere('branch_target_id', auth()->user()->branch_id);
-                })->orWhere(fn($query) => $query->where('pick_id', auth()->id())->orWhere('given_id', auth()->id())))->label('تم الإلتقاط'),
+            )->badge(Order::where('status',OrderStatusEnum::PICK->value)->where(fn($query)=>$query->orWhere([
+                'pick_id'=>auth()->id(),
+                'given_id'=>auth()->id(),
+                'branch_source_id'=>auth()->user()->branch_id,
+                'branch_target_id'=>auth()->user()->branch_id,
+            ]))->count())->label('تم الإلتقاط'),
+            Tab::make('transfer')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::TRANSFER->value)->where(fn($query)=>$query->orWhere([
+                'pick_id'=>auth()->id(),
+                'given_id'=>auth()->id(),
+                'branch_source_id'=>auth()->user()->branch_id,
+                'branch_target_id'=>auth()->user()->branch_id,
+            ])))->badge(Order::where('status',OrderStatusEnum::TRANSFER->value)->where(fn($query)=>$query->orWhere([
+                'pick_id'=>auth()->id(),
+                'given_id'=>auth()->id(),
+                'branch_source_id'=>auth()->user()->branch_id,
+                'branch_target_id'=>auth()->user()->branch_id,
+            ]))->count())->label('بإنتظار التسليم'),
+            Tab::make('success')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::SUCCESS->value)->where(fn($query)=>$query->orWhere([
+                'pick_id'=>auth()->id(),
+                'given_id'=>auth()->id(),
+                'branch_source_id'=>auth()->user()->branch_id,
+                'branch_target_id'=>auth()->user()->branch_id,
+            ])))/*->badge(Order::where('status','success')->count())*/->label('منتهي'),
+            Tab::make('canceled')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::CANCELED->value)->where(fn($query)=>$query->orWhere([
+                'pick_id'=>auth()->id(),
+                'given_id'=>auth()->id(),
+                'branch_source_id'=>auth()->user()->branch_id,
+                'branch_target_id'=>auth()->user()->branch_id,
+            ])))/*->badge(Order::where('status','success')->count())*/->label('ملغي'),
+            Tab::make('returned')->modifyQueryUsing(fn($query)=>$query->where('status',OrderStatusEnum::RETURNED->value)->where(fn($query)=>$query->orWhere([
+                'pick_id'=>auth()->id(),
+                'given_id'=>auth()->id(),
+                'branch_source_id'=>auth()->user()->branch_id,
+                'branch_target_id'=>auth()->user()->branch_id,
+            ])))/*->badge(Order::where('status','success')->count())*/->label('مرتجع'),
 
-            'transfer'=>  Tab::make('transfer')  ->query(fn($query) => $query->where('status',OrderStatusEnum::TRANSFER->value)->where(function ($query) {
-                $query->where('branch_source_id', auth()->user()->branch_id);
-                $query->orWhere('branch_target_id', auth()->user()->branch_id);
-            })->orWhere(fn($query) => $query->where('pick_id', auth()->id())->orWhere('given_id', auth()->id())))->label('بإنتظار التسليم'),
-
-            'success'=> Tab::make('success')->query(fn($query) =>
-            $query->where('status', OrderStatusEnum::SUCCESS->value))->label('منتهي'),
-            'canceled'=> Tab::make('canceled')->query(fn($query) =>
-            $query->where('status', OrderStatusEnum::CANCELED->value))->label('ملغي'),
-            'returned'=> Tab::make('returned')->query(fn($query) =>
-            $query->where('status', OrderStatusEnum::RETURNED->value))->label('مرتجع'),
         ];
-    }*/
+    }
 
 
 
