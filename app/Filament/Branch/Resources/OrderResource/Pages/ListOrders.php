@@ -33,21 +33,21 @@ class ListOrders extends ListRecords
     public function getTabs(): array
     {
         return [
-            Tab::make('all')
-                ->modifyQueryUsing(fn($query) => $query)
+          'all'=>  Tab::make('all')
+                ->query(fn($query) => $query)
                 ->label('الكل'),
 
-            Tab::make('pick')->modifyQueryUsing(fn($query) => $query->where('status', OrderStatusEnum::PICK->value))->label('تم الإلتقاط'),
+          'pick'=>  Tab::make('pick')->query(fn($query) => $query->where('status', OrderStatusEnum::PICK->value))->label('تم الإلتقاط'),
 
-            Tab::make('transfer')->modifyQueryUsing(fn($query) => $query->where('status', OrderStatusEnum::TRANSFER->value))
+          'transfer'=>  Tab::make('transfer')->query(fn($query) => $query->where('status', OrderStatusEnum::TRANSFER->value))
 
                 ->label('بإنتظار التسليم'),
 
-            Tab::make('success')->modifyQueryUsing(fn($query) =>
+           'success'=> Tab::make('success')->query(fn($query) =>
             $query->where('status', OrderStatusEnum::SUCCESS->value))->label('منتهي'),
-            Tab::make('canceled')->modifyQueryUsing(fn($query) =>
+           'canceled'=> Tab::make('canceled')->query(fn($query) =>
             $query->where('status', OrderStatusEnum::CANCELED->value))->label('ملغي'),
-            Tab::make('returned')->modifyQueryUsing(fn($query) =>
+           'returned'=> Tab::make('returned')->query(fn($query) =>
             $query->where('status', OrderStatusEnum::RETURNED->value))->label('مرتجع'),
         ];
     }
