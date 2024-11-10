@@ -541,7 +541,7 @@ $cities=City::selectRaw('id,name')->get();
 
 
                         })
-                        ->visible(fn($record) =>  ($record->status === OrderStatusEnum::PICK || $record->status === OrderStatusEnum::TRANSFER))
+                        ->visible(fn($record) =>  $record->pick_id != null && ($record->status === OrderStatusEnum::PICK || $record->status === OrderStatusEnum::TRANSFER))
                         ->label('تحديد موظف التسليم')->color('info'),
 
                     Tables\Actions\Action::make('cancel_order')

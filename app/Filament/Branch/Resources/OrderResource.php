@@ -508,10 +508,10 @@ class OrderResource extends Resource
                             ->searchable()->label('موظف التسليم')
                     ])
                         ->action(function ($record, $data) {
-                            if ($record->given_id == null) {
+
                                 $record->update(['given_id' => $data['given_id'], 'status' => OrderStatusEnum::TRANSFER->value]);
                                 Notification::make('success')->title('نجاح العملية')->body('تم تحديد موظف التسليم بنجاح')->success()->send();
-                            }
+
                         })
                         ->visible(fn($record) =>  $record->pick_id != null && ($record->status === OrderStatusEnum::PICK || $record->status === OrderStatusEnum::TRANSFER))
                         ->label('تحديد موظف التسليم')->color('info'),
