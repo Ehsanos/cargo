@@ -577,7 +577,7 @@ $cities=City::selectRaw('id,name')->get();
                             }
                         })
                         ->label('تأكيد إلتقاط الشحنة')->color('info')
-                        ->visible(fn($record) => !auth()->user()->hasRole('super_admin') && $record->pick_id !=null && ($record->status == OrderStatusEnum::AGREE ) ),
+                        ->visible(fn($record) => !auth()->user()->hasRole('super_admin') && $record->pick_id !=null ),
 
                     Tables\Actions\Action::make('success_given')
                         ->form(function ($record) {
