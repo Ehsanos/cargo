@@ -534,10 +534,10 @@ $cities=City::selectRaw('id,name')->get();
                             ->searchable()->label('موظف الإلتقاط'),
                     ])
                         ->action(function ($record, $data) {
-                            if($record->given_id==null){
+
                                 $record->update(['given_id' => $data['given_id'],'status'=>OrderStatusEnum::TRANSFER->value]);
                                 Notification::make('success')->title('نجاح العملية')->body("تم تحديد موظف التسليم بنجاح ")->success()->send();
-                            }
+
 
 
                         })
