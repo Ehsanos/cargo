@@ -74,6 +74,7 @@ class OrderResource extends Resource
 
     public static function form(Form $form): Form
     {
+
         return $form
             ->schema([
 
@@ -355,7 +356,8 @@ class OrderResource extends Resource
 
     public static function table(Table $table): Table
     {
-
+$users=User::selectRaw('id,name')->get();
+$cities=City::selectRaw('id,name')->get();
         return $table
             ->poll(10)
             ->columns([
@@ -433,8 +435,8 @@ class OrderResource extends Resource
                         Forms\Components\Select::make('branch_target_id')->relationship('branchTarget', 'name')
                             ->label('اسم الفرع المستلم')->multiple(),
 
-                        Forms\Components\Select::make('receive_id')->relationship('receive', 'name')->label('اسم المستلم')->multiple(),
-                        Forms\Components\Select::make('sender_id')->relationship('sender', 'name')->label('اسم المرسل')->multiple(),
+                        Forms\Components\Select::make('receive_id')->options($users->pluck('name','id'))->label('اسم المستلم')->multiple(),
+                        Forms\Components\Select::make('sender_id')->options($users->pluck('name','id'))->label('اسم المرسل')->multiple(),
                         Forms\Components\Select::make('status')->options([
                             OrderStatusEnum::PENDING->value => OrderStatusEnum::PENDING->getLabel(),
                             OrderStatusEnum::AGREE->value => OrderStatusEnum::AGREE->getLabel(),
@@ -446,9 +448,9 @@ class OrderResource extends Resource
 
 
                         ])->label('حالة الطلب')->multiple(),
-                        Forms\Components\Select::make('city_source_id')->relationship('citySource', 'name')
+                        Forms\Components\Select::make('city_source_id')->options($cities->pluck('name','id'))
                             ->label('من بلدة')->multiple(),
-                        Forms\Components\Select::make('city_target_id')->relationship('cityTarget', 'name')
+                        Forms\Components\Select::make('city_target_id')->options($cities->pluck('name','id'))
                             ->label('الى بلدة')->multiple(),
 
                         Forms\Components\DatePicker::make('created_from')->label('من تاريخ'),
