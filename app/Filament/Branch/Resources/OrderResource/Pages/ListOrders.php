@@ -30,7 +30,12 @@ class ListOrders extends ListRecords
                 'given_id'=>auth()->id(),
                 'branch_source_id'=>auth()->user()->branch_id,
                 'branch_target_id'=>auth()->user()->branch_id,
-            ])))->badge(Order::all()->count())->label('الكل'),
+            ])))->badge(Order::where(fn($query)=>$query->orWhere([
+                'pick_id'=>auth()->id(),
+                'given_id'=>auth()->id(),
+                'branch_source_id'=>auth()->user()->branch_id,
+                'branch_target_id'=>auth()->user()->branch_id,
+            ]))->count())->label('الكل'),
             Tab::make('pick')->modifyQueryUsing(fn($query)=>$query
                 ->where('status',OrderStatusEnum::PICK->value)
                 ->where(fn($query)=>$query->orWhere([
