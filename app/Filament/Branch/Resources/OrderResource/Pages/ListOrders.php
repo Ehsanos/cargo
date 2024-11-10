@@ -73,10 +73,10 @@ class ListOrders extends ListRecords
         ->orWhere('branch_target_id', auth()->user()->branch_id)
         ->orWhere('pick_id', auth()->id())
         ->orWhere('given_id', auth()->id())->count()) ->label('منتهي'),
-                    Tab::make('canceled')->modifyQueryUsing(fn($query) => $query->where('status', OrderStatusEnum::CANCELED->value))->where('branch_source_id', auth()->user()->branch_id)
+                    Tab::make('canceled')->modifyQueryUsing(fn($query) => $query->where('status', OrderStatusEnum::CANCELED->value)->where('branch_source_id', auth()->user()->branch_id)
                         ->orWhere('branch_target_id', auth()->user()->branch_id)
                         ->orWhere('pick_id', auth()->id())
-                        ->orWhere('given_id', auth()->id()) ->label('ملغي'),
+                        ->orWhere('given_id', auth()->id())) ->label('ملغي'),
                     Tab::make('returned')->modifyQueryUsing(fn($query) => $query->where('status', OrderStatusEnum::RETURNED->value))->where('branch_source_id', auth()->user()->branch_id)
                         ->orWhere('branch_target_id', auth()->user()->branch_id)
                         ->orWhere('pick_id', auth()->id())
