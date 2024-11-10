@@ -479,7 +479,9 @@ class OrderResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('set_picker')->form([
-                        Forms\Components\Select::make('pick_id')->relationship('receive', 'name', fn($query) => $query->where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)))
+
+                        Forms\Components\Select::make('pick_id')
+                            ->options(User::selectRaw('id,name')->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)->pluck('name','id'))
                             ->searchable()->label('موظف الإلتقاط'),
                     ])
                         ->action(function ($record, $data) {
@@ -502,7 +504,7 @@ class OrderResource extends Resource
 
                     Tables\Actions\Action::make('select_given_id')->form([
                         Forms\Components\Select::make('given_id')
-                            ->relationship('receive', 'name', fn($query) => $query->where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)))
+                            ->options(User::selectRaw('id,name')->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)->pluck('name','id'))
                             ->searchable()->label('موظف التسليم')
                     ])
                         ->action(function ($record, $data) {
