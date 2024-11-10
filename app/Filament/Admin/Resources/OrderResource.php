@@ -506,7 +506,7 @@ $cities=City::selectRaw('id,name')->get();
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('set_picker')->form([
                         Forms\Components\Select::make('pick_id')
-                            ->relationship('receive','name',fn($query)=>$query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value))
+                            ->options(User::selectRaw('id,name')->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)->pluck('name','id'))
                             ->searchable()->label('موظف الإلتقاط'),
                     ])
                         ->action(function ($record, $data) {
@@ -530,7 +530,7 @@ $cities=City::selectRaw('id,name')->get();
 
                     Tables\Actions\Action::make('set_given')->form([
                         Forms\Components\Select::make('given_id')
-                            ->relationship('receive','name',fn($query)=>$query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value))
+                            ->options(User::selectRaw('id,name')->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)->pluck('name','id'))
                             ->searchable()->label('موظف الإلتقاط'),
                     ])
                         ->action(function ($record, $data) {
@@ -571,17 +571,7 @@ $cities=City::selectRaw('id,name')->get();
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                   /* Tables\Actions\BulkAction::make('pick_id_check')->form([
-                        Forms\Components\Select::make('pick_id')
-                            ->relationship('receive','name',fn($query)=>$query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value))
-                            ->searchable()->label('موظف الإلتقاط')
-                    ])
-                        ->action(function ($records, $data) {
 
-                            Order::whereIn('id', $records->pluck('id')->toArray())->update(['pick_id' => $data['pick_id'], 'status' => OrderStatusEnum::AGREE->value]);
-                            Notification::make('success')->title('نجاح العملية')->body('تم تحديد موظف الإلتقاط بنجاح')->success()->send();
-                        })
-                        ->label('تحديد موظف الإلتقاط'),*/
                     Tables\Actions\BulkAction::make('given_id_check')->form([
                         Forms\Components\Select::make('given_id')->options(User::where('users.level', LevelUserEnum::STAFF->value)->orWhere('users.level', LevelUserEnum::BRANCH->value)->selectRaw('id,name,iban')->get()->mapWithKeys(fn($user) => [$user->id => $user->iban_name]))->searchable()->label('موظف الإلتقاط')
                     ])
