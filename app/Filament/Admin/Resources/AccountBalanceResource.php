@@ -9,6 +9,7 @@ use App\Models\Balance;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -83,7 +84,27 @@ class AccountBalanceResource extends Resource
                 })
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->visible(fn($record)=>$record->uuid==null),
+                Tables\Actions\Action::make('complete')->action(function($record){
+                    try{
+                        $record->update(['is_complete'=>true,'pending'=>false]);
+                        Notification::make('success')->success()->title('نجاح العملية')->body(' تم تأكيد الدفعة بنجاح')->send();
+
+                    }catch (\Exception | \Error $e){
+                        Notification::make('error')->danger()->title('فشلت العملية')->body($e->getMessage())->send();
+                    }
+                })->label('تأكيد دفع المصاريف')->requiresConfirmation()->visible(fn($record)=>$record->uuid!=null && $record->is_complete==false),
+
+                Tables\Actions\Action::make('cancel')->action(function($record){
+                    try{
+                        Balance::where('uuid',$record->uuid)->delete();
+                        Notification::make('success')->success()->title('نجاح العملية')->body(' تم إلغاء الدفعة بنجاح')->send();
+                    }catch (\Exception | \Error $e){
+                        Notification::make('error')->danger()->title('فشلت العملية')->body($e->getMessage())->send();
+                    }
+                })->label('إلغاء الدفعة')->requiresConfirmation()
+                    ->visible(fn($record)=>$record->uuid!=null && $record->is_complete==false),
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
