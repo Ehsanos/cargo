@@ -93,7 +93,7 @@ class AccountBalanceResource extends Resource
                     }catch (\Exception | \Error $e){
                         Notification::make('error')->danger()->title('فشلت العملية')->body($e->getMessage())->send();
                     }
-                })->label('تأكيد دفع المصاريف')->requiresConfirmation()->visible(fn($record)=>$record->uuid!=null && $record->is_complete==false),
+                })->label('تأكيد دفع المصاريف')->requiresConfirmation()->visible(fn($record)=>$record->uuid!=null && $record->is_complete==false)->button(),
 
                 Tables\Actions\Action::make('cancel')->action(function($record){
                     try{
@@ -103,7 +103,7 @@ class AccountBalanceResource extends Resource
                         Notification::make('error')->danger()->title('فشلت العملية')->body($e->getMessage())->send();
                     }
                 })->label('إلغاء الدفعة')->requiresConfirmation()
-                    ->visible(fn($record)=>$record->uuid!=null && $record->is_complete==false),
+                    ->visible(fn($record)=>$record->uuid!=null && $record->is_complete==false)->button(),
 
             ])
             ->bulkActions([
