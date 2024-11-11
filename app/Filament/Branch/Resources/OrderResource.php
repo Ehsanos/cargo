@@ -335,8 +335,6 @@ class OrderResource extends Resource
         return $table
             ->poll(10)
             ->columns([
-//                Tables\Columns\TextColumn::make('id')->label('#'),
-               //Tables\Columns\SpatieMediaLibraryImageColumn::make('images')->collection('images')->circular()->openUrlInNewTab(),
 
                 PopoverColumn::make('qr_url')
                     ->trigger('click')
@@ -345,11 +343,6 @@ class OrderResource extends Resource
                     ->icon('heroicon-o-qr-code'),
 
                 Tables\Columns\TextColumn::make('id')->description(fn($record) => $record->code)->copyable(),
-
-
-//                Tables\Columns\TextColumn::make('status')->label('حالة الطلب')
-
-
                 Tables\Columns\TextColumn::make('type')->label('نوع الطلب')
                     ->description(fn($record) => $record->status?->getLabel())
                     ->searchable(),
@@ -637,16 +630,6 @@ $form=[];
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    /*Tables\Actions\BulkAction::make('pick_id_check')->form([
-                        Forms\Components\Select::make('pick_id')
-                            ->relationship('receive','name',fn($query)=>$query->where('users.branch_id', auth()->user()->branch_id)->where(fn($query) => $query->where('level', LevelUserEnum::STAFF->value)->orWhere('level', LevelUserEnum::BRANCH->value)))->searchable()->label('موظف الإلتقاط')
-                    ])
-                        ->action(function ($records, $data) {
-
-                            Order::whereIn('id',$records->pluck('id')->toArray())->update(['pick_id' => $data['pick_id'], 'status' => OrderStatusEnum::AGREE->value]);
-                            Notification::make('success')->title('نجاح العملية')->body('تم تحديد موظف الإلتقاط بنجاح')->success()->send();
-                        })
-                        ->label('تحديد موظف الإلتقاط'),*/
 
 
                     Tables\Actions\BulkAction::make('given_id_check')->form([

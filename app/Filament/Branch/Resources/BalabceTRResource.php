@@ -50,13 +50,16 @@ class BalabceTRResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->modifyQueryUsing(fn($query) => $query->where('user_id', auth()->id())->where('currency_id',2)->latest())
+        return $table
             ->columns([
                 Tables\Columns\TextColumn::make('credit')->label('إيداع'),
                 Tables\Columns\TextColumn::make('debit')->label('قبض'),
                 Tables\Columns\TextColumn::make('customer_name')->label('اسم الزبون المستلم'),
                 Tables\Columns\TextColumn::make('info')->label('الملاحظات'),
                 Tables\Columns\TextColumn::make('customer_name')->label('الطرف المقابل'),
+                Tables\Columns\TextColumn::make('order.code')->label('الطلب'),
+                Tables\Columns\TextColumn::make('order.sender.name')->label('المرسل')->description(fn($record)=>$record->order?->general_sender_name!=null ? "{$record->order->general_sender_name}":""),
+                Tables\Columns\TextColumn::make('order.receive.name')->label('المستلم')->description(fn($record)=>$record->order?->global_name!=null?" {$record->order->global_name}":""),
 
                 Tables\Columns\TextColumn::make('total')->label('الرصيد'),
                 Tables\Columns\TextColumn::make('created_at')->date('Y-m')->label('التاريخ'),
