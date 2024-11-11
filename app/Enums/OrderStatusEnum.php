@@ -38,8 +38,8 @@ enum OrderStatusEnum:string implements HasLabel ,HasColor,HasIcon
             self::AGREE, self::PICK => 'primary',
             self::TRANSFER => 'primary',
             self::SUCCESS => 'success',
-            self::RETURNED => 'white',
-            self::CANCELED => 'white',
+            self::RETURNED => 'danger',
+            self::CANCELED => 'warning',
 
         };
     }
