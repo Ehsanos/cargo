@@ -148,19 +148,12 @@ class OrderResource extends Resource
                             ->schema([
                                 Forms\Components\Repeater::make('packages')->relationship('packages')->schema([
                                     SpatieMediaLibraryFileUpload::make('package')->label('صورة الشحنة')->collection('packages'),
-
-//                                    Forms\Components\TextInput::make('code')->default(fn()=>"FC". now()->format('dHis'))->hidden(),
                                     Forms\Components\Select::make('unit_id')
                                         ->relationship('unit', 'name')
                                         ->required()
-                                        ->label('الوحدة'),
+                                        ->label('الوحدة')->required(),
                                     Forms\Components\TextInput::make('info')->label('معلومات الشحنة'),
                                     Forms\Components\TextInput::make('quantity')->numeric()->label('الكمية'),
-
-
-//                                    Forms\Components\TextInput::make('length')->numeric()->label('الطول'),
-//                                    Forms\Components\TextInput::make('width')->numeric()->label('العرض'),
-//                                    Forms\Components\TextInput::make('height')->numeric()->label('الارتفاع'),
 
 
                                 ])

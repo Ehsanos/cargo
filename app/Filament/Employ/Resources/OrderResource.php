@@ -143,7 +143,7 @@ public static function canCreate(): bool
                                 ('فئة الحجم'),
 
 
-                            Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة'),
+                            Forms\Components\Select::make('unit_id')->relationship('unit', 'name')->label('الوحدة')->required(),
 
                             Forms\Components\Select::make('weight_id')
                                 ->relationship('weight', 'name')
@@ -218,6 +218,9 @@ public static function canCreate(): bool
                                 break;
                             case OrderStatusEnum::CANCELED:
                                 $list=['style'=>'background-color:gray;color:black'];
+                                break;
+                            case OrderStatusEnum::SUCCESS:
+                                $list=['style'=>'background-color:green;'];
                                 break;
                         }
                         return $list;

@@ -363,7 +363,7 @@ class OrderResource extends Resource
                                 $list=['style'=>'background-color:gray;color:black'];
                                 break;
                             case OrderStatusEnum::SUCCESS:
-                                $list=['style'=>'background-color:gereen;'];
+                                $list=['style'=>'background-color:green;'];
                                 break;
 
                         }

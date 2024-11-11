@@ -388,6 +388,9 @@ $cities=City::selectRaw('id,name')->get();
                            case OrderStatusEnum::CANCELED:
                                $list=['style'=>'background-color:gray;color:black'];
                                break;
+                           case OrderStatusEnum::SUCCESS:
+                               $list=['style'=>'background-color:green;color:black'];
+                               break;
                        }
                        return $list;
                    }),
