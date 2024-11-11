@@ -393,7 +393,24 @@ $cities=City::selectRaw('id,name')->get();
                                break;
                        }
                        return $list;
-                   }),
+                   })->extraAttributes(function($record){
+                        $list=[];
+                        switch ($record->status){
+                            case OrderStatusEnum::PICK:
+                            case OrderStatusEnum::TRANSFER:
+                            case OrderStatusEnum::RETURNED:
+                                $list=['style'=>'color:white'];
+                                break;
+
+
+
+
+                            case OrderStatusEnum::CANCELED:
+                                $list=['style'=>'color:black'];
+                                break;
+                        }
+                        return $list;
+                    }),
                 Tables\Columns\TextColumn::make('far_sender')->formatStateUsing(fn($state)=>FarType::tryFrom($state)?->getLabel())
                     ->color(fn($state)=>FarType::tryFrom($state)?->getColor())
                     ->icon(fn($state)=>FarType::tryFrom($state)?->getIcon())
