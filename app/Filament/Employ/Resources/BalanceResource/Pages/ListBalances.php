@@ -110,6 +110,7 @@ class ListBalances extends ListRecords
                         'user_id' => auth()->id(),
                         'uuid' => $uuid,
                         'debit' => $data['amount'],
+                        'credit'=>0,
                         'currency_id' => 1,
                         'pending' => false,
                         'is_complete' => true,
@@ -119,11 +120,12 @@ class ListBalances extends ListRecords
                     Balance::create([
                         'user_id' => 908,
                         'uuid' => $uuid,
-                        'debit' => $data['amount'],
+                        'debit' => 0,
+                        'credit'=>$data['amount'],
                         'currency_id' => 1,
                         'pending' => false,
                         'is_complete' => false,
-                        'customer_name' => 'حساب مصاريف',
+                        'customer_name' => auth()->user()->name,
                         'info' => $data['info'],
                     ]);
                     \DB::commit();
