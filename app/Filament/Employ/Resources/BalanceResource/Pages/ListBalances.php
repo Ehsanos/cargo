@@ -90,6 +90,49 @@ class ListBalances extends ListRecords
                     }
 
                 })->label('إضافة سند'),
+
+            Actions\Action::make('quid')->form([
+                TextInput::make('amount')->label('القيمة')->required()->numeric(),
+                TextInput::make('info')->label('البيان')
+            ])
+                //
+                ->action(function ($data) {
+                \DB::beginTransaction();
+                try {
+                    if($data['amount']<=0){
+                        throw  new \Exception('لا يمكن إضافة قيمة أقل من 0');
+                    }
+                    if(auth()->user()->total_balance<$data['amount']){
+                        throw  new \Exception('لا تملك رصيد كافي');
+                    }
+                    $uuid = \Str::uuid();
+                    Balance::create([
+                        'user_id' => auth()->id(),
+                        'uuid' => $uuid,
+                        'debit' => $data['amount'],
+                        'currency_id' => 1,
+                        'pending' => false,
+                        'is_complete' => true,
+                        'customer_name' => 'حساب مصاريف',
+                        'info' => $data['info'],
+                    ]);
+                    Balance::create([
+                        'user_id' => 908,
+                        'uuid' => $uuid,
+                        'debit' => $data['amount'],
+                        'currency_id' => 1,
+                        'pending' => false,
+                        'is_complete' => false,
+                        'customer_name' => 'حساب مصاريف',
+                        'info' => $data['info'],
+                    ]);
+                    \DB::commit();
+                    Notification::make('success')->success()->title('نجاح العملية')->body('تم إضافة المصاريف')->send();
+                } catch (\Exception | \Error $e) {
+                    \DB::rollBack();
+                    Notification::make('error')->danger()->title('فشلت العملية')->body($e->getMessage())->send();
+                }
+            })->label('إضافة مصاريف'),
         ];
     }
 
