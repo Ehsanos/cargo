@@ -688,10 +688,10 @@ $cities=City::selectRaw('id,name')->get();
         ];
     }
 
-    public static function getNavigationBadge(): ?string
+    /*public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
-    }
+    }*/
 
     public static function getPages(): array
     {
