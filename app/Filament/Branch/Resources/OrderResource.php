@@ -245,7 +245,7 @@ class OrderResource extends Resource
                             ]),
                             Forms\Components\Grid::make()->schema([
                                 Forms\Components\Select::make('unit_id')
-                                    ->relationship('unit', 'name')->label('الوحدة'),
+                                    ->relationship('unit', 'name')->label('الوحدة')->required(),
                             ]),
 
                         ]),
@@ -362,6 +362,10 @@ class OrderResource extends Resource
                             case OrderStatusEnum::CANCELED:
                                 $list=['style'=>'background-color:gray;color:black'];
                                 break;
+                            case OrderStatusEnum::SUCCESS:
+                                $list=['style'=>'background-color:gereen;'];
+                                break;
+
                         }
                         return $list;
                     }),
@@ -379,15 +383,11 @@ class OrderResource extends Resource
 
                 Tables\Columns\TextColumn::make('currency.name')->label('العملة'),
                 Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل')->description(fn($record) => $record->general_sender_name)->searchable(),
-                /*Tables\Columns\TextColumn::make('sender.address')->label('هاتف المرسل')->description(fn($record)=>$record->phone)
-                    ->url(fn($record) => url('https://wa.me/' . ltrim($record->receive?->phone, '+')))->openUrlInNewTab()
-                    ->searchable(),*/
+
                 Tables\Columns\TextColumn::make('citySource.name')->label('من بلدة')->description(fn($record) => "إلى {$record->cityTarget?->name}")->searchable(),
                 Tables\Columns\TextColumn::make('receive.name')->label('معرف المستلم ')->description(fn($record) => $record->global_name)->searchable(),
-//                Tables\Columns\TextColumn::make('receive_address')->label('عنوان المستلم ')->searchable(),
                 Tables\Columns\TextColumn::make('receive_address')
                     ->formatStateUsing(fn($record) => (string)$record->receive_address . ' - ' . (string)$record->receive_phone)->label('هاتف المستلم ')
-                    /*->description(fn($record) =>  ltrim($record?->receive_phone, '+'))*/
                     ->url(function ($record) {
                         $far = $record->far_sender ? 'على المرسل' : 'على المستلم';
                         $message = "السلام عليكم ورحمة الله وبركاته
@@ -410,10 +410,7 @@ class OrderResource extends Resource
                         return url('https://wa.me/' . ltrim($record?->receive_phone, '+') . '?text=' . $message);
                     })->openUrlInNewTab()
                     ->searchable(),
-//                Tables\Columns\TextColumn::make('global_name')->label('اسم المستلم'),
-//                Tables\Columns\TextColumn::make('cityTarget.name')->label('الى بلدة ')->searchable(),
-//                Tables\Columns\TextColumn::make('created_at')->label('تاريخ الشحنة')
-//                    ->formatStateUsing(fn($state) => Carbon::parse($state)->diffForHumans()) // عرض الزمن بشكل نسبي
+
                 Tables\Columns\TextColumn::make('pick.name')->formatStateUsing(fn($record)=>'موظف الإلتقاط : '.$record->pick?->name)->description(fn($record)=>'موظف التسليم : '.$record->given?->name)->label('التوكيل')
 
 
