@@ -368,10 +368,7 @@ $cities=City::selectRaw('id,name')->get();
                     ->content(fn($record) => \LaraZeus\Qr\Facades\Qr::render($record->code))
                     ->icon('heroicon-o-qr-code'),
 
-                Tables\Columns\TextColumn::make('id')->description(fn($record) => $record->code)->copyable()->searchable(),
-
-
-//                Tables\Columns\TextColumn::make('status')->label('حالة الطلب')
+                Tables\Columns\TextColumn::make('code')->description(fn($record) => $record->id,'above')->copyable()->searchable(),
 
 
                 Tables\Columns\TextColumn::make('type')->label('نوع الطلب')
@@ -393,24 +390,7 @@ $cities=City::selectRaw('id,name')->get();
                                break;
                        }
                        return $list;
-                   })->color(function($record){
-                        $list=[];
-                        switch ($record->status){
-                            case OrderStatusEnum::PICK:
-                            case OrderStatusEnum::TRANSFER:
-                            case OrderStatusEnum::RETURNED:
-                          return  OrderStatusEnum::TRANSFER->getColor();
-
-
-
-
-
-                            case OrderStatusEnum::CANCELED:
-                                return  OrderStatusEnum::CANCELED->getColor();
-                                break;
-                        }
-                        return $list;
-                    }),
+                   }),
                 Tables\Columns\TextColumn::make('far_sender')->formatStateUsing(fn($state)=>FarType::tryFrom($state)?->getLabel())
                     ->color(fn($state)=>FarType::tryFrom($state)?->getColor())
                     ->icon(fn($state)=>FarType::tryFrom($state)?->getIcon())

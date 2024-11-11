@@ -342,10 +342,29 @@ class OrderResource extends Resource
                     ->content(fn($record) => \LaraZeus\Qr\Facades\Qr::render($record->code))
                     ->icon('heroicon-o-qr-code'),
 
-                Tables\Columns\TextColumn::make('id')->description(fn($record) => $record->code)->copyable(),
+                Tables\Columns\TextColumn::make('code')->description(fn($record) => $record->id,'above')->copyable()->searchable(),
+
+
                 Tables\Columns\TextColumn::make('type')->label('نوع الطلب')
                     ->description(fn($record) => $record->status?->getLabel())
-                    ->searchable(),
+                    ->extraCellAttributes(function($record){
+                        $list=[];
+                        switch ($record->status){
+                            case OrderStatusEnum::PICK:
+                                $list=['style'=>'background-color:yellow'];
+                                break;
+                            case OrderStatusEnum::TRANSFER:
+                                $list=['style'=>'background-color:orange'];
+                                break;
+                            case OrderStatusEnum::RETURNED:
+                                $list=['style'=>'background-color:red'];
+                                break;
+                            case OrderStatusEnum::CANCELED:
+                                $list=['style'=>'background-color:gray;color:black'];
+                                break;
+                        }
+                        return $list;
+                    }),
                 Tables\Columns\TextColumn::make('far_sender')->formatStateUsing(fn($state) => FarType::tryFrom($state)?->getLabel())
                     ->color(fn($state) => FarType::tryFrom($state)?->getColor())
                     ->icon(fn($state) => FarType::tryFrom($state)?->getIcon())
