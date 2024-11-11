@@ -393,20 +393,20 @@ $cities=City::selectRaw('id,name')->get();
                                break;
                        }
                        return $list;
-                   })->extraAttributes(function($record){
+                   })->color(function($record){
                         $list=[];
                         switch ($record->status){
                             case OrderStatusEnum::PICK:
                             case OrderStatusEnum::TRANSFER:
                             case OrderStatusEnum::RETURNED:
-                                $list=['style'=>'color:white'];
-                                break;
+                          return  OrderStatusEnum::TRANSFER->getColor();
+
 
 
 
 
                             case OrderStatusEnum::CANCELED:
-                                $list=['style'=>'color:black'];
+                                return  OrderStatusEnum::CANCELED->getColor();
                                 break;
                         }
                         return $list;

@@ -35,8 +35,7 @@ enum OrderStatusEnum:string implements HasLabel ,HasColor,HasIcon
     {
         return match ($this) {
             self::PENDING => 'info',
-            self::AGREE => 'primary',
-            self::PICK => 'primary',
+            self::AGREE, self::PICK => 'primary',
             self::TRANSFER => 'primary',
             self::SUCCESS => 'success',
             self::RETURNED => 'warning',
