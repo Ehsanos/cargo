@@ -268,7 +268,7 @@ class OrderResource extends Resource
 
                         Forms\Components\Grid::make()->schema([
                             Forms\Components\Select::make('unit_id')
-                                ->relationship('unit', 'name')->label('الوحدة'),
+                                ->relationship('unit', 'name')->label('الوحدة')->required(),
                         ]),
                     ]),
                     Forms\Components\Fieldset::make('الأجور')->schema([
@@ -368,7 +368,7 @@ $cities=City::selectRaw('id,name')->get();
                     ->content(fn($record) => \LaraZeus\Qr\Facades\Qr::render($record->code))
                     ->icon('heroicon-o-qr-code'),
 
-                Tables\Columns\TextColumn::make('code')->description(fn($record) => $record->id,'above')->copyable()->searchable(),
+                Tables\Columns\TextColumn::make('id')->description(fn($record) => $record->code,'above')->copyable()->searchable(),
 
 
                 Tables\Columns\TextColumn::make('type')->label('نوع الطلب')
@@ -411,7 +411,7 @@ $cities=City::selectRaw('id,name')->get();
                 Tables\Columns\TextColumn::make('sender.name')->label('اسم المرسل')->description(fn($record) => $record->general_sender_name)->searchable(),
 
                 Tables\Columns\TextColumn::make('citySource.name')->label('من بلدة')->description(fn($record) => "إلى {$record->cityTarget?->name}")->searchable(),
-                Tables\Columns\TextColumn::make('receive.name')->label('معرف المستلم ')->description(fn($record) => $record->global_name)->searchable(),
+                Tables\Columns\TextColumn::make('global_name')->label('معرف المستلم ')->description(fn($record) => $record->receive?->name)->searchable(),
                 Tables\Columns\TextColumn::make('receive_phone')
                     ->formatStateUsing(fn($record)=>(string) $record->receive_address .' - '.(string) $record->receive_phone)->label('هاتف المستلم ')
                     /*->description(fn($record) =>  ltrim($record?->receive_phone, '+'))*/
