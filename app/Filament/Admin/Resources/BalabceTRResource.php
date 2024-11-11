@@ -63,6 +63,7 @@ class BalabceTRResource extends Resource
                 Tables\Columns\TextColumn::make('order.receive.name')->label('المستلم')->description(fn($record)=>$record->order?->global_name!=null?" {$record->order->global_name}":""),
 
                 Tables\Columns\TextColumn::make('total')->label('الرصيد'),
+                Tables\Columns\TextColumn::make('created_at')->date('Y-m-d')->label('الرصيد'),
             ])
             ->filters([
 

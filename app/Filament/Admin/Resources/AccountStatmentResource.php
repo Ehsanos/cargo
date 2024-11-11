@@ -66,12 +66,18 @@ class AccountStatmentResource extends Resource
     {
         return $table
             ->poll(10)
-            ->modifyQueryUsing(fn($query) => $query->where('pending',false)->where('is_complete',true)->latest())
             ->columns([
-                Tables\Columns\TextColumn::make('credit'),
-                Tables\Columns\TextColumn::make('debit'),
-                Tables\Columns\TextColumn::make('total'),
-                Tables\Columns\TextColumn::make('info'),
+                Tables\Columns\TextColumn::make('credit')->label('إيداع'),
+                Tables\Columns\TextColumn::make('debit')->label('قبض'),
+
+                Tables\Columns\TextColumn::make('info')->label('الملاحظات'),
+                Tables\Columns\TextColumn::make('customer_name')->label('الطرف المقابل'),
+                Tables\Columns\TextColumn::make('order.code')->label('الطلب'),
+                Tables\Columns\TextColumn::make('order.sender.name')->label('المرسل')->description(fn($record)=>$record->order?->general_sender_name!=null ? "{$record->order->general_sender_name}":""),
+                Tables\Columns\TextColumn::make('order.receive.name')->label('المستلم')->description(fn($record)=>$record->order?->global_name!=null?" {$record->order->global_name}":""),
+
+                Tables\Columns\TextColumn::make('total')->label('الرصيد'),
+                Tables\Columns\TextColumn::make('created_at')->date('Y-m-d')->label('الرصيد'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('user_id')->relationship('user', 'name')->searchable()->default(0)->label('المستخدم'),
