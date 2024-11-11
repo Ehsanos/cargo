@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('balances', function (Blueprint $table) {
-            $table->string('uuid')->nullable()->unique();
+            $table->string('uuid')->nullable();
         });
     }
 
