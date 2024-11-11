@@ -99,7 +99,7 @@ class AccountStatmentResource extends Resource
                     }
                 })->label('تأكيد دفع المصاريف')->requiresConfirmation()->visible(fn($record)=>$record->uuid!=null && $record->is_complete==false),
 
-                Tables\Actions\Action::make('complete')->action(function($record){
+                Tables\Actions\Action::make('cancel')->action(function($record){
                     try{
                        Balance::where('uuid',$record->uuid)->delete();
                         Notification::make('success')->success()->title('نجاح العملية')->body(' تم إلغاء الدفعة بنجاح')->send();
