@@ -82,15 +82,15 @@ class ExchangeResource extends Resource
                         $amountTarget = 0;
                         $currencyTarget = 0;
                         if ($record->currency_id == 1) {
-                            if ($record->user->total_balance < $record->amount) {
-                                throw new \Exception('لا يوجد رصيد كاف في الحساب');
-                            }
+//                            if ($record->user->total_balance < $record->amount) {
+//                                throw new \Exception('لا يوجد رصيد كاف في الحساب');
+//                            }
                             $amountTarget = $record->amount * $record->exchange;
                             $currencyTarget = 2;
                         } else {
-                            if ($record->user->total_balance_tr < $record->amount) {
-                                throw new \Exception('لا يوجد رصيد كاف في الحساب');
-                            }
+//                            if ($record->user->total_balance_tr < $record->amount) {
+//                                throw new \Exception('لا يوجد رصيد كاف في الحساب');
+//                            }
                             $amountTarget = $record->amount / $record->exchange;
                             $currencyTarget = 1;
                         }
