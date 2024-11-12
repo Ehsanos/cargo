@@ -64,7 +64,7 @@ class ReportResource extends Resource
 
                 Tables\Columns\TextColumn::make('total_balance')
                     ->label('الرصيد الإجمالي')
-                    ->formatStateUsing(fn($state) => number_format($state, 2)),
+                    ->formatStateUsing(fn($state)=>sprintf('%.3f',$state)),
 
                 Tables\Columns\TextColumn::make('numbers3')
                     ->label('عدد الطلبات المرتجعة ')
