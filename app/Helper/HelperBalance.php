@@ -27,10 +27,10 @@ class HelperBalance
         // إذا كان الرقم يحتوي على كسور
 
        if (intval($number) != $number) {
-            return number_format($number, 3); // يظهر 3 أرقام بعد الفاصلة العشرية
+            return (float) number_format($number, 3); // يظهر 3 أرقام بعد الفاصلة العشرية
         }
         // إذا كان الرقم صحيحا
-        return $number;
+        return (float) $number;
     }
     public static function completePicker(Order $order)
     {
