@@ -72,9 +72,7 @@ class UserResource extends Resource
                         ->maxLength(15)
                         ->extraAttributes(['style' => 'text-align: left; direction: ltr;'])
                         ->tel()
-                        ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')// تخصيص عرض حقل الرمز ومحاذاة النص لليسار
-// الحد الأقصى لطول الرقم
-                        ->required(),
+                        ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/'),
 
                     Forms\Components\TextInput::make('country_code')
                         ->label('رمز الدولة')
@@ -82,9 +80,7 @@ class UserResource extends Resource
                         ->prefix('+')
                         ->maxLength(3)
                         ->numeric()
-                        ->extraAttributes(['style' => 'text-align: left; direction: ltr; width: 100px;']) // تخصيص عرض حقل الرمز ومحاذاة النص لليسار
-                        // تحديد الحد الأقصى للأرقام (بما في ذلك +)
-                        ->required(),
+                        ->extraAttributes(['style' => 'text-align: left; direction: ltr; width: 100px;']) ,
                 ]),
 
 
@@ -117,7 +113,7 @@ class UserResource extends Resource
                                 ->orWhereHas('users',fn($query)=>$query->where('level',LevelUserEnum::BRANCH->value)->where('users.id',$record->id)))
                         ->pluck('name','id'))->searchable()->visible(fn($get)=>$get('level')==LevelUserEnum::STAFF->value || $get('level')==LevelUserEnum::STAFF->value || $get('level')==LevelUserEnum::BRANCH->value)->required(),
 
-                Forms\Components\TextInput::make('full_name')->label('الاسم الكامل'),
+//                Forms\Components\TextInput::make('full_name')->label('الاسم الكامل'),
                 Forms\Components\DatePicker::make('birth_date')->label('تاريخ الميلاد')
                     ->format('Y-m-d')->default(now()),
                 Forms\Components\Select::make('status')->options(

@@ -4,6 +4,7 @@ namespace App\Filament\Branch\Resources;
 
 use App\Filament\Branch\Resources\BalabceTRResource\Pages;
 use App\Filament\Branch\Resources\BalabceTRResource\RelationManagers;
+use App\Helper\HelperBalance;
 use App\Models\BalabceTR;
 use App\Models\Balance;
 use Filament\Forms;
@@ -52,8 +53,8 @@ class BalabceTRResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('credit')->label('إيداع'),
-                Tables\Columns\TextColumn::make('debit')->label('قبض'),
+                Tables\Columns\TextColumn::make('credit')->label('إيداع')->formatStateUsing(fn($state)=>HelperBalance::formatNumber($state)),
+                Tables\Columns\TextColumn::make('debit')->label('قبض')->formatStateUsing(fn($state)=>HelperBalance::formatNumber($state)),
                 Tables\Columns\TextColumn::make('customer_name')->label('اسم الزبون المستلم'),
                 Tables\Columns\TextColumn::make('info')->label('الملاحظات'),
                 Tables\Columns\TextColumn::make('customer_name')->label('الطرف المقابل'),
@@ -61,7 +62,7 @@ class BalabceTRResource extends Resource
                 Tables\Columns\TextColumn::make('order.sender.name')->label('المرسل')->description(fn($record)=>$record->order?->general_sender_name!=null ? "{$record->order->general_sender_name}":""),
                 Tables\Columns\TextColumn::make('order.receive.name')->label('المستلم')->description(fn($record)=>$record->order?->global_name!=null?" {$record->order->global_name}":""),
 
-                Tables\Columns\TextColumn::make('total')->label('الرصيد'),
+                Tables\Columns\TextColumn::make('total')->label('الرصيد')->formatStateUsing(fn($state)=>HelperBalance::formatNumber($state)),
                 Tables\Columns\TextColumn::make('created_at')->date('Y-m')->label('التاريخ'),
             ])
             ->filters([

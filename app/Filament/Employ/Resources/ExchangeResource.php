@@ -5,6 +5,7 @@ namespace App\Filament\Employ\Resources;
 use App\Enums\OrderStatusEnum;
 use App\Filament\Employ\Resources\ExchangeResource\Pages;
 use App\Filament\Employ\Resources\ExchangeResource\RelationManagers;
+use App\Helper\HelperBalance;
 use App\Models\Exchange;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -52,8 +53,8 @@ class ExchangeResource extends Resource
                     ];
                     return $list[$state];
                 })->label('نوع التحويل'),
-                Tables\Columns\TextColumn::make('amount')->label('الكمية'),
-                Tables\Columns\TextColumn::make('exchange')->label('سعر الصرف'),
+                Tables\Columns\TextColumn::make('amount')->label('الكمية')->formatStateUsing(fn($state)=>HelperBalance::formatNumber($state)),
+                Tables\Columns\TextColumn::make('exchange')->label('سعر الصرف')->formatStateUsing(fn($state)=>HelperBalance::formatNumber($state)),
                 Tables\Columns\TextColumn::make('status')->formatStateUsing(fn($state)=>OrderStatusEnum::tryFrom($state)?->getLabel())->label('الحالة'),
             ])
             ->filters([
