@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources;
 use App\Enums\BalanceTypeEnum;
 use App\Filament\Admin\Resources\BalabceTRResource\Pages;
 use App\Filament\Admin\Resources\BalabceTRResource\RelationManagers;
+use App\Helper\HelperBalance;
 use App\Models\BalabceTR;
 use App\Models\Balance;
 use Filament\Forms;
@@ -53,8 +54,8 @@ class BalabceTRResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('credit')->label('إيداع')->formatStateUsing(fn($state)=>sprintf('%.3f',$state)),
-                Tables\Columns\TextColumn::make('debit')->label('قبض')->formatStateUsing(fn($state)=>sprintf('%.3f',$state)),
+                Tables\Columns\TextColumn::make('credit')->label('إيداع')->formatStateUsing(fn($state)=>HelperBalance::formatNumber($state)),
+                Tables\Columns\TextColumn::make('debit')->label('قبض')->formatStateUsing(fn($state)=>HelperBalance::formatNumber($state)),
 
                 Tables\Columns\TextColumn::make('info')->label('الملاحظات'),
                 Tables\Columns\TextColumn::make('customer_name')->label('الطرف المقابل'),
@@ -62,7 +63,7 @@ class BalabceTRResource extends Resource
                 Tables\Columns\TextColumn::make('order.sender.name')->label('المرسل')->description(fn($record)=>$record->order?->general_sender_name!=null ? "{$record->order->general_sender_name}":""),
                 Tables\Columns\TextColumn::make('order.receive.name')->label('المستلم')->description(fn($record)=>$record->order?->global_name!=null?" {$record->order->global_name}":""),
 
-                Tables\Columns\TextColumn::make('total')->formatStateUsing(fn($state)=>sprintf('%.3f',$state))->label('الرصيد'),
+                Tables\Columns\TextColumn::make('total')->formatStateUsing(fn($state)=>HelperBalance::formatNumber($state))->label('الرصيد'),
                 Tables\Columns\TextColumn::make('created_at')->date('Y-m-d')->label('الرصيد'),
             ])
             ->filters([

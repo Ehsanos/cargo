@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Widgets;
 use App\Enums\LevelUserEnum;
+use App\Helper\HelperBalance;
 use App\Models\User;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -37,7 +38,7 @@ class PendingBalanceEmployeeTRYWidget extends BaseWidget
             )
             ->columns([
                 Tables\Columns\TextColumn::make('name')->label('المستخدم'),
-                Tables\Columns\TextColumn::make('net_balance')->label('الرصيد الحالي')->formatStateUsing(fn($state)=>sprintf('%.3f',$state))->sortable()
+                Tables\Columns\TextColumn::make('net_balance')->label('الرصيد الحالي')->formatStateUsing(fn($state)=>HelperBalance::formatNumber($state))->sortable()
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('id')->options(User::pluck('name','id'))->searchable()

@@ -6,6 +6,7 @@ use App\Enums\LevelUserEnum;
 use App\Enums\OrderStatusEnum;
 use App\Filament\Admin\Resources\ReportResource\Pages;
 use App\Filament\Admin\Resources\ReportResource\RelationManagers;
+use App\Helper\HelperBalance;
 use App\Models\Report;
 use App\Models\User;
 use Filament\Actions\ViewAction;
@@ -64,7 +65,7 @@ class ReportResource extends Resource
 
                 Tables\Columns\TextColumn::make('total_balance')
                     ->label('الرصيد الإجمالي')
-                    ->formatStateUsing(fn($state)=>sprintf('%.3f',$state)),
+                    ->formatStateUsing(fn($state)=>HelperBalance::formatNumber($state)),
 
                 Tables\Columns\TextColumn::make('numbers3')
                     ->label('عدد الطلبات المرتجعة ')

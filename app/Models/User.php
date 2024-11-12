@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Helper\HelperBalance;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -128,7 +129,7 @@ class User extends Authenticatable implements HasMedia, FilamentUser, HasAvatar
                 ->where('currency_id',1)
                 ->where('pending', '!=', true)
                 ->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0;
-        return sprintf('%.2f', $total);
+        return HelperBalance::formatNumber( $total);
     }
 
     public function getTotalBalanceTrAttribute(): float
@@ -137,13 +138,13 @@ class User extends Authenticatable implements HasMedia, FilamentUser, HasAvatar
                 ->where('currency_id',2)
                 ->where('pending', '!=', true)
                 ->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0;
-        return sprintf('%.2f', $total);
+        return HelperBalance::formatNumber( $total);
     }
 
     public function getPendingBalanceAttribute(): float
     {
         $total = DB::table('balances')->where('user_id', $this->id)->where('pending', true)->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0;
-        return sprintf('%.2f', $total);
+        return HelperBalance::formatNumber( $total);
     }
 
     public function getIbanNameAttribute(): string

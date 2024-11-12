@@ -23,7 +23,14 @@ class HelperBalance
         }*/
     }
 
-
+   public static function formatNumber($number) {
+        // إذا كان الرقم يحتوي على كسور
+        if (is_float($number)) {
+            return number_format($number, 3); // يظهر 3 أرقام بعد الفاصلة العشرية
+        }
+        // إذا كان الرقم صحيحا
+        return $number;
+    }
     public static function completePicker(Order $order)
     {
         $sender = User::find($order->sender_id);

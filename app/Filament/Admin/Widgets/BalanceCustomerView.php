@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Widgets;
 use App\Enums\LevelUserEnum;
+use App\Helper\HelperBalance;
 use App\Models\Balance;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -45,10 +46,10 @@ class BalanceCustomerView extends BaseWidget
             ->where('balances.currency_id', '=',2)->first();
 
       return [
-          Stat::make('مجموع رصيد الزبائن USD ' , sprintf('%.2f',sprintf('%2.f',$totalUsd->total))),
-          Stat::make('مجموع رصيد الزبائن TRY ' , sprintf('%.2f',sprintf('%2.f',$totalTRY->total))),
-          Stat::make('مجموع رصيد قيد التحصيل USD ' , sprintf('%.2f',sprintf('%2.f',$pendingUsd->total))),
-          Stat::make('مجموع رصيد قيد التحصيل TRY ' , sprintf('%.2f',sprintf('%2.f',$pendingTRY->total))),
+          Stat::make('مجموع رصيد الزبائن USD ' , HelperBalance::formatNumber($totalUsd->total)),
+          Stat::make('مجموع رصيد الزبائن TRY ' , HelperBalance::formatNumber($totalTRY->total)),
+          Stat::make('مجموع رصيد قيد التحصيل USD ' , HelperBalance::formatNumber($pendingUsd->total)),
+          Stat::make('مجموع رصيد قيد التحصيل TRY ' , HelperBalance::formatNumber($pendingTRY->total)),
       ];
     }
 }

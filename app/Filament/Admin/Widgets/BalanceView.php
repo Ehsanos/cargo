@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Widgets;
 
+use App\Helper\HelperBalance;
 use App\Models\Balance;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -22,7 +23,7 @@ class BalanceView extends BaseWidget
         // dd($balances);
         $list = [];
         foreach ($balances as $balance) {
-            $list[] = Stat::make('رصيد صندوق ' . $balance->currency?->name, sprintf('%.2f',$balance->totalBalance));
+            $list[] = Stat::make('رصيد صندوق ' . $balance->currency?->name, HelperBalance::formatNumber($balance->totalBalance));
 
         }
         return $list;
