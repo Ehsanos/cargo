@@ -38,10 +38,10 @@ class ListBalabceTRS extends ListRecords
                 //
                 ->action(function ($data) {
                     \DB::beginTransaction();
-                    if(auth()->user()->total_balance_tr  < $data['value'] ){
-                        Notification::make('error')->title('فشل العملية')->body('لا تملك رصيد كافي')->danger()->send();
-                        return ;
-                    }
+//                    if(auth()->user()->total_balance_tr  < $data['value'] ){
+//                        Notification::make('error')->title('فشل العملية')->body('لا تملك رصيد كافي')->danger()->send();
+//                        return ;
+//                    }
                     $target=User::find($data['user_id']);
                     try {
 

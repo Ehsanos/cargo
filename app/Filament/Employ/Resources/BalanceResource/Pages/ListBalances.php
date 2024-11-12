@@ -31,9 +31,9 @@ class ListBalances extends ListRecords
                             if ($value <= 0) {
                                 $fail('يجب أن تكون القيمة أكبر من 0');
                             }
-                            if (auth()->user()->total_balance < $value) {
-                                $fail('لا تملك رصيد كافي');
-                            }
+//                            if (auth()->user()->total_balance < $value) {
+//                                $fail('لا تملك رصيد كافي');
+//                            }
                         },
                     ]),
 
@@ -50,11 +50,11 @@ class ListBalances extends ListRecords
                         return;
                     }
 
-                    if (auth()->user()->total_balance < $data['value']) {
-                        Notification::make('success')->title('فشل العملية')->body('لا تملك رصيد كافي')->danger()->send();
-
-                        return;
-                    }
+//                    if (auth()->user()->total_balance < $data['value']) {
+//                        Notification::make('success')->title('فشل العملية')->body('لا تملك رصيد كافي')->danger()->send();
+//
+//                        return;
+//                    }
                     \DB::beginTransaction();
                     try {
                         Balance::create([
@@ -102,9 +102,9 @@ class ListBalances extends ListRecords
                     if($data['amount']<=0){
                         throw  new \Exception('لا يمكن إضافة قيمة أقل من 0');
                     }
-                    if(auth()->user()->total_balance<$data['amount']){
-                        throw  new \Exception('لا تملك رصيد كافي');
-                    }
+//                    if(auth()->user()->total_balance<$data['amount']){
+//                        throw  new \Exception('لا تملك رصيد كافي');
+//                    }
                     $uuid = \Str::uuid();
                     Balance::create([
                         'user_id' => auth()->id(),

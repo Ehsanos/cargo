@@ -31,9 +31,9 @@ class ListBalabceTRS extends ListRecords
                             if ($value <= 0) {
                                 $fail('يجب أن تكون القيمة أكبر من 0');
                             }
-                            if (auth()->user()->total_balance_tr < $value) {
-                                $fail('لا تملك رصيد كافي');
-                            }
+//                            if (auth()->user()->total_balance_tr < $value) {
+//                                $fail('لا تملك رصيد كافي');
+//                            }
                         },
                     ]),
 
@@ -50,11 +50,11 @@ class ListBalabceTRS extends ListRecords
                         return;
                     }
 
-                    if (auth()->user()->total_balance_tr < $data['value']) {
-                        Notification::make('success')->title('فشل العملية')->body('لا تملك رصيد كافي')->danger()->send();
-
-                        return;
-                    }
+//                    if (auth()->user()->total_balance_tr < $data['value']) {
+//                        Notification::make('success')->title('فشل العملية')->body('لا تملك رصيد كافي')->danger()->send();
+//
+//                        return;
+//                    }
                     \DB::beginTransaction();
                     try {
                         Balance::create([
