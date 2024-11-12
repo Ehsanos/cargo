@@ -25,7 +25,8 @@ class HelperBalance
 
    public static function formatNumber($number) {
         // إذا كان الرقم يحتوي على كسور
-        if (is_float($number)) {
+
+       if (intval($number) != $number) {
             return number_format($number, 3); // يظهر 3 أرقام بعد الفاصلة العشرية
         }
         // إذا كان الرقم صحيحا
