@@ -182,7 +182,7 @@ public static function canCreate(): bool
                         ])
                             ->collapsible()
                             ->collapsed(),
-                    ])->collapsible()->collapsed(true),
+                    ])->collapsible()->collapsed(true)->visible(false),
 
 
             ]);

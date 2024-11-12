@@ -323,7 +323,7 @@ class OrderResource extends Resource
                         // استخدام اسم الشحنة كتسمية
 
 
-                    ])->collapsible()->collapsed(true),
+                    ])->collapsible()->collapsed(true)->visible(false),
 
 
             ]);
