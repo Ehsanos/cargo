@@ -74,7 +74,7 @@ class BalabceTRResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn($query)=>$query->where(['user_id' => auth()->id(), 'is_complete' => true])->where('currency_id',2)->latest())
+            ->modifyQueryUsing(fn($query)=>$query->where(['user_id' => auth()->id()])->where('currency_id',2)->latest())
 
             ->columns([
                 Tables\Columns\TextColumn::make('credit')->label('ايداع'),
