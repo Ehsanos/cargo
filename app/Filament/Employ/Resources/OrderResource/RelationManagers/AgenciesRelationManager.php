@@ -55,20 +55,7 @@ protected static ?string $title="المهام";
             ->actions([
                 Tables\Actions\EditAction::make(),
 //                Tables\Actions\DeleteAction::make(),
-                Tables\Actions\Action::make('is_complete')->form([
-                    Forms\Components\Select::make('status')->options([
-                        ActivateAgencyEnum::PENDING->value => ActivateAgencyEnum::PENDING->getLabel(),
-                        ActivateAgencyEnum::COMPLETE->value => ActivateAgencyEnum::COMPLETE->getLabel(),
-                        ActivateAgencyEnum::CANCELED->value => ActivateAgencyEnum::CANCELED->getLabel(),
-                    ])->label('حالة المهمة'),
-                    Forms\Components\Textarea::make('msg')->label('ملاحظات'),
-                ])->action(function ($record, $data) {
-                    $record->update([
-                        'activate' => $data['status'],
-                        'msg' => $data['msg']
-                    ]);
-                    Notification::make('success')->title('نجاح العملية')->body('تم حفظ البيانات')->success()->send();
-                })->label('إنهاء المهمة')->button()->visible(fn($record) => $record->status == ActivateAgencyEnum::PENDING)
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

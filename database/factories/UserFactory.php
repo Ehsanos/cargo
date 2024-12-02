@@ -33,7 +33,8 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'level'=>fake()->randomElement(LevelUserEnum::cases()),
             'address' => fake()->address,
-            'phone' => fake()->phoneNumber
+            'phone' => fake()->phoneNumber,
+            'iban'=>Str::random(12),
         ];
     }
 

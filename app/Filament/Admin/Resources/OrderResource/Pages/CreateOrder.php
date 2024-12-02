@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\OrderResource\Pages;
 
 use App\Filament\Admin\Resources\OrderResource;
+use App\Models\User;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
@@ -14,8 +15,8 @@ class CreateOrder extends CreateRecord
     {
 
 
-   $data['code']="FC".now()->format('YmdHis').'NO'; // الطابع الزمني بتنسيق قصير
-
+        $data['code'] = "AWB" . now()->format('YmdHis'); // الطابع الزمني بتنسيق قصير
+        $data['shipping_date'] = now()->format('Y-m-d');
 
         return $data;
 
@@ -23,6 +24,10 @@ class CreateOrder extends CreateRecord
 
     }
 
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 
 
 }

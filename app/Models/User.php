@@ -10,6 +10,7 @@ use Filament\Models\Contracts\HasAvatar;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasMedia, FilamentUser,HasAvatar
@@ -91,57 +93,53 @@ $casts = [
     'password' => 'hashed',
     'level' => LevelUserEnum::class,
     'status' => ActivateStatusEnum::class,
-    'job' => JobUserEnum::class
+    'job' => JobUserEnum::class,
+
 ];
 
 
-public
-function city(): BelongsTo
+public  function city(): BelongsTo
 {
     return $this->belongsTo(City::class);
 }
 
-public
-function branch(): BelongsTo
+public function branch(): BelongsTo
 {
     return $this->belongsTo(Branch::class);
 }
 
-public
-function sentOrders(): HasMany
+public function sentOrders(): HasMany
 {
     return $this->hasMany(Order::class, 'sender_id');
 }
 
-public
-function receivedOrders(): HasMany
+public function receivedOrders(): HasMany
 {
     return $this->hasMany(Order::class, 'receive_id');
 }
 
-public
-function balances(): HasMany
+public  function balances(): HasMany
 {
     return $this->hasMany(Balance::class)->where('balances.is_complete', 1);
 }
 
-public
-function pendingBalances(): HasMany
+public function pendingBalances(): HasMany
 {
     return $this->hasMany(Balance::class)->where('balances.is_complete', 0);
 }
 
-public
-function getTotalBalanceAttribute(): float
+public function getTotalBalanceAttribute(): float
 {
     $total = DB::table('balances')->where('user_id', $this->id)->where('is_complete', true)->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0;
     return sprintf('%.2f', $total);
 }
 
-public
-function getPendingBalanceAttribute(): float
+public function getPendingBalanceAttribute(): float
 {
     $total = DB::table('balances')->where('user_id', $this->id)->where('is_complete', false)->selectRaw('SUM(credit) - SUM(debit) as total')->first()?->total ?? 0;
     return sprintf('%.2f', $total);
 }
+
+
+
 }

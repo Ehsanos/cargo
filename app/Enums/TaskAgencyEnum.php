@@ -11,6 +11,7 @@ enum TaskAgencyEnum:string implements HasLabel ,HasColor,HasIcon
     case TAKE='take';
     case DELIVER='deliver';
     case TASK='branch';
+    case TRANSPORT='transport';
 
 
     public function getLabel(): string
@@ -18,7 +19,8 @@ enum TaskAgencyEnum:string implements HasLabel ,HasColor,HasIcon
         return match ($this) {
             self::TAKE => 'إلتقاط',
             self::DELIVER => 'تسليم',
-            self::TASK => 'نقل',
+            self::TASK => 'مهمة إدارية',
+            self::TRANSPORT => 'نقل',
 
         };
     }
@@ -29,6 +31,7 @@ enum TaskAgencyEnum:string implements HasLabel ,HasColor,HasIcon
             self::TAKE => 'info',
             self::DELIVER => 'success',
             self::TASK => 'warning',
+            self::TRANSPORT => 'blue',
 
         };
     }
@@ -38,7 +41,8 @@ enum TaskAgencyEnum:string implements HasLabel ,HasColor,HasIcon
         return match ($this) {
             self::TAKE => 'fas-door-open',
             self::DELIVER => 'fas-cart-flatbed',
-            self::TASK => 'fas-cart-flatbed',
+            self::TASK => 'fas-list-check',
+            self::TRANSPORT => 'fas-truck-fast',
 
         };
     }

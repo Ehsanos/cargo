@@ -13,6 +13,7 @@ use App\Enums\ActivateStatusEnum;
 use App\Enums\OrderTypeEnum;
 use App\Enums\OrderStatusEnum;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 
 class Order extends Model
@@ -66,6 +67,12 @@ class Order extends Model
         return $this->hasMany(Package::class);
     }
 
+
+
+    public function fofo():HasOne {
+        return $this->hasOne(Package::class);
+    }
+
     public function agencies(): HasMany
     {
         return $this->hasMany(Agency::class);
@@ -85,6 +92,21 @@ class Order extends Model
     public function size():BelongsTo{
         return  $this->belongsTo(Category::class)->where('type',CategoryTypeEnum::SIZE->value);
 
+    }
+
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class);
+    }
+
+    public function pick(): BelongsTo
+    {
+        return $this->belongsTo(User::class,'pick_id');
+    }
+
+    public function given(): BelongsTo
+    {
+        return $this->belongsTo(User::class,'given_id');
     }
 
 }
