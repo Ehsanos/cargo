@@ -109,7 +109,8 @@ protected static ?string $pluralLabel='الرصيد';
                             'type' => BalanceTypeEnum::PUSH->value,
                             'is_complete' => 1,
                             'info' => 'تحويل رصيد للمستخدم ' . $user->name,
-                            'user_id' => auth()->id()
+                            'user_id' => auth()->id(),
+
                         ]);
 
                         Balance::create([
